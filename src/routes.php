@@ -1,0 +1,59 @@
+<?php
+use Slim\App;
+use Slim\Routing\RouteCollectorProxy;
+use Cherry\Controller\IndexController;
+use Cherry\Controller\ApiController;
+use Cherry\Middleware\AuthMiddleware;
+use Cherry\Middleware\AcceptHeaderMiddleware;
+use Cherry\Middleware\InitialMiddleware;
+use Psr\Container\ContainerInterface;
+
+return function (App $app, ContainerInterface $container) {
+    // Web Routers
+    $app->get('/', IndexController::class . ':home');
+    $app->get('/login', IndexController::class . ':login');
+    $app->post('/login', IndexController::class . ':verifyPassword');
+    $app->get('/logout', IndexController::class . ':logout');
+    $app->group('', function(RouteCollectorProxy $group) {
+        $group->get('/init', IndexController::class . ':showInitialForm');
+        $group->post('/init', IndexController::class . ':init');
+    })->add(InitialMiddleware::class);
+
+    /**
+     * @deprecated
+     */
+    $app->get('/note/{snowflake_id}', IndexController::class . ':note');
+    $app->get('/notes/{snowflake_id}', IndexController::class . ':note');
+    $app->get('/tags/{tag}', IndexController::class . ':tags');
+
+    $app->group('', function(RouteCollectorProxy $group) {
+        $group->get('/timeline', IndexController::class . ':timeline');
+        $group->get('/editor', IndexController::class . ':editor');
+        $group->post('/notes', IndexController::class . ':createPost');
+        $group->post('/notes/{snowflake_id}/delete', IndexController::class . ':deletePost');
+        $group->get('/notifications', IndexController::class . ':notifications');
+        $group->get('/follow-requests/{notification_id}/answer', IndexController::class . ':handleFollowRequest');
+        $group->post('/following', IndexController::class . ':sendFollow');
+        $group->post('/objects/{object_id}/like', IndexController::class . ':liked');
+        $group->post('/objects/{object_id}/boost', IndexController::class . ':boosted');
+        $group->get('/objects/{object_id}/reply', IndexController::class . ':replyTo');
+        $group->get('/web/following', IndexController::class . ':following');
+        $group->get('/web/followers', IndexController::class . ':followers');
+        $group->post('/following/{id}/delete', IndexController::class . ':deleteFollowing');
+        $group->post('/followers/{id}/delete', IndexController::class . ':deleteFollowers');
+        $group->post('/profiles/{profile_id}/fetch', IndexController::class . ':fetchProfile');
+    })->add(AuthMiddleware::class);
+
+    $app->get('/test', IndexController::class . ':test');
+
+    // Server API Routers
+    $app->post('/inbox', ApiController::class . ':inbox');
+    $app->group('', function (RouteCollectorProxy $group) {
+        $group->get('/.well-known/webfinger', ApiController::class . ':webFinger');
+        $group->get('/profile', ApiController::class . ':profile')->setName('api_profile');
+        $group->get('/outbox/{snowflake_id}/object', ApiController::class . ':objectInfo');
+        $group->get('/outbox', ApiController::class . ':outbox');
+        $group->get('/followers', ApiController::class . ':followers');
+        $group->get('/following', ApiController::class . ':following');
+    })->add(AcceptHeaderMiddleware::class);
+};
