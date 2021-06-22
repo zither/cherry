@@ -76,7 +76,7 @@
             </div>
         </div>
         <div class="mt">
-            <form action="/create" method="POST">
+            <form action="/notes" method="POST">
                 <input name="in_reply_to" type="hidden" value="<?=$note['id']?>"/>
                 <div class="mb">
                     <textarea class="color-purple" name="content" rows="10"><?=$at?></textarea>
