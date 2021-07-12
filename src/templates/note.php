@@ -49,11 +49,11 @@
                             <?php endif;?>
                             <?php if ($is_admin && $note['is_local']): ?>
                                 <div class="flex-auto mr">
-                                    <a href="/note/<?=$note['snowflake_id']?>/delete" title="删除">
-                                        <div class="inline-block">
+                                    <form class="interaction" method="POST" action="/notes/<?=$note['snowflake_id']?>/delete">
+                                        <button class="inline-block color-purple" title="删除">
                                             <i class="gg-trash"></i>
-                                        </div>
-                                    </a>
+                                        </button>
+                                    </form>
                                 </div>
                             <?php endif;?>
                         </div>
