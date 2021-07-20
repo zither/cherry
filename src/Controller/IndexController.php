@@ -1055,7 +1055,7 @@ class IndexController
 
         if ($followerId) {
             $db = $this->container->get(Medoo::class);
-            $follower = $db->get('followers', ['id' => $followerId]);
+            $follower = $db->get('followers', '*', ['id' => $followerId]);
             $db->delete('followers', ['id' => $followerId]);
             $db->insert('tasks', [
                 'task' => 'LocalUndoTask',
@@ -1073,7 +1073,7 @@ class IndexController
 
         if ($followingId) {
             $db = $this->container->get(Medoo::class);
-            $following = $db->get('following', ['id' => $followingId]);
+            $following = $db->get('following', '*', ['id' => $followingId]);
             $db->delete('following', ['id' => $followingId]);
             $db->insert('tasks', [
                 'task' => 'LocalUndoTask',
