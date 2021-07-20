@@ -99,6 +99,9 @@ class DeliverActivityTask implements TaskInterface
         }
 
         $targets = [];
+        if ($activityType->type === 'Follow') {
+            $actors = array_merge($actors, [$activityType->object]);
+        }
         if (!empty($actors)) {
             $profiles = $db->select('profiles', ['inbox', 'shared_inbox'], ['actor' => $actors]);
             $targets = array_merge($targets, $profiles);
