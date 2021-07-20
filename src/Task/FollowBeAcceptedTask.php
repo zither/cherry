@@ -40,7 +40,7 @@ class FollowBeAcceptedTask implements TaskInterface
             return;
         }
         $followActivity = $rawActivity['object'];
-        $followActivityId = $db->get('activities', ['id'], ['activity_id' => $followActivity['id']]);
+        $followActivityId = $db->get('activities', 'id', ['activity_id' => $followActivity['id']]);
         $following = [
             'profile_id' => $profile['id'],
             'status' => 1,

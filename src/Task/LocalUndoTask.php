@@ -41,7 +41,7 @@ class LocalUndoTask implements TaskInterface
             throw new \InvalidArgumentException('Invalid activity type: ' . $activityType->type);
         }
         $targetObject = $db->get('objects', ['id', 'profile_id'], ['raw_object_id' => $activityType->object]);
-        if (empty($targetObject)) {
+        if (empty($targetObject) && ($activityType->type === 'Like' || $activityType === 'Announce')) {
             throw new \InvalidArgumentException('Object not found : ' . $activityType->object);
         }
         $profile = $db->get('profiles', ['id', 'actor', 'outbox'], ['id' => 1]);
@@ -67,7 +67,7 @@ class LocalUndoTask implements TaskInterface
         $newActivity = [
             'activity_id' => $undo['id'],
             'profile_id' => $profile['id'],
-            'object_id' => $targetObject['id'],
+            'object_id' => $targetObject['id'] ?? 0,
             'type' => 'Undo',
             'raw' => json_encode($undo, JSON_UNESCAPED_SLASHES),
             'published' => Time::utc(),
