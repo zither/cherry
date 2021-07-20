@@ -53,7 +53,7 @@
                     </div>
                     <div class="flex flex-align-center">
                         <form action="/following/<?=$v['id']?>/delete" method="POST">
-                            <button>删除</button>
+                            <button>取消</button>
                         </form>
                     </div>
                 </div>
