@@ -95,6 +95,7 @@ class LocalUndoTask implements TaskInterface
                     'profile_id' => $profile['id'],
                     'type' => $types[$column],
                 ]);
+                $db->update('activities', ['is_deleted' => 1], ['id' => $activityId]);
             }
 
             $db->insert('tasks', [

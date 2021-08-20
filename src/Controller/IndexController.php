@@ -979,9 +979,9 @@ class IndexController
             goto REDIRECT_BACK;
         }
 
-        $boosted = $object['is_boosted'] ? 0 : 1;
-        $db->update('objects', ['is_boosted' => $boosted], ['id' => $objectId]);
-        if ($boosted) {
+        $toBoost = $object['is_boosted'] ? 0 : 1;
+        $db->update('objects', ['is_boosted' => $toBoost], ['id' => $objectId]);
+        if ($toBoost) {
             $db->insert('tasks', [
                 'task' => 'LocalInteractiveTask',
                 'params' => json_encode(['object_id' => $objectId, 'type' => 'Announce'], JSON_UNESCAPED_SLASHES),
