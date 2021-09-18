@@ -171,11 +171,16 @@
                                     </div>
                                     <?php if ($is_admin): ?>
                                     <div class="dropdown-menu flex-column">
-                                        <div class="item"><a href="#">折叠嘟文</a></div>
                                         <?php if ($v['is_local']):?>
                                             <div class="item">
                                                 <form action="/notes/<?=$v['snowflake_id']?>/delete" METHOD="POST">
                                                     <input class="btn" type="submit" value="删除嘟文" />
+                                                </form>
+                                            </div>
+                                        <?php else: ?>
+                                            <div class="item">
+                                                <form action="/profiles/<?=$v['profile_id']?>/fetch" METHOD="POST">
+                                                    <input class="btn" type="submit" value="更新资料" />
                                                 </form>
                                             </div>
                                         <?php endif;?>

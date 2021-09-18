@@ -133,8 +133,6 @@
                                         <i class="gg-more-alt"> </i>
                                     </div>
                                     <div class="dropdown-menu flex-column">
-                                        <div class="item"><a href="#">折叠嘟文</a></div>
-                                        <div class="item"><a href="#">隐藏嘟文</a></div>
                                         <div class="item">
                                             <form action="/profiles/<?=$v['profile_id']?>/fetch" METHOD="POST">
                                                 <input class="btn" type="submit" value="更新资料" />
