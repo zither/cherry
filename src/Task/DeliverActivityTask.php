@@ -88,10 +88,7 @@ class DeliverActivityTask implements TaskInterface
         $actors = [];
         $toFollowers = false;
         foreach ($activityType->audiences() as $v) {
-            if ($v === Activity::PUBLIC_COLLECTION) {
-                continue;
-            }
-            if ($v === $profile['followers']) {
+            if ($v === Activity::PUBLIC_COLLECTION || $v === $profile['followers']) {
                 $toFollowers = true;
             } else  {
                 $actors[] = $v;
