@@ -22,7 +22,7 @@ class LocalInteractiveTask implements TaskInterface
     {
         $db = $this->container->get(Medoo::class);
         $objectId = $args['object_id'];
-        $object = $db->get('objects', ['id', 'raw_object_id', 'profile_id'], ['id' => $objectId]);
+        $object = $db->get('objects', ['id', 'raw_object_id', 'profile_id', 'is_public'], ['id' => $objectId]);
         if (empty($object)) {
             throw new \InvalidArgumentException('Invalid object id: ' . $objectId);
         }
@@ -61,6 +61,7 @@ class LocalInteractiveTask implements TaskInterface
             'raw' => json_encode($rawActivity, JSON_UNESCAPED_SLASHES),
             'published' => Time::utc(),
             'is_local' => 1,
+            'is_public' => $object['is_public']
         ];
         try {
             $db->pdo->beginTransaction();
