@@ -1199,6 +1199,62 @@ class IndexController
         return $this->redirectBack($request, $response);
     }
 
+    public function showProfileForm(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    {
+        $profileId = 1;
+        $db = $this->container->get(Medoo::class);
+        $profile = $db->get('profiles', ['id', 'name', 'avatar', 'summary'], ['id' => $profileId]);
+        if (empty($profile)) {
+            throw new HttpException($request, 'profile not found', 400);
+        }
+        $flash = $this->flash($request);
+        $data = [
+            'errors' => $flash->get('error', []),
+            'messages' => $flash->get('success', []),
+            'profile' => $profile
+        ];
+        return $this->render($response, 'settings/profile', $data);
+    }
+
+    public function updateProfile(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    {
+        $flash = $this->flash($request);
+        $profileId = $args['profile_id'];
+        if ($profileId != 1) {
+            $flash->error('非法请求');
+            return $this->redirectBack($request, $response);
+        }
+
+        $name = $this->getPostParam($request, 'name');
+        $avatar = $this->getPostParam($request, 'avatar');
+        $summary = $this->getPostParam($request, 'summary');
+        if (empty($name) || empty($avatar)) {
+            $flash->error('请完整填写相关资料');
+            return $this->redirectBack($request, $response);
+        }
+
+        try {
+            $db = $this->container->get(Medoo::class);
+            $data = [
+                'name' => $name,
+                'avatar' => $avatar,
+                'summary' => $summary
+            ];
+            $db->update('profiles', $data, ['id' => $profileId]);
+            $task = [
+                'task' => 'LocalUpdateProfileTask',
+                'params' => json_encode(['id' => $profileId], JSON_UNESCAPED_SLASHES),
+                'priority' => 140,
+            ];
+            $db->insert('tasks', $task);
+            $flash->success('更新成功');
+        } catch (Exception $e) {
+            $flash->error($e->getMessage());
+        }
+
+        return $this->redirectBack($request, $response);
+    }
+
     public function showInitialForm(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $flash = $this->flash($request);

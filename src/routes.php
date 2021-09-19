@@ -42,6 +42,8 @@ return function (App $app, ContainerInterface $container) {
         $group->post('/following/{id}/delete', IndexController::class . ':deleteFollowing');
         $group->post('/followers/{id}/delete', IndexController::class . ':deleteFollowers');
         $group->post('/profiles/{profile_id}/fetch', IndexController::class . ':fetchProfile');
+        $group->post('/profiles/{profile_id}/update', IndexController::class . ':updateProfile');
+        $group->get('/settings/profile', IndexController::class . ':showProfileForm');
     })->add(AuthMiddleware::class);
 
     $app->get('/test', IndexController::class . ':test');

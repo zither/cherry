@@ -48,6 +48,7 @@ return function (App $app, ContainerInterface $container) {
             \Cherry\Task\LocalInteractiveTask::class,
             \Cherry\Task\LocalUndoTask::class,
             \Cherry\Task\RemoteDeleteTask::class,
+            \Cherry\Task\LocalUpdateProfileTask::class,
             \Cherry\Task\Cron\DeleteExpiredSessionsTask::class,
         ];
         $commands = [];
