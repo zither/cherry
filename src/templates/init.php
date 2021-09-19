@@ -34,7 +34,7 @@
             </div>
             <div class="mt label">
                 <label for="summary">简介</label>
-                <input id="summary" type="text" name="avatar"  placeholder="简介"/>
+                <input id="summary" type="text" name="summary"  placeholder="简介"/>
             </div>
             <div class="mt label">
                 <label for="password">登录密码</label>
