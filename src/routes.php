@@ -9,7 +9,7 @@ use Cherry\Middleware\InitialMiddleware;
 use Psr\Container\ContainerInterface;
 
 return function (App $app, ContainerInterface $container) {
-    // Web Routers
+    // Web Routes
     $app->get('/', IndexController::class . ':home');
     $app->get('/login', IndexController::class . ':login');
     $app->post('/login', IndexController::class . ':verifyPassword');
@@ -48,12 +48,13 @@ return function (App $app, ContainerInterface $container) {
 
     $app->get('/test', IndexController::class . ':test');
 
-    // Server API Routers
+    // Server API Routes
     $app->post('/inbox', ApiController::class . ':inbox');
     $app->group('', function (RouteCollectorProxy $group) {
         $group->get('/.well-known/webfinger', ApiController::class . ':webFinger');
         $group->get('/profile', ApiController::class . ':profile')->setName('api_profile');
         $group->get('/outbox/{snowflake_id}/object', ApiController::class . ':objectInfo');
+        $group->get('/outbox/{snowflake_id}', ApiController::class . ':activityInfo');
         $group->get('/outbox', ApiController::class . ':outbox');
         $group->get('/followers', ApiController::class . ':followers');
         $group->get('/following', ApiController::class . ':following');

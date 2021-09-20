@@ -261,7 +261,33 @@ class ApiController
         return $this->ldJson($response, $object);
     }
 
+    public function activityInfo(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    {
+        $snowflakeId = $args['snowflake_id'];
+        if (empty($snowflakeId)) {
+            return $response->withStatus(404);
+        }
 
+        $db = $this->container->get(Medoo::class);
+        $profile = $db->get('profiles', ['id', 'outbox'], ['id' => 1]);
+        $activityUrl = "{$profile['outbox']}/$snowflakeId";
+        $activity = $db->get('activities', '*', ['activity_id' => $activityUrl]);
+        if (empty($activity)) {
+            return $response->withStatus(404);
+        }
+
+        $rawActivity = json_decode($activity['raw'], true);
+        $activityType = Activity::createFromArray($rawActivity);
+        if (!in_array($activityType->lowerType(), ['create', 'announce'])) {
+            return $response->withStatus(404);
+        }
+        //@TODO check request authorization
+        if (!$activityType->isPublic()) {
+            return $response->withStatus(401);
+        }
+
+        return $this->ldJson($response, $rawActivity);
+    }
 
     public function followers(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
