@@ -13,7 +13,7 @@
             <div class="flex-grow">
                 <?php if (strtolower($v['type']) === 'follow'): ?>
                     <?php if ($v['status'] === 0): ?>
-                        <div><a href="<?=$v['url']?>"><?=$v['name'] ?: $v['preferred_name']?></a> requests to follow you</div>
+                        <div><a class="color-black" href="<?=$v['url']?>"><?=$v['name'] ?: $v['preferred_name']?></a> requests to follow you</div>
                         <div>
                             <a class="btn mr" href="/follow-requests/<?=$v['id']?>/answer?action=accept">允许</a>
                             <a class="btn mr" href="/follow-requests/<?=$v['id']?>/answer?action=reject">拒绝</a>
@@ -21,7 +21,7 @@
                         </div>
                     <?php else: ?>
                         <div><span><?=$v['name']?></span> followed you</div>
-                        <div><a href="<?=$v['url']?>"><?=$v['url']?></a></div>
+                        <div><a class="color-black" href="<?=$v['url']?>"><?=$v['url']?></a></div>
                     <?php endif;?>
                 <?php endif; ?>
             </div>
