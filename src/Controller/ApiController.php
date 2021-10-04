@@ -84,7 +84,7 @@ class ApiController
                 'type' => 'Key'
             ]
         ];
-        return $this->json($response, $user);
+        return $this->ldJson($response, $user);
     }
 
     public function inbox(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
@@ -327,15 +327,10 @@ class ApiController
         return $this->ldJson($response, $collection);
     }
 
-
-    protected function json(ResponseInterface $response, array $body = [], $ldSignature = false): ResponseInterface
+    protected function json(ResponseInterface $response, array $body = []): ResponseInterface
     {
-        $response = $response->withHeader('Content-Type', 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"');
-        $helper = new SignRequest();
-        //$body['signature'] = $helper->createLdSignature($body);
-
+        $response = $response->withHeader('Content-Type', 'application/json');
         $response->getBody()->write(json_encode($body, JSON_UNESCAPED_SLASHES));
-
         return $response;
     }
 
