@@ -53,6 +53,60 @@ class ApiController
         return $this->json($response, $webFinger);
     }
 
+    public function nodeInfo(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        $db = $this->container->get(Medoo::class);
+        $settings = $db->get('settings', '*', ['id' => 1]);
+        $nodeInfo = [
+            'links' => [
+                [
+                    'ref' => 'http://nodeinfo.diaspora.software/ns/schema/2.0',
+                    'href' => sprintf('https://%s/nodeinfo/2.0.json', $settings['domain'])
+                ],
+                [
+                    'ref' => 'http://nodeinfo.diaspora.software/ns/schema/2.1',
+                    'href' => sprintf('https://%s/nodeinfo/2.1.json', $settings['domain'])
+                ],
+            ]
+        ];
+        return $this->json($response, $nodeInfo);
+    }
+
+    public function nodeInfoDetails(ServerRequestInterface $request, ResponseInterface $response, array $args)
+    {
+        $nodeInfoVersion = $args['version'] ?? "2.0";
+        if ($nodeInfoVersion !== '2.0' && $nodeInfoVersion !== '2.1') {
+            return $response->withStatus(404);
+        }
+
+        $software = [
+            'name' => 'cherry',
+            'version' => CHERRY_VERSION,
+        ];
+        if ($nodeInfoVersion === '2.1') {
+            $software['repository'] = CHERRY_REPOSITORY;
+        }
+        $nodeInfo = [
+            'version' => $nodeInfoVersion,
+            'software' => $software,
+            'protocols' => ['activitypub'],
+            'usage' => [
+                'users' => [
+                    'total' => 1,
+                    'activeMonth' => 1,
+                    'activeHalfyear' => 1
+                ]
+            ],
+            'openRegistration' => false,
+            'services' => [
+                'inbound' => [],
+                'outbound' => []
+            ],
+            'metadata' => []
+        ];
+        return $this->json($response, $nodeInfo);
+    }
+
     public function profile(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $db = $this->container->get(Medoo::class);

@@ -52,6 +52,8 @@ return function (App $app, ContainerInterface $container) {
     $app->post('/inbox', ApiController::class . ':inbox');
     $app->group('', function (RouteCollectorProxy $group) {
         $group->get('/.well-known/webfinger', ApiController::class . ':webFinger');
+        $group->get('/.well-known/nodeinfo', ApiController::class . ':nodeInfo');
+        $group->get('/nodeinfo/{version}.json', ApiController::class . ':nodeInfoDetails');
         $group->get('/profile', ApiController::class . ':profile')->setName('api_profile');
         $group->get('/outbox/{snowflake_id}/object', ApiController::class . ':objectInfo');
         $group->get('/outbox/{snowflake_id}', ApiController::class . ':activityInfo');
