@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<phpunit colors="true"
+         bootstrap="tests/bootstrap.php"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         stopOnFailure="false"
+>
+    <testsuites>
+        <testsuite name="Cherry Tests">
+            <directory suffix="Test.php" phpVersion="7.4.0" phpVersionOperator=">=">./tests/</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>

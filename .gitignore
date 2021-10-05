@@ -5,3 +5,4 @@ storage/
 !storage/.gitkeep
 data/
 !data/*.sql
+.phpunit.*
