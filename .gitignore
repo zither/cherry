@@ -1,7 +1,7 @@
-.idea
-vendor
+.idea/
+vendor/
 configs/configs.php
-storage/*
+storage/
 !storage/.gitkeep
-data/*.json
-data/*.html
+data/
+!data/*.sql
