@@ -493,10 +493,11 @@ class IndexController
 
         $db = $this->container->get(Medoo::class);
         $profile = $db->get('profiles', '*', ['id' => 1]);
+        $domain = parse_url($profile['actor'], PHP_URL_HOST);
 
         // 嘟文
         $markdown = $this->container->get(Markdown::class);
-        $markdown->setTagHost($profile['actor']);
+        $markdown->setTagHost($domain);
         $parsedContent = $markdown->text($content);
         $tags = $markdown->hashTags();
 
@@ -520,7 +521,6 @@ class IndexController
         $snowflake = $this->container->get(Snowflake::class);
         $objectId = $snowflake->id();
         $published = Time::ISO8601();
-        $domain = parse_url($profile['actor'], PHP_URL_HOST);
         $object = [
             'id' => "{$profile['outbox']}/$objectId/object",
             'url' => "https://$domain/notes/$objectId",

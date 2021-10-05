@@ -32,7 +32,7 @@ class Markdown extends Parsedown
             return $marked;
         }
         $this->tags = $matches[1];
-        $replacement = sprintf('<a class="mention hashtag" href="%s/tags/${1}" rel="tag">#${1}</a>', $this->host);
+        $replacement = sprintf('<a class="mention hashtag" href="https://%s/tags/${1}" rel="tag">#${1}</a>', $this->host);
         return preg_replace('/#([^#<\s]+)/', $replacement, $marked);
     }
 
