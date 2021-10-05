@@ -1,25 +1,41 @@
 {
-    "require": {
-        "ext-curl": "*",
-        "ext-json": "*",
-        "ext-pdo": "*",
-        "ext-openssl": "*",
-        "slim/slim": "4.*",
-        "php-di/php-di": "^6.3",
-        "catfan/medoo": "^1.7",
-        "godruoyi/php-snowflake": "^1.0",
-        "guzzlehttp/guzzle": "^7.2",
-        "http-interop/http-factory-guzzle": "^1.0",
-        "league/plates": "^3.4",
-        "erusev/parsedown": "^1.7"
-    },
-    "autoload": {
-        "psr-4": {
-            "Cherry\\": "src/",
-            "adrianfalleiro\\": "third/adrianfalleiro/"
-        },
-        "files": [
-            "third/jsonld/jsonld.php"
-        ]
+  "name": "zither/cherry",
+  "description": "A self-hosted, single-user, ActivityPub powered microblog.",
+  "type": "project",
+  "keywords": [
+    "activitypub",
+    "microblog"
+  ],
+  "homepage": "https://github.com/zither/cherry",
+  "authors": [
+    {
+      "name": "Yue Qing",
+      "email": "ilorn.mc@gmail.com",
+      "homepage": "https://lib.miaobai.net",
+      "role": "Developer"
     }
+  ],
+  "require": {
+    "ext-curl": "*",
+    "ext-json": "*",
+    "ext-pdo": "*",
+    "ext-openssl": "*",
+    "slim/slim": "4.*",
+    "php-di/php-di": "^6.3",
+    "catfan/medoo": "^1.7",
+    "godruoyi/php-snowflake": "^1.0",
+    "guzzlehttp/guzzle": "^7.2",
+    "http-interop/http-factory-guzzle": "^1.0",
+    "league/plates": "^3.4",
+    "erusev/parsedown": "^1.7"
+  },
+  "autoload": {
+    "psr-4": {
+      "Cherry\\": "src/",
+      "adrianfalleiro\\": "third/adrianfalleiro/"
+    },
+    "files": [
+      "third/jsonld/jsonld.php"
+    ]
+  }
 }
