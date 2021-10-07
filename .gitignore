@@ -6,3 +6,4 @@ storage/
 data/
 !data/*.sql
 .phpunit.*
+tests/configs/configs_testing.php

@@ -1,10 +1,12 @@
 <?php
 use Slim\App;
-use Psr\Container\ContainerInterface;
 use adrianfalleiro\SlimCLIRunner;
 use Cherry\Middleware\SetSessionCookieMiddleware;
 
-return function (App $app, ContainerInterface $container) {
+return function (App $app) {
+
+    $container = $app->getContainer();
+
     $app->add(SlimCLIRunner::class);
     $app->addRoutingMiddleware();
     $app->add(SetSessionCookieMiddleware::class);

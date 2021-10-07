@@ -32,6 +32,7 @@
   "autoload": {
     "psr-4": {
       "Cherry\\": "src/",
+      "Cherry\\Test\\": "tests/",
       "adrianfalleiro\\": "third/adrianfalleiro/"
     },
     "files": [

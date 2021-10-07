@@ -11,18 +11,17 @@ use Cherry\Session\SessionInterface;
 use Cherry\Markdown;
 use Cherry\Helper\SignRequest;
 
-function short(string $class)
-{
-    $reflection = new ReflectionClass($class);
-    return $reflection->getShortName();
+if (!function_exists('short')) {
+    function short(string $class)
+    {
+        $reflection = new ReflectionClass($class);
+        return $reflection->getShortName();
+    }
 }
 
-return function (App $app, ContainerInterface $container) {
+return function (App $app) {
 
-    // settings
-    $container->set('settings', function () {
-        return require ROOT . '/configs/configs.php';
-    });
+    $container = $app->getContainer();
 
     // CLI Tasks
     $container->set('commands', function() {

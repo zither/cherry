@@ -1,5 +1,7 @@
 <?php
 
+namespace Cherry\Test;
+
 use PHPUnit\Framework\TestCase;
 use Cherry\Markdown;
 

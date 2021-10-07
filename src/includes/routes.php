@@ -6,9 +6,8 @@ use Cherry\Controller\ApiController;
 use Cherry\Middleware\AuthMiddleware;
 use Cherry\Middleware\AcceptHeaderMiddleware;
 use Cherry\Middleware\InitialMiddleware;
-use Psr\Container\ContainerInterface;
 
-return function (App $app, ContainerInterface $container) {
+return function (App $app) {
     // Web Routes
     $app->get('/', IndexController::class . ':home');
     $app->get('/login', IndexController::class . ':login');

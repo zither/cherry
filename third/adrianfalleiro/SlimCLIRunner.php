@@ -48,7 +48,7 @@ class SlimCLIRunner
      */
     public function __invoke($request, $handler)
     {
-        if (PHP_SAPI !== 'cli') {
+        if (PHP_SAPI !== 'cli' || $request->hasHeader('BYPASS_CLI_RUNNER')) {
             return $handler->handle($request);
         }
 
