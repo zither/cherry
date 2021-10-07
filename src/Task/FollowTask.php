@@ -28,13 +28,12 @@ class FollowTask implements TaskInterface
         try {
             $account = $args['account'];
             $db = $this->container->get(Medoo::class);
+            $signHttp = $this->container->get(SignRequest::class);
             if ($args['is_url']) {
                 $profileUrl = $account;
             } else {
                 $accountArr = explode('@', $account);
                 $webFingerUrl = sprintf('https://%s/.well-known/webfinger?resource=acct:%s', $accountArr[1], $account);
-
-                $signHttp = $this->container->get(SignRequest::class);
 
                 $webFingerRequest = new Request('GET', $webFingerUrl, [
                     'Accept' => 'application/activity+json',
