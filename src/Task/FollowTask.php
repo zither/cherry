@@ -4,6 +4,7 @@ namespace Cherry\Task;
 
 use adrianfalleiro\RetryException;
 use adrianfalleiro\TaskInterface;
+use Cherry\ActivityPub\Activity;
 use Cherry\Helper\SignRequest;
 use Cherry\Helper\Time;
 use Godruoyi\Snowflake\Snowflake;
@@ -30,7 +31,7 @@ class FollowTask implements TaskInterface
             $db = $this->container->get(Medoo::class);
             $signHttp = $this->container->get(SignRequest::class);
             $client = new Client();
-            
+
             if ($args['is_url']) {
                 $profileUrl = $account;
             } else {
@@ -79,7 +80,8 @@ class FollowTask implements TaskInterface
                 'id' => "{$adminProfile['outbox']}/$activityId",
                 'type' => 'Follow',
                 'actor' => $adminProfile['actor'],
-                'object' => $profileUrl,
+                //@TODO add profile type to profile table !!!
+                'object' => $args['is_url'] && $profile['preferred_name'] === 'relay' ? Activity::PUBLIC_COLLECTION : $profileUrl,
             ];
             $jsonRequest =json_encode($followRequest, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
             $activity = [
