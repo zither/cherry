@@ -9,7 +9,6 @@ use Cherry\Helper\Time;
 use Godruoyi\Snowflake\Snowflake;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\Psr7\Message;
 use GuzzleHttp\Psr7\Request;
 use Medoo\Medoo;
 use Psr\Container\ContainerInterface;
@@ -28,33 +27,37 @@ class FollowTask implements TaskInterface
     {
         try {
             $account = $args['account'];
-            $accountArr = explode('@', $account);
-            $webFingerUrl = sprintf('https://%s/.well-known/webfinger?resource=acct:%s', $accountArr[1], $account);
+            if ($args['is_url']) {
+                $profileUrl = $account;
+            } else {
+                $accountArr = explode('@', $account);
+                $webFingerUrl = sprintf('https://%s/.well-known/webfinger?resource=acct:%s', $accountArr[1], $account);
 
-            $db = $this->container->get(Medoo::class);
-            $signHttp = $this->container->get(SignRequest::class);
+                $db = $this->container->get(Medoo::class);
+                $signHttp = $this->container->get(SignRequest::class);
 
-            $webFingerRequest = new Request('GET', $webFingerUrl, [
-                'Accept' => 'application/activity+json',
-                'Content-Type' => 'text/html',
-            ]);
+                $webFingerRequest = new Request('GET', $webFingerUrl, [
+                    'Accept' => 'application/activity+json',
+                    'Content-Type' => 'text/html',
+                ]);
 
-            $webFingerRequest = $signHttp->sign($webFingerRequest);
-            $client = new Client();
-            $response = $client->send($webFingerRequest);
+                $webFingerRequest = $signHttp->sign($webFingerRequest);
+                $client = new Client();
+                $response = $client->send($webFingerRequest);
 
-            $info = json_decode($response->getBody()->getContents(), true);
-            if (empty($info['links'])) {
-                throw new RetryException("Links for $account not found");
-            }
-            foreach ($info['links'] as $v) {
-                if ($v['rel'] === 'self') {
-                    $profileUrl = $v['href'];
-                    break;
+                $info = json_decode($response->getBody()->getContents(), true);
+                if (empty($info['links'])) {
+                    throw new RetryException("Links for $account not found");
                 }
-            }
-            if (empty($profileUrl)) {
-                throw new RetryException("Profile link for $account not found");
+                foreach ($info['links'] as $v) {
+                    if ($v['rel'] === 'self') {
+                        $profileUrl = $v['href'];
+                        break;
+                    }
+                }
+                if (empty($profileUrl)) {
+                    throw new RetryException("Profile link for $account not found");
+                }
             }
 
             $profile = $db->get('profiles', '*', ['actor' => $profileUrl]);

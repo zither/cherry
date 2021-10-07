@@ -7,6 +7,7 @@ use Cherry\Test\PSR7ObjectProvider;
 use Medoo\Medoo;
 use PHPUnit\Framework\TestCase;
 use DI\Container;
+use Psr\Http\Message\ServerRequestInterface;
 use Slim\Factory\AppFactory;
 use Psr\Http\Message\ResponseInterface;
 
@@ -110,13 +111,97 @@ class IndexControllerTest extends TestCase
     {
         $provider = new PSR7ObjectProvider();
         $request = $provider->createServerRequest('/following', 'POST');
+        $session = $this->signIn($request);
+        $this->app->handle($request);
+        $this->assertContains(
+            'Account required',
+            $this->getNextMessagesByTypeFromSession($session, 'error')
+        );
+    }
+
+    public function testSendFollowWithNormalAccount()
+    {
+        $normalAccount = 'dev@cherry.test';
+        $provider = new PSR7ObjectProvider();
+        $request = $provider->createServerRequest('/following', 'POST', ['account' => $normalAccount]);
+        $session = $this->signIn($request);
+        $this->app->handle($request);
+        $this->assertContains(
+            'Follow Request Sent!',
+            $this->getNextMessagesByTypeFromSession($session, 'success')
+        );
+    }
+
+    public function testSendFollowWithNormalAccountThatStartedWithAt()
+    {
+        $account = '@dev@cherry.test';
+        $provider = new PSR7ObjectProvider();
+        $request = $provider->createServerRequest('/following', 'POST', ['account' => $account]);
+        $session = $this->signIn($request);
+        $this->app->handle($request);
+        $this->assertContains(
+            'Follow Request Sent!',
+            $this->getNextMessagesByTypeFromSession($session, 'success')
+        );
+    }
+
+    public function testSendFollowWithInvalidAccount()
+    {
+        $account = 'this is not a account';
+        $provider = new PSR7ObjectProvider();
+        $request = $provider->createServerRequest('/following', 'POST', ['account' => $account]);
+        $session =  $this->signIn($request);
+        $this->app->handle($request);
+        $this->assertContains(
+            'Invalid Account',
+            $this->getNextMessagesByTypeFromSession($session, 'error')
+        );
+    }
+
+    public function testSendFollowWithURLAccount()
+    {
+        $account = 'https://localhost/actor';
+        $provider = new PSR7ObjectProvider();
+        $request = $provider->createServerRequest('/following', 'POST', ['account' => $account]);
+        $session =  $this->signIn($request);
+        $this->app->handle($request);
+        $this->assertContains(
+            'Follow Request Sent!',
+            $this->getNextMessagesByTypeFromSession($session, 'success')
+        );
+        $db = $this->container->get(Medoo::class);
+        $task = $db->get('tasks', '*', ['task' => 'FollowTask']);
+        $this->assertNotEmpty($task);
+        $params = json_decode($task['params'], true);
+        $this->assertArrayHasKey('is_url', $params);
+        $this->assertEquals(true, $params['is_url']);
+    }
+
+    public function testSendFollowWithURLAccountThatDoesNotContainProtocol()
+    {
+        $account = 'localhost/actor';
+        $provider = new PSR7ObjectProvider();
+        $request = $provider->createServerRequest('/following', 'POST', ['account' => $account]);
+        $session =  $this->signIn($request);
+        $this->app->handle($request);
+        $this->assertContains(
+            'Invalid Account',
+            $this->getNextMessagesByTypeFromSession($session, 'error')
+        );
+    }
+
+    protected function getNextMessagesByTypeFromSession(SessionInterface $session, string $type): array
+    {
+        return $session['MemoFlashMessages']['forNext'][$type] ?? [];
+    }
+
+    protected function signIn(ServerRequestInterface $request): SessionInterface
+    {
         $factory = $this->container->get(SessionInterface::class);
         /** @var SessionInterface $session */
         $session = $factory($this->container, $request);
         $session->start();
         $session['is_admin'] = 1;
-        $this->app->handle($request);
-        $this->assertArrayHasKey('error', $session['MemoFlashMessages']['forNext']);
-        $this->assertEquals($session['MemoFlashMessages']['forNext']['error'], ['Account required']);
+        return $session;
     }
 }

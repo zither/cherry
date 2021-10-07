@@ -846,17 +846,24 @@ class IndexController
             if (empty($account)) {
                 throw new InvalidArgumentException('Account required');
             }
-            if (strpos($account, '@') === 0) {
-                $account = substr($account, 1);
-            }
-            $accountArr = explode('@', $account);
-            if (count($accountArr) !== 2) {
-                throw new InvalidArgumentException('Invalid Account');
+            $isUrl = true;
+            if (filter_var($account, FILTER_VALIDATE_URL) === false) {
+                if (strpos($account, '@') === 0) {
+                    $account = substr($account, 1);
+                }
+                $accountArr = explode('@', $account);
+                if (count($accountArr) !== 2) {
+                    throw new InvalidArgumentException('Invalid Account');
+                }
+                $isUrl = false;
             }
             $db = $this->container->get(Medoo::class);
             $task = [
                 'task' => 'FollowTask',
-                'params' => json_encode(['account' => $account], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
+                'params' => json_encode([
+                    'account' => $account,
+                    'is_url' => $isUrl,
+                ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
                 'priority' => 140,
             ];
             $db->insert('tasks', $task);
