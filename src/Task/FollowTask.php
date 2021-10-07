@@ -29,6 +29,8 @@ class FollowTask implements TaskInterface
             $account = $args['account'];
             $db = $this->container->get(Medoo::class);
             $signHttp = $this->container->get(SignRequest::class);
+            $client = new Client();
+            
             if ($args['is_url']) {
                 $profileUrl = $account;
             } else {
@@ -41,7 +43,6 @@ class FollowTask implements TaskInterface
                 ]);
 
                 $webFingerRequest = $signHttp->sign($webFingerRequest);
-                $client = new Client();
                 $response = $client->send($webFingerRequest);
 
                 $info = json_decode($response->getBody()->getContents(), true);
