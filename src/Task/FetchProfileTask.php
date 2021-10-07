@@ -38,7 +38,7 @@ class FetchProfileTask implements TaskInterface
 
         $content = $response->getBody()->getContents();
         $person = json_decode($content, true);
-        if (empty($person['inbox']) || empty($person['outbox']) || empty($person['publicKey'])) {
+        if (empty($person['inbox']) || empty($person['publicKey'])) {
             throw new FailedTaskException('Invalid actor');
         }
         $host = parse_url($actor, PHP_URL_HOST);
