@@ -37,7 +37,7 @@ class FetchProfileTaskTest extends TestCase
 
     public function testCommand()
     {
-        $person = file_get_contents(ROOT . '/tests/data/profile.json');
+        $person = file_get_contents(ROOT . '/tests/data/actor.json');
         $localProfile = json_decode($person, true);
         $path = '/actor';
         $actor = self::$server->getServerRoot() . $path;
@@ -67,5 +67,27 @@ class FetchProfileTaskTest extends TestCase
         ));
         $task = new FetchProfileTask($this->container);
         $task->command(['actor' => $actor]);
+    }
+
+    public function testCommandWithRelayActor()
+    {
+        $person = file_get_contents(ROOT . '/tests/data/relay-actor.json');
+        $localProfile = json_decode($person, true);
+        $path = '/actor';
+        $actor = self::$server->getServerRoot() . $path;
+        self::$server->setResponseOfPath($path, new Response(
+            $person,
+            ['Content-Type' => 'application/activity+json'],
+        ));
+        $task = new FetchProfileTask($this->container);
+        $profile = $task->command(['actor' => $actor]);
+        $this->assertIsArray($profile);
+        $this->assertArrayHasKey('id', $profile);
+
+        $db = $this->container->get(Medoo::class);
+        $profileInDB = $db->get('profiles', '*', ['id' => $profile['id']]);
+
+        $this->assertEquals($localProfile['id'], $profileInDB['actor']);
+        $this->assertEquals('Group', $profileInDB['type']);
     }
 }
