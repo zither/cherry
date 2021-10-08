@@ -80,9 +80,13 @@ class FollowTask implements TaskInterface
                 'id' => "{$adminProfile['outbox']}/$activityId",
                 'type' => 'Follow',
                 'actor' => $adminProfile['actor'],
-                //@TODO add profile type to profile table !!!
-                'object' => $args['is_url'] && $profile['preferred_name'] === 'relay' ? Activity::PUBLIC_COLLECTION : $profileUrl,
+                'object' => $profileUrl,
             ];
+            if ($profile['type'] === 'Group') {
+                $followRequest['object'] = Activity::PUBLIC_COLLECTION;
+                // keep the actor in raw activity
+                $followRequest['cc'] = [$profile['actor']];
+            }
             $jsonRequest =json_encode($followRequest, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
             $activity = [
                 'activity_id' => $followRequest['id'],
