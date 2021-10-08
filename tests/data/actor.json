@@ -1,0 +1,23 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/activitystreams"
+  ],
+  "type": "Person",
+  "id": "https://cherry.test/actor",
+  "url": "https://cherry.test/actor",
+  "preferredUsername": "dev",
+  "name": "cherry",
+  "summary": "",
+  "manuallyApprovesFollowers": true,
+  "inbox": "https://cherry.test/actor/inbox",
+  "outbox": "https://cherry.test/actor/outbox",
+  "followers": "https://cherry.test/actor/followers",
+  "following": "https://cherry.test/actor/following",
+  "icon": {},
+  "publicKey": {
+    "id": "https://cherry.test/actor#main-key",
+    "owner": "https://cherry.test/actor",
+    "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxCw37CosPspbhAxfws1G\nq0iP7l93vlt9ATn4lw9hG6Yev5EooU4Dl/VdCrW7KWqJ0CkwcV9V5yQQ34KjJik8\nO7u8KHfcaGRBVOv188w1n+pcMqIXu0+FjkU6F2/Lgoribhe03I0YaieqVSCzxSkm\nzWbb7sKixOWdRkhxZFIcV85jcCTbaz6MK2PXigYPDh5FiWnl8OHTFykV5Qs03snu\n14jx8930fsXGbMX8Z6hr13FzR2s6hGcCPNzESYK/gkuRWkQM3QCyfBgG3KO9rrT5\nth1r/qGqkao+cL6ec6fYe8AJpoVNmHCByC8loJkNrWepSud/WGvuU+gj45fZowzB\nfQIDAQAB\n-----END PUBLIC KEY-----",
+    "type": "Key"
+  }
+}

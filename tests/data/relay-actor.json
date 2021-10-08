@@ -1,0 +1,18 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/activitystreams",
+    "https://w3id.org/security/v1"
+  ],
+  "id": "https://neko-relay.com/actor",
+  "type": "Group",
+  "preferredUsername": "relay",
+  "inbox": "https://neko-relay.com/inbox",
+  "outbox": "https://neko-relay.com/actor/outbox",
+  "followers": "https://neko-relay.com/actor/followers",
+  "following": "https://neko-relay.com/actor/following",
+  "publicKey": {
+    "id": "https://neko-relay.com/actor#main-key",
+    "owner": "https://neko-relay.com/actor",
+    "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyyoaKX01VuKIKFI1CEu0\n3FwmdRoa6kcpN9JU/ZSsQdLp4bBkOpVTD+mZVE4zVbpyZSASluuYM7ABQhS2gtkc\nLBBfkDQMnBN7mnz4LUAI58GmnTfT3knlBr6uydpMDZ9QS6rQ8WrfRBDvIQ5kC6mP\nw1XgVyn9IKkdLeZ1msrkwIpgm+n5Me61JnGR5VtEqJinlAxkK7snWvxRHpla5kez\nJdoVvPhV/1Yy7ryt2QnNZTdzIt4PhTgBEHQ+Iwgi+TbyMlpZEkT4F/86mA0z9X0b\nnl1F3nAdSEoLLzQpo8fRdVOb++8oe6WsKAvhcQO7vPblwShGTk/2jWqSyilWV2Cr\nAQIDAQAB\n-----END PUBLIC KEY-----\n"
+  }
+}
