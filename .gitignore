@@ -3,8 +3,7 @@ vendor/
 configs/configs.php
 storage/
 !storage/.gitkeep
-data/
-!data/*.sql
-!tests/data/
+/data/
+!/data/*.sql
 .phpunit.*
 tests/configs/configs_testing.php
