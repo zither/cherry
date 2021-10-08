@@ -106,6 +106,7 @@ DROP TABLE IF EXISTS `profiles`;
 CREATE TABLE `profiles` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `actor` varchar(192) NOT NULL DEFAULT '',
+  `type` varchar(32) NOT NULL DEFAULT 'Person',
   `name` varchar(32) NOT NULL DEFAULT '',
   `preferred_name` varchar(32) NOT NULL DEFAULT '',
   `account` varchar(64) NOT NULL DEFAULT '',
