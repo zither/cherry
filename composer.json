@@ -32,7 +32,6 @@
   "autoload": {
     "psr-4": {
       "Cherry\\": "src/",
-      "Cherry\\Test\\": "tests/",
       "adrianfalleiro\\": "third/adrianfalleiro/"
     },
     "files": [
@@ -41,5 +40,10 @@
   },
   "require-dev": {
     "phpunit/phpunit": "^8.5"
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Cherry\\Test\\": "tests/"
+    }
   }
 }
