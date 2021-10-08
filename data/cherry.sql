@@ -1,27 +1,4 @@
--- MySQL dump 10.13  Distrib 5.6.42, for Linux (x86_64)
---
--- Host: 127.0.0.1    Database: cherry
--- ------------------------------------------------------
--- Server version	5.5.5-10.4.13-MariaDB
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `activities`
---
-
 DROP TABLE IF EXISTS `activities`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `activities` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `activity_id` varchar(192) NOT NULL DEFAULT '',
@@ -38,15 +15,8 @@ CREATE TABLE `activities` (
   KEY `activities_activity_id_IDX` (`activity_id`) USING BTREE,
   KEY `activities_published_IDX` (`published`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=22138 DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `attachments`
---
 
 DROP TABLE IF EXISTS `attachments`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `attachments` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `profile_id` int(10) unsigned NOT NULL DEFAULT 0,
@@ -59,15 +29,8 @@ CREATE TABLE `attachments` (
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1033 DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `followers`
---
 
 DROP TABLE IF EXISTS `followers`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `followers` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `profile_id` int(10) unsigned NOT NULL DEFAULT 0,
@@ -78,15 +41,8 @@ CREATE TABLE `followers` (
   PRIMARY KEY (`id`),
   KEY `followers_profile_id_IDX` (`profile_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `following`
---
 
 DROP TABLE IF EXISTS `following`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `following` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `profile_id` int(10) unsigned NOT NULL DEFAULT 0,
@@ -97,15 +53,8 @@ CREATE TABLE `following` (
   PRIMARY KEY (`id`),
   KEY `following_profile_id_IDX` (`profile_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `interactions`
---
 
 DROP TABLE IF EXISTS `interactions`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `interactions` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `activity_id` int(10) unsigned NOT NULL DEFAULT 0,
@@ -115,15 +64,8 @@ CREATE TABLE `interactions` (
   `published` timestamp NOT NULL DEFAULT '1970-01-01 16:00:01',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=119 DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `notifications`
---
 
 DROP TABLE IF EXISTS `notifications`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `notifications` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `actor` varchar(192) NOT NULL DEFAULT '',
@@ -135,15 +77,8 @@ CREATE TABLE `notifications` (
   `status` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `objects`
---
 
 DROP TABLE IF EXISTS `objects`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `objects` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '索引编号',
   `profile_id` int(10) unsigned NOT NULL DEFAULT 0,
@@ -166,15 +101,8 @@ CREATE TABLE `objects` (
   PRIMARY KEY (`id`),
   KEY `objects_raw_object_id_IDX` (`raw_object_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=6616 DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `profiles`
---
 
 DROP TABLE IF EXISTS `profiles`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `profiles` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `actor` varchar(192) NOT NULL DEFAULT '',
@@ -195,11 +123,6 @@ CREATE TABLE `profiles` (
   PRIMARY KEY (`id`),
   KEY `profiles_actor_IDX` (`actor`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=460 DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `replies`
---
 
 DROP TABLE IF EXISTS `replies`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -212,15 +135,8 @@ CREATE TABLE `replies` (
   `published` timestamp NOT NULL DEFAULT '1970-01-01 16:00:01',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `sessions`
---
 
 DROP TABLE IF EXISTS `sessions`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `sessions` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(128) NOT NULL DEFAULT '',
@@ -230,15 +146,8 @@ CREATE TABLE `sessions` (
   PRIMARY KEY (`id`),
   KEY `sessions_name_IDX` (`name`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=2270 DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `settings`
---
 
 DROP TABLE IF EXISTS `settings`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `settings` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `domain` varchar(64) NOT NULL DEFAULT '',
@@ -247,15 +156,8 @@ CREATE TABLE `settings` (
   `private_key` text DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `shares`
---
 
 DROP TABLE IF EXISTS `shares`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `shares` (
   `id` int(10) unsigned NOT NULL DEFAULT 0,
   `activity_id` int(10) unsigned NOT NULL DEFAULT 0,
@@ -264,15 +166,8 @@ CREATE TABLE `shares` (
   `published` timestamp NOT NULL DEFAULT '1970-01-01 16:00:01',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `tags`
---
 
 DROP TABLE IF EXISTS `tags`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tags` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `term` varchar(128) NOT NULL DEFAULT '',
@@ -281,15 +176,8 @@ CREATE TABLE `tags` (
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3985 DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `task_logs`
---
 
 DROP TABLE IF EXISTS `task_logs`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `task_logs` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `task` varchar(64) NOT NULL DEFAULT '',
@@ -299,15 +187,8 @@ CREATE TABLE `task_logs` (
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=808 DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `tasks`
---
 
 DROP TABLE IF EXISTS `tasks`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tasks` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `task` varchar(64) NOT NULL DEFAULT '',
@@ -323,15 +204,3 @@ CREATE TABLE `tasks` (
   PRIMARY KEY (`id`),
   KEY `tasks_timer_IDX` (`timer`,`priority`,`retried`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=22630 DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2021-06-21 19:28:55
