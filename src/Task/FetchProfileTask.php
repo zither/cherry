@@ -44,6 +44,7 @@ class FetchProfileTask implements TaskInterface
         $host = parse_url($actor, PHP_URL_HOST);
         $profile = [
             'actor' => $actor,
+            'type' => $person['type'] ?? 'Person',
             'name' => $person['name'] ?? '',
             'preferred_name' => $person['preferredUsername'],
             'account' => "{$person['preferredUsername']}@$host",
