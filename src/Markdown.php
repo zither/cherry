@@ -13,7 +13,35 @@ class Markdown extends Parsedown
 
     protected $tags = [];
 
+    public function __construct()
+    {
+        $this->InlineTypes['#'][] = 'HashTag';
+        $this->inlineMarkerList .= '#';
+    }
+
+    protected function inlineHashTag($excerpt)
+    {
+        if (preg_match('/#([^#<\s]+)/', $excerpt['text'], $matches)) {
+            $this->tags[] = $matches[1];
+            return [
+                'extent' => strlen($matches[0]),
+                'element' => [
+                    'name' => 'a',
+                    'text' => $matches[0],
+                    'attributes' => [
+                        'class' => 'mention hashtag',
+                        'href' => sprintf('https://%s/tags/%s', $this->host, $matches[1]),
+                        'rel' => 'tag'
+                    ]
+                ]
+            ];
+        }
+        return null;
+    }
+
     /**
+     * Block Atx Header elements
+     *
      * @param $Line
      * @return array|void
      */
@@ -22,18 +50,16 @@ class Markdown extends Parsedown
         return;
     }
 
-    public function text($text)
+    /**
+     * Block Setext Header elements
+     *
+     * @param $Line
+     * @param array|null $Block
+     * @return array|void|null
+     */
+    protected function blockSetextHeader($Line, array $Block = null)
     {
-        $marked = parent::text($text);
-        $pattern = '/#([^#<\s]+)/';
-        preg_match_all($pattern, $marked, $matches);
-
-        if (empty($matches[1])) {
-            return $marked;
-        }
-        $this->tags = $matches[1];
-        $replacement = sprintf('<a class="mention hashtag" href="https://%s/tags/${1}" rel="tag">#${1}</a>', $this->host);
-        return preg_replace('/#([^#<\s]+)/', $replacement, $marked);
+        return;
     }
 
     public function hashTags()
