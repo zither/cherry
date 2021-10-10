@@ -14,7 +14,7 @@ CREATE TABLE `activities` (
   PRIMARY KEY (`id`),
   KEY `activities_activity_id_IDX` (`activity_id`) USING BTREE,
   KEY `activities_published_IDX` (`published`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=22138 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `attachments`;
 CREATE TABLE `attachments` (
@@ -28,7 +28,7 @@ CREATE TABLE `attachments` (
   `hash` varchar(128) NOT NULL DEFAULT '',
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1033 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `followers`;
 CREATE TABLE `followers` (
@@ -40,7 +40,7 @@ CREATE TABLE `followers` (
   `created_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `followers_profile_id_IDX` (`profile_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `following`;
 CREATE TABLE `following` (
@@ -52,7 +52,7 @@ CREATE TABLE `following` (
   `created_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `following_profile_id_IDX` (`profile_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `interactions`;
 CREATE TABLE `interactions` (
@@ -63,7 +63,7 @@ CREATE TABLE `interactions` (
   `type` tinyint(3) unsigned NOT NULL DEFAULT 0 COMMENT '1likes 2shares 3replies',
   `published` timestamp NOT NULL DEFAULT '1970-01-01 16:00:01',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=119 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `notifications`;
 CREATE TABLE `notifications` (
@@ -76,7 +76,7 @@ CREATE TABLE `notifications` (
   `viewed` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `status` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `objects`;
 CREATE TABLE `objects` (
@@ -100,7 +100,7 @@ CREATE TABLE `objects` (
   `is_boosted` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `objects_raw_object_id_IDX` (`raw_object_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=6616 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `profiles`;
 CREATE TABLE `profiles` (
@@ -123,7 +123,7 @@ CREATE TABLE `profiles` (
   `public_key` text DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `profiles_actor_IDX` (`actor`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=460 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `replies`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -146,7 +146,7 @@ CREATE TABLE `sessions` (
   `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `sessions_name_IDX` (`name`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=2270 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `settings`;
 CREATE TABLE `settings` (
@@ -156,7 +156,7 @@ CREATE TABLE `settings` (
   `public_key` text DEFAULT NULL,
   `private_key` text DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `shares`;
 CREATE TABLE `shares` (
@@ -176,7 +176,7 @@ CREATE TABLE `tags` (
   `object_id` int(10) unsigned NOT NULL DEFAULT 0,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3985 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `task_logs`;
 CREATE TABLE `task_logs` (
@@ -187,7 +187,7 @@ CREATE TABLE `task_logs` (
   `reason` varchar(192) NOT NULL DEFAULT '',
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=808 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `tasks`;
 CREATE TABLE `tasks` (
@@ -204,4 +204,4 @@ CREATE TABLE `tasks` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `tasks_timer_IDX` (`timer`,`priority`,`retried`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=22630 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

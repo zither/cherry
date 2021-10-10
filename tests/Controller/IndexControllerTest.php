@@ -6,6 +6,7 @@ use Cherry\Session\SessionInterface;
 use Cherry\Test\PSR7ObjectProvider;
 use Cherry\Test\Traits\SetupCherryEnv;
 use Medoo\Medoo;
+use phpDocumentor\Reflection\DocBlock\Tags\Reference\Url;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -122,6 +123,35 @@ class IndexControllerTest extends TestCase
             'Invalid Account',
             $this->getNextMessagesByTypeFromSession($session, 'error')
         );
+    }
+
+    public function testCreatePostWithMentionTag()
+    {
+        $content = 'Mention: @dev@cherry.test .';
+        $provider = new PSR7ObjectProvider();
+        $request = $provider->createServerRequest('/notes', 'POST', ['content' => $content]);
+        $session =  $this->signIn($request);
+        $this->app->handle($request);
+
+        $db = $this->container->get(Medoo::class);
+        $rawActivity = $db->get('activities', 'raw', ['LIMIT' => 1]);
+        $this->assertNotEmpty($rawActivity);
+
+        $activity = json_decode($rawActivity, true);
+        $this->assertArrayHasKey('object', $activity);
+
+        $object = $activity['object'];
+        $this->assertArrayHasKey('tag', $object);
+        $expectedTags = [
+            [
+                'type' => 'Mention',
+                'href' => 'https://cherry.test',
+                'name' => '@dev@cherry.test'
+            ]
+        ];
+        $this->assertEquals($expectedTags, $object['tag']);
+        $this->assertArrayHasKey('cc', $object);
+        $this->assertContains('https://cherry.test', $object['cc']);
     }
 
     protected function getNextMessagesByTypeFromSession(SessionInterface $session, string $type): array

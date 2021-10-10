@@ -48,6 +48,7 @@ return function (App $app) {
             \Cherry\Task\LocalUndoTask::class,
             \Cherry\Task\RemoteDeleteTask::class,
             \Cherry\Task\LocalUpdateProfileTask::class,
+            \Cherry\Task\FetchProfileByAccountTask::class,
             \Cherry\Task\Cron\DeleteExpiredSessionsTask::class,
         ];
         $commands = [];
@@ -101,8 +102,10 @@ return function (App $app) {
     });
 
     // Markdown parser
-    $container->set(Markdown::class, function() {
-        return new Markdown();
+    $container->set(Markdown::class, function() use ($container) {
+        $parser = new Markdown();
+        $parser->setContainer($container);
+        return $parser;
     });
 
     // Session factory

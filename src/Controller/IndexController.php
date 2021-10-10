@@ -499,7 +499,6 @@ class IndexController
         $markdown = $this->container->get(Markdown::class);
         $markdown->setTagHost($domain);
         $parsedContent = $markdown->text($content);
-        $tags = $markdown->hashTags();
 
         // 获取自身和目标对象相关信息
         if (!empty($inReplyTo)) {
@@ -562,18 +561,36 @@ class IndexController
                     $audiences['to'] = $replyActor;
                 }
         }
-        if (!empty($replyActor)) {
-            $mentions = ['tag' => [
-                [
+
+        $objectTags = [];
+
+        $actorMentions = $markdown->getMentions();
+        if (!empty($actorMentions)) {
+            if (!isset($audiences['cc'])) {
+                $audiences['cc'] = [];
+            }
+            foreach ($actorMentions as $mention) {
+                $objectTags[] = [
                     'type' => 'Mention',
-                    'href' => $replyProfile['actor'],
-                    'name' => '@' . $replyProfile['account'],
-                ]
-            ]];
-            $object = array_merge($object, ['inReplyTo' => $replyObject['raw_object_id']], $audiences, $mentions);
-        } else {
-            $object = array_merge($object, $audiences);
+                    'href' => $mention['actor'],
+                    'name' => '@' . $mention['account']
+                ];
+                if (!in_array($mention['actor'], $audiences['cc'])) {
+                    $audiences['cc'][] = $mention['actor'];
+                }
+            }
         }
+
+        if (!empty($replyActor)) {
+            $objectTags[] = [
+                'type' => 'Mention',
+                'href' => $replyProfile['actor'],
+                'name' => '@' . $replyProfile['account'],
+            ];
+            $object = array_merge($object, ['inReplyTo' => $replyObject['raw_object_id']]);
+        }
+
+        $object = array_merge($object, $audiences);
 
         // 新 Activity 信息
         $activity = array_merge([
@@ -603,8 +620,8 @@ class IndexController
             ]);
             $objectId = $db->id();
 
+            $tags = $markdown->hashTags();
             if (!empty($tags)) {
-                $hashTags = [];
                 $terms = [];
                 foreach ($tags as $v) {
                     $terms[] = [
@@ -612,7 +629,7 @@ class IndexController
                         'profile_id' => 1,
                         'object_id' => $objectId,
                     ];
-                    $hashTags[] = [
+                    $objectTags[] = [
                         'type' => 'Hashtag',
                         'name' => "#$v",
                         'href' => "{$profile['actor']}/tags/$v",
@@ -620,8 +637,12 @@ class IndexController
                 }
                 $db->insert('tags', $terms);
 
-                // 添加 tag 信息
-                $object['tag'] = $hashTags;
+
+            }
+
+            // 添加 tag 信息
+            if (!empty($objectTags)) {
+                $object['tag'] = $objectTags;
             }
 
             $activity['object'] = $object;
