@@ -150,6 +150,8 @@ class IndexControllerTest extends TestCase
             ]
         ];
         $this->assertEquals($expectedTags, $object['tag']);
+        $this->assertArrayHasKey('cc', $object);
+        $this->assertContains('https://cherry.test', $object['cc']);
     }
 
     protected function getNextMessagesByTypeFromSession(SessionInterface $session, string $type): array

@@ -566,12 +566,18 @@ class IndexController
 
         $actorMentions = $markdown->getMentions();
         if (!empty($actorMentions)) {
+            if (!isset($audiences['cc'])) {
+                $audiences['cc'] = [];
+            }
             foreach ($actorMentions as $mention) {
                 $objectTags[] = [
                     'type' => 'Mention',
                     'href' => $mention['actor'],
                     'name' => '@' . $mention['account']
                 ];
+                if (!in_array($mention['actor'], $audiences['cc'])) {
+                    $audiences['cc'][] = $mention['actor'];
+                }
             }
         }
 
