@@ -1,0 +1,10 @@
+{
+  "subject": "acct:relay@neko-relay.com",
+  "links": [
+    {
+      "rel": "self",
+      "type": "application/activity+json",
+      "href": "https://neko-relay.com/actor"
+    }
+  ]
+}
