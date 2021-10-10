@@ -123,10 +123,24 @@ return function (App $app) {
         };
     });
 
+    $container->set('settings', \DI\factory(
+        function(ContainerInterface $container, Medoo $db, $keys, $cat) {
+            $conditions = ['cat' => $cat];
+            if (!empty($keys)) {
+                $conditions['k'] = $keys;
+            }
+            $pairs = $db->select('settings', ['k', 'v'], $conditions);
+            $settings = [];
+            foreach ($pairs as $v) {
+                $settings[$v['k']] = $v['v'];
+            }
+            return $settings;
+        })->parameter('keys', [])->parameter('cat', 'system')
+    );
+
     // Session factory
     $container->set(SignRequest::class, function(ContainerInterface $container) {
-        $db = $container->get(Medoo::class);
-        $settings = $db->get('settings', '*', ['id' => 1]);
+        $settings = $container->make('settings');
         $helper = new SignRequest();
         $helper->withKey($settings['public_key'], $settings['private_key']);
         $helper->withDomain($settings['domain']);

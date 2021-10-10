@@ -61,11 +61,10 @@ trait SetupCherryEnv
 
         $db = $this->container->get(Medoo::class);
         $db->insert('settings', [
-            'id' => 1,
-            'domain' => $domain,
-            'password' => $passwordHash,
-            'public_key' => $publicKey,
-            'private_key' => $privateKey,
+            ['cat' => 'system', 'k' => 'domain', 'v' => $domain],
+            ['cat' => 'system', 'k' => 'password', 'v' => $passwordHash],
+            ['cat' => 'system', 'k' => 'public_key', 'v' => $publicKey],
+            ['cat' => 'system', 'k' => 'private_key', 'v' => $privateKey],
         ]);
         $profile = [
             'id' => 1,

@@ -445,8 +445,7 @@ class IndexController
             if (!$password) {
                 throw new \Exception('Password required');
             }
-            $db = $this->container->get(Medoo::class);
-            $admin = $db->get('settings', '*', ['id' => 1]);
+            $admin = $this->container->make('settings');
             if (!password_verify($password, $admin['password'])) {
                 throw new \Exception('Invalid password');
             }
@@ -1045,11 +1044,8 @@ class IndexController
 
         $data = '{"key":"https://o3o.ca/users/yue#main-key","signature":"AqhTapM1FiwZIjg8CqXSK2Xe67xP7BYt/89CQGTuFL/VZ1UGXWrbmvlHPv3iyW1g04oZIerQn2iWlYMPUR/kmwEApL5TrDoEYDmEFsXDI5lSC0TOgPuqrfRJNng6OLRgKwuEJTHUirqt1enoS+Dn1IKWHmSMAH9+emSjzBYZDHUQfhFPiBvoqhhLn2zVY0gR2qiCfne6VJYrN51gTrbzwmnMOQzty70PPM1C2hfSMfl5N5xL0U0ZZBvhiUzjdixoYvvrO+GndBYQThGGa4EFK3Z+TrtX90QUAb1Mj+eZlQQMQN15HdSgiKj/KhabXqSO1Q6lcEQCyYkLhUjDjDAagQ","algorithm":"rsa-sha256","data":"(request-target): post /inbox\nhost: chokecherry.cc\ndate: Sat, 20 Feb 2021 08:08:14 GMT\ndigest: SHA-256=a17hcVru6fQq1lXgLuROvJQdQfSVO2Xfcm5GdWiKzRA=\ncontent-type: application/activity+json"}';
         $data = json_decode($data, true);
-        $db = $this->container->get(Medoo::class);
-        $profile = $db->get('profiles', '*', ['id' => 2]);
 
-
-        $settings = $db->get('settings', '*', ['id' => 1]);
+        $settings = $this->container->make('settings');
         $helper->withKey($settings['public_key'], $settings['private_key']);
         $res = $helper->verifyHttpSignature($data['data'], $data['signature']);
 
@@ -1329,11 +1325,10 @@ class IndexController
             $publicKey = $publicKey["key"];
             $db = $this->container->get(Medoo::class);
             $db->insert('settings', [
-                'id' => 1,
-                'domain' => $domain,
-                'password' => $hash,
-                'public_key' => $publicKey,
-                'private_key' => $privateKey,
+                ['cat' => 'system', 'k' => 'domain', 'v' => $domain],
+                ['cat' => 'system', 'k' => 'password', 'v' => $hash],
+                ['cat' => 'system', 'k' => 'public_key', 'v' => $publicKey],
+                ['cat' => 'system', 'k' => 'private_key', 'v' => $privateKey],
             ]);
 
             $profile = [
@@ -1391,8 +1386,7 @@ class IndexController
 
     protected function getSettings()
     {
-        $db = $this->container->get(Medoo::class);
-        return $db->get('settings', '*', ['id' => 1]);
+        return $this->container->make('settings');
     }
 
     protected function redirectBack(ServerRequestInterface $request, ResponseInterface $response)

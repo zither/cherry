@@ -55,8 +55,7 @@ class ApiController
 
     public function nodeInfo(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $db = $this->container->get(Medoo::class);
-        $settings = $db->get('settings', '*', ['id' => 1]);
+        $settings = $this->container->make('settings');
         $nodeInfo = [
             'links' => [
                 [

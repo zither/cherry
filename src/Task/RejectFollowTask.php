@@ -37,7 +37,7 @@ class RejectFollowTask implements TaskInterface
         $rawActivity = json_decode($activity['raw'], true);
 
         $snowflake = $this->container->get(Snowflake::class);
-        $settings = $db->get('settings', '*', ['id' => 1]);
+        $settings = $this->container->make('settings');
         $message = [
             '@context' => 'https://www.w3.org/ns/activitystreams',
             'id' => sprintf('https://%s/outbox/%s', $settings['domain'], $snowflake->id()),
