@@ -6,7 +6,6 @@ use Cherry\Session\SessionInterface;
 use Cherry\Test\PSR7ObjectProvider;
 use Cherry\Test\Traits\SetupCherryEnv;
 use Medoo\Medoo;
-use phpDocumentor\Reflection\DocBlock\Tags\Reference\Url;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -152,6 +151,16 @@ class IndexControllerTest extends TestCase
         $this->assertEquals($expectedTags, $object['tag']);
         $this->assertArrayHasKey('cc', $object);
         $this->assertContains('https://cherry.test', $object['cc']);
+    }
+
+    public function testGetSettings()
+    {
+        $settings = $this->container->make('settings');
+        $this->assertArrayHasKey('domain', $settings);
+        $this->assertArrayHasKey('password', $settings);
+        $this->assertArrayHasKey('public_key', $settings);
+        $this->assertArrayHasKey('private_key', $settings);
+        $this->assertEquals('cherry.test', $settings['domain']);
     }
 
     protected function getNextMessagesByTypeFromSession(SessionInterface $session, string $type): array

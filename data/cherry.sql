@@ -151,11 +151,11 @@ CREATE TABLE `sessions` (
 DROP TABLE IF EXISTS `settings`;
 CREATE TABLE `settings` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `domain` varchar(64) NOT NULL DEFAULT '',
-  `password` varchar(255) NOT NULL DEFAULT '',
-  `public_key` text DEFAULT NULL,
-  `private_key` text DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  `cat` varchar(191) NOT NULL DEFAULT '',
+  `k` varchar(191) NOT NULL DEFAULT '',
+  `v` text NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `cat_k` (`cat`, `k`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `shares`;

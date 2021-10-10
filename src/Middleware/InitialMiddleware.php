@@ -26,10 +26,10 @@ class InitialMiddleware implements MiddlewareInterface
     public function process(Request $request, RequestHandler $requestHandler): ResponseInterface
     {
         $db = $this->container->get(Medoo::class);
-        $settingsExists = $db->count('settings', ['id' => 1]);
+        $settings = $this->container->make('settings');
         $profileExists = $db->count('profiles', ['id' => 1]);
 
-        if (!$settingsExists && !$profileExists) {
+        if (!empty($settings) && !$profileExists) {
             return $requestHandler->handle($request);
         }
 
