@@ -70,13 +70,13 @@ return function (App $app) {
 
     // Database
     $container->set(Medoo::class, function(ContainerInterface $container) {
-        $settings = $container->get('settings');
+        $configs = $container->get('configs');
         return new Medoo([
-            'database_type' => $settings['database']['type'],
-            'database_name' => $settings['database']['name'],
-            'server' => $settings['database']['host'],
-            'username' => $settings['database']['user'],
-            'password' => $settings['database']['password'],
+            'database_type' => $configs['database']['type'],
+            'database_name' => $configs['database']['name'],
+            'server' => $configs['database']['host'],
+            'username' => $configs['database']['user'],
+            'password' => $configs['database']['password'],
             'port' => 3306,
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_general_ci',

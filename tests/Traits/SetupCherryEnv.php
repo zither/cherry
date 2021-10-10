@@ -26,8 +26,8 @@ trait SetupCherryEnv
         AppFactory::setContainer($container);
         $app = AppFactory::create();
 
-        $settings = require ROOT . '/tests/configs/configs_testing.php';
-        $container->set('settings', $settings);
+        $configs = require ROOT . '/tests/configs/configs_testing.php';
+        $container->set('configs', $configs);
         (require ROOT . '/src/includes/dependencies.php')($app);
         (require ROOT . '/src/includes/middlewares.php')($app);
         (require ROOT . '/src/includes/settings.php')($app);
@@ -36,12 +36,12 @@ trait SetupCherryEnv
         $this->app = $app;
         $this->container = $container;
 
-        $this->prepareDatabase($settings);
+        $this->prepareDatabase($configs);
     }
 
-    protected function prepareDatabase(array $settings)
+    protected function prepareDatabase(array $configs)
     {
-        $database = $settings['database'];
+        $database = $configs['database'];
         $pdo = new \PDO("mysql:host={$database['host']}",$database['user'], $database['password']);
         $pdo->exec("DROP DATABASE {$database['name']}");
         $pdo->exec("CREATE DATABASE {$database['name']}");
@@ -89,8 +89,8 @@ trait SetupCherryEnv
 
     public function tearDownCherryEnv(): void
     {
-        $settings = $this->container->get('settings');
+        $configs = $this->container->get('configs');
         $db = $this->container->get(Medoo::class);
-        $db->exec("DROP DATABASE {$settings['database']['name']}");
+        $db->exec("DROP DATABASE {$configs['database']['name']}");
     }
 }

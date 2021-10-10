@@ -11,8 +11,8 @@ $container = new Container();
 AppFactory::setContainer($container);
 $app = AppFactory::create();
 
-$settings = require ROOT . '/configs/configs.php';
-$container->set('settings', $settings);
+$configs = require ROOT . '/configs/configs.php';
+$container->set('configs', $configs);
 (require ROOT . '/src/includes/dependencies.php')($app);
 (require ROOT . '/src/includes/middlewares.php')($app);
 (require ROOT . '/src/includes/settings.php')($app);
