@@ -75,6 +75,9 @@ class FetchObjectTask implements TaskInterface
         if (!empty($object->tag)) {
             $tags = [];
             foreach ($object->tag as $v) {
+                if ($v['type'] !== 'Hashtag') {
+                    continue;
+                }
                 $tags[] = [
                     'term' => trim($v['name'], '#'),
                     'object_id' => $newObject['id'],
