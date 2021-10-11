@@ -1137,14 +1137,16 @@ class IndexController
     public function tags(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $tag = $args['tag'];
-
         $db = $this->container->get(Medoo::class);
-        $tags = $db->select('tags', '*', [
+        $conditions = [
             'term' => $tag,
-            'profile_id' => 1,
             'LIMIT' => 10,
             'ORDER' => ['id' => 'DESC']
-        ]);
+        ];
+        if (!$this->isLogin($request)) {
+            $conditions['profile_id'] = 1;
+        }
+        $tags = $db->select('tags', ['object_id'], $conditions);
 
         $objectIds = [];
         foreach ($tags as $v){
@@ -1153,12 +1155,14 @@ class IndexController
             }
         }
 
-        $objects = [];
+        $activities = [];
         if (!empty($objectIds)) {
-            $objects = $db->select('objects', [
+            $activities = $db->select('activities', [
                 '[>]profiles' => ['profile_id' => 'id'],
+                '[>]objects' => ['object_id' => 'id'],
             ], [
-                'objects.id',
+                'activities.id',
+                'activities.object_id',
                 'objects.raw_object_id',
                 'objects.profile_id',
                 'objects.type',
@@ -1180,12 +1184,12 @@ class IndexController
                 'profiles.avatar',
                 'profiles.account',
             ], [
-                'objects.id' => $objectIds,
+                'activities.object_id' => $objectIds,
+                'activities.type' => ['Create', 'Announce'],
                 'ORDER' => ['published' => 'DESC']
             ]);
 
-
-            foreach ($objects as &$v) {
+            foreach ($activities as &$v) {
                 $v['date'] = Time::getLocalTime($v['published']);
                 if ($v['is_local']) {
                     preg_match('#\d{18}#', $v['raw_object_id'], $matches);
@@ -1195,7 +1199,7 @@ class IndexController
         }
 
         return $this->render($response, 'tag', [
-            'notes' => $objects,
+            'notes' => $activities,
             'is_admin' => $this->isLogin($request)
         ]);
     }

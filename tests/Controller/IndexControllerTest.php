@@ -163,6 +163,26 @@ class IndexControllerTest extends TestCase
         $this->assertEquals('cherry.test', $settings['domain']);
     }
 
+    public function testTags()
+    {
+        $content = 'Tag: #测试标签 #cherry';
+        $provider = new PSR7ObjectProvider();
+        $request = $provider->createServerRequest('/notes', 'POST', ['content' => $content]);
+        $this->signIn($request);
+        $this->app->handle($request);
+
+        $db = $this->container->get(Medoo::class);
+        $unicodeTagCount =$db->count('tags', ['term' => '测试标签']);
+        $totalCount  = $db->count('tags');
+        $this->assertEquals(1, $unicodeTagCount);
+        $this->assertEquals(2, $totalCount);
+
+        $request = $provider->createServerRequest('/tags/测试标签');
+        $this->signIn($request);
+        $response = $this->app->handle($request);
+        $this->assertStringContainsString('测试标签', (string)$response->getBody());
+    }
+
     protected function getNextMessagesByTypeFromSession(SessionInterface $session, string $type): array
     {
         return $session['MemoFlashMessages']['forNext'][$type] ?? [];

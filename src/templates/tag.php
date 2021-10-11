@@ -7,7 +7,11 @@
                 <div class="flex-row">
                     <div class="flex-column flex-grow flex-shrink box">
                         <div class="flex-grow flex-row">
-                            <div class="flex-auto avatar-min mr"><img src="<?=$v['avatar']?>"></div>
+                            <?php if (!empty($v['avatar'])):?>
+                                <div class="flex-auto avatar-min mr"><img src="<?=$v['avatar']?>" referrerpolicy="no-referrer"></div>
+                            <?php else:?>
+                                <div class="flex-auto avatar-min-none mr"></div>
+                            <?php endif;?>
                             <div class="flex-auto bold mr color-black"><?=$v['name'] ?: $v['preferred_name']?></div>
                             <div class="flex-auto flex-shrink ellipse mr"><a class="color-black no-decoration" href="<?=$v['profile_url']?>"><?=$v['account']?></a></div>
                             <div class="color-purple flex-grow ml mr text-right"><?=$v['date']?></div>
@@ -56,7 +60,7 @@
                                 <?php endif;?>
                                 <?php if ($is_admin && $v['is_local']): ?>
                                     <div class="flex-auto mr">
-                                        <a href="/note/<?=$v['snowflake_id']?>/delete" title="删除">
+                                        <a href="/notes/<?=$v['snowflake_id']?>/delete" title="删除">
                                             <div class="inline-block">
                                                 <i class="gg-trash"></i>
                                             </div>
