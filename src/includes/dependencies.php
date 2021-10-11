@@ -71,12 +71,13 @@ return function (App $app) {
     // Database
     $container->set(Medoo::class, function(ContainerInterface $container) {
         $configs = $container->get('configs');
+        $database = $configs['database'];
         return new Medoo([
-            'database_type' => $configs['database']['type'],
-            'database_name' => $configs['database']['name'],
-            'server' => $configs['database']['host'],
-            'username' => $configs['database']['user'],
-            'password' => $configs['database']['password'],
+            'database_type' => $database['type'],
+            'database_name' => $database['name'],
+            'server' => $database['host'],
+            'username' => $database['user'],
+            'password' => $database['password'],
             'port' => 3306,
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_general_ci',
@@ -84,7 +85,7 @@ return function (App $app) {
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_EMULATE_PREPARES => false
             ],
-            'command' => ["SET time_zone='+8:00'"],
+            'command' => ["SET time_zone='{$database['time_zone']}'"],
         ]);
     });
 
