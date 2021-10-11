@@ -1354,7 +1354,7 @@ class IndexController
             ];
             $db->insert('profiles', $profile);
 
-            return $response->withStatus('302')->withHeader('location', '/');
+            return $response->withStatus('302')->withHeader('location', '/login');
         } catch (Exception $e) {
             $flash = $this->flash($request);
             $flash->error($e->getMessage());
