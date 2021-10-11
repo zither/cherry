@@ -29,7 +29,7 @@ class InitialMiddleware implements MiddlewareInterface
         $settings = $this->container->make('settings');
         $profileExists = $db->count('profiles', ['id' => 1]);
 
-        if (!empty($settings) && !$profileExists) {
+        if (empty($settings) && !$profileExists) {
             return $requestHandler->handle($request);
         }
 
