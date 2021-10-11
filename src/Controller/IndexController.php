@@ -1398,16 +1398,7 @@ class IndexController
 
     protected function session(ServerRequestInterface $request): SessionInterface
     {
-        if ($this->container->has('session')) {
-            $session = $this->container->get('session');
-        } else {
-            $factory = $this->container->get(SessionInterface::class);
-            $session = $factory($this->container, $request);
-        }
-        if (!$session->isStarted()) {
-            $session->start();
-        }
-        return $session;
+        return $this->container->make(SessionInterface::class, ['request' => $request]);
     }
 
     protected function flash(ServerRequestInterface $request): FlashMessage

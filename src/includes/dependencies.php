@@ -10,6 +10,7 @@ use Cherry\Session\MedooSession;
 use Cherry\Session\SessionInterface;
 use Cherry\Markdown;
 use Cherry\Helper\SignRequest;
+use function DI\factory;
 
 if (!function_exists('short')) {
     function short(string $class)
@@ -103,29 +104,30 @@ return function (App $app) {
     });
 
     // Markdown parser
-    $container->set(Markdown::class, function() use ($container) {
+    $container->set(Markdown::class, function(ContainerInterface $container) {
         $parser = new Markdown();
         $parser->setContainer($container);
         return $parser;
     });
 
     // Session factory
-    $container->set(SessionInterface::class, function() {
-        return function (ContainerInterface $container, ServerRequestInterface $request) {
-            $db = $container->get(Medoo::class);
-            $session = new MedooSession($db);
-            $cookies = $request->getCookieParams();
-            if (isset($cookies[$session->getName()])) {
-                $session->setId($cookies[$session->getName()]);
-                $session->start();
-            }
-            $container->set('session', $session);
-            return $session;
-        };
+    $container->set(SessionInterface::class, function(ContainerInterface $container, ServerRequestInterface $request) {
+        if ($container->has('session')) {
+            return $container->get('session');
+        }
+        $db = $container->get(Medoo::class);
+        $session = new MedooSession($db);
+        $cookies = $request->getCookieParams();
+        if (isset($cookies[$session->getName()])) {
+            $session->setId($cookies[$session->getName()]);
+        }
+        $session->start();
+        $container->set('session', $session);
+        return $session;
     });
 
-    $container->set('settings', \DI\factory(
-        function(ContainerInterface $container, Medoo $db, $keys, $cat) {
+    $container->set('settings', factory(
+        function(Medoo $db, $keys, $cat) {
             $conditions = ['cat' => $cat];
             if (!empty($keys)) {
                 $conditions['k'] = $keys;

@@ -170,10 +170,7 @@ class IndexControllerTest extends TestCase
 
     protected function signIn(ServerRequestInterface $request): SessionInterface
     {
-        $factory = $this->container->get(SessionInterface::class);
-        /** @var SessionInterface $session */
-        $session = $factory($this->container, $request);
-        $session->start();
+        $session = $this->container->make(SessionInterface::class, ['request' => $request]);
         $session['is_admin'] = 1;
         return $session;
     }
