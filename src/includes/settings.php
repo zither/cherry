@@ -1,7 +1,7 @@
 <?php
 use Slim\App;
-use Psr\Container\ContainerInterface;
 
 return function (App $app) {
-    date_default_timezone_set('Asia/Shanghai');
+    $configs = $app->getContainer()->get('configs');
+    date_default_timezone_set($configs['default_time_zone'] ?? 'UTC');
 };
