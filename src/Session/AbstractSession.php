@@ -23,7 +23,7 @@ abstract class AbstractSession extends Collection implements SessionInterface
     /**
      * @var string
      */
-    protected $token;
+    protected $token = '';
 
     /**
      * @return string

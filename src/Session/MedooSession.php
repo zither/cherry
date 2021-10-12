@@ -28,7 +28,7 @@ class MedooSession extends AbstractSession
     /**
      * @var string
      */
-    protected $token;
+    protected $token = '';
 
     /**
      * @var string
@@ -85,7 +85,7 @@ class MedooSession extends AbstractSession
     {
         $data = serialize($this->data);
         $this->client->update($this->table, [$this->valueColumn => $data], [$this->keyColumn => $this->token]);
-        $this->token = null;
+        $this->token = '';
         $this->started = false;
         return true;
     }
@@ -96,7 +96,7 @@ class MedooSession extends AbstractSession
     public function destroy(): bool
     {
         $this->client->delete($this->table, [$this->keyColumn => $this->token]);
-        $this->token = null;
+        $this->token = '';
         $this->started = false;
         return true;
     }
