@@ -180,7 +180,44 @@ class IndexControllerTest extends TestCase
         $request = $provider->createServerRequest('/tags/测试标签');
         $this->signIn($request);
         $response = $this->app->handle($request);
-        $this->assertStringContainsString('测试标签', (string)$response->getBody());
+        $this->assertStringContainsString('#测试标签', (string)$response->getBody());
+    }
+
+    public function testTagsWithPrivateTagAfterLoggingIn()
+    {
+        $content = 'Tag: #已登录';
+        $provider = new PSR7ObjectProvider();
+        $request = $provider->createServerRequest('/notes', 'POST', ['content' => $content, 'scope' => 4]);
+        $session = $this->signIn($request);
+        $sessionName = $session->getName();
+        $sessionId = $session->getId();
+        $request = $request->withCookieParams([$sessionName => $sessionId]);
+        $this->app->handle($request);
+
+        $db = $this->container->get(Medoo::class);
+        $count =$db->count('tags', ['term' => '已登录']);
+        $this->assertEquals(1, $count);
+
+        $request = $provider->createServerRequest('/tags/已登录');
+        $request = $request->withCookieParams([$sessionName => $sessionId]);
+        $response = $this->app->handle($request);
+        $this->assertStringContainsString('#已登录', (string)$response->getBody());
+    }
+
+    public function testTagsWithPrivateTagWithoutLoggingIn()
+    {
+        $content = 'Tag: #已登录';
+        $provider = new PSR7ObjectProvider();
+        $request = $provider->createServerRequest('/notes', 'POST', ['content' => $content, 'scope' => 4]);
+        $this->signIn($request);
+        $this->app->handle($request);
+        $db = $this->container->get(Medoo::class);
+        $count =$db->count('tags', ['term' => '已登录']);
+        $this->assertEquals(1, $count);
+
+        $request = $provider->createServerRequest('/tags/已登录');
+        $response = $this->app->handle($request);
+        $this->assertStringNotContainsString('#已登录', (string)$response->getBody());
     }
 
     protected function getNextMessagesByTypeFromSession(SessionInterface $session, string $type): array

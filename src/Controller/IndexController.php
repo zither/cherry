@@ -1157,6 +1157,17 @@ class IndexController
 
         $activities = [];
         if (!empty($objectIds)) {
+            $selectConditions = [
+                'activities.object_id' => $objectIds,
+                'activities.type' => ['Create', 'Announce'],
+                'activities.is_public' => 1,
+                'activities.is_deleted' => 0,
+                'ORDER' => ['published' => 'DESC']
+            ];
+            // show all activities after logging in
+            if ($this->isLogin($request)) {
+                unset($selectConditions['activities.is_public']);
+            }
             $activities = $db->select('activities', [
                 '[>]profiles' => ['profile_id' => 'id'],
                 '[>]objects' => ['object_id' => 'id'],
@@ -1183,11 +1194,7 @@ class IndexController
                 'profiles.url(profile_url)',
                 'profiles.avatar',
                 'profiles.account',
-            ], [
-                'activities.object_id' => $objectIds,
-                'activities.type' => ['Create', 'Announce'],
-                'ORDER' => ['published' => 'DESC']
-            ]);
+            ], $selectConditions);
 
             foreach ($activities as &$v) {
                 $v['date'] = Time::getLocalTime($v['published']);
