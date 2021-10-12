@@ -113,7 +113,10 @@ return function (App $app) {
     // Session factory
     $container->set(SessionInterface::class, function(ContainerInterface $container, ServerRequestInterface $request) {
         if ($container->has('session')) {
-            return $container->get('session');
+            $session = $container->get('session');
+            if ($session->isStarted()) {
+                return $container->get('session');
+            }
         }
         $db = $container->get(Medoo::class);
         $session = new MedooSession($db);
