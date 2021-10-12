@@ -74,7 +74,9 @@ class CreateRequestTask implements TaskInterface
                         'profile_id' => $profile['id'],
                     ];
                 }
-                $db->insert('tags', $tags);
+                if (!empty($tags)) {
+                    $db->insert('tags', $tags);
+                }
             }
 
             if (!empty($object->attachment)) {
