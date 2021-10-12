@@ -59,7 +59,7 @@ class IndexController
             'LIMIT' => $pageSize,
             'ORDER' => ['activities.id' => 'DESC'],
         ];
-        if (!$this->isLogin($request)) {
+        if (!$this->isLoggedIn($request)) {
             $defaultConditions['activities.is_public'] = 1;
         }
         if ($index) {
@@ -227,7 +227,7 @@ class IndexController
             'profile' => $profile,
             'blogs' => $blogs,
             'counts' => $counts,
-            'is_admin' => $this->isLogin($request),
+            'is_admin' => $this->isLoggedIn($request),
             'notifications' => $notificationsCount,
             'prev' => $prevIndex,
             'next' => $nextIndex,
@@ -421,7 +421,7 @@ class IndexController
 
     public function login(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        if ($this->isLogin($request)) {
+        if ($this->isLoggedIn($request)) {
             return $response->withStatus('302')->withHeader('location', '/timeline');
         }
         $db = $this->container->get(Medoo::class);
@@ -803,7 +803,7 @@ class IndexController
             'note' => $note,
             'interactions' => $interactions,
             'replies' => $replies,
-            'is_admin' => $this->isLogin($request),
+            'is_admin' => $this->isLoggedIn($request),
         ]);
     }
 
@@ -854,7 +854,7 @@ class IndexController
             'note' => $object,
             'profile' => $profile,
             'at' => $at,
-            'is_admin' => $this->isLogin($request),
+            'is_admin' => $this->isLoggedIn($request),
         ]);
     }
 
@@ -1143,7 +1143,7 @@ class IndexController
             'LIMIT' => 10,
             'ORDER' => ['id' => 'DESC']
         ];
-        if (!$this->isLogin($request)) {
+        if (!$this->isLoggedIn($request)) {
             $conditions['profile_id'] = 1;
         }
         $tags = $db->select('tags', ['object_id'], $conditions);
@@ -1165,7 +1165,7 @@ class IndexController
                 'ORDER' => ['published' => 'DESC']
             ];
             // show all activities after logging in
-            if ($this->isLogin($request)) {
+            if ($this->isLoggedIn($request)) {
                 unset($selectConditions['activities.is_public']);
             }
             $activities = $db->select('activities', [
@@ -1207,7 +1207,7 @@ class IndexController
 
         return $this->render($response, 'tag', [
             'notes' => $activities,
-            'is_admin' => $this->isLogin($request)
+            'is_admin' => $this->isLoggedIn($request)
         ]);
     }
 
@@ -1389,7 +1389,7 @@ class IndexController
         return $queries[$key] ?? $default;
     }
 
-    protected function isLogin(ServerRequestInterface $request)
+    protected function isLoggedIn(ServerRequestInterface $request)
     {
         $session = $this->session($request);
         return $session->isStarted() && $session['is_admin'];
