@@ -1,5 +1,5 @@
 # Cherry
 
-A self-hosted, single-user, ActivityPub powered microblog.
+An ActivityPub-based microblog.
 
-**Still in early development.**
+**WIP**
