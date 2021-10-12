@@ -8,6 +8,10 @@ abstract class AbstractType
 {
     protected static $requiredAttributes = [];
 
+    final public function __construct()
+    {
+    }
+
     public static function createFromArray(array $attributes)
     {
         foreach (static::$requiredAttributes as $attribute) {

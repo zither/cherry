@@ -40,7 +40,8 @@
   },
   "require-dev": {
     "phpunit/phpunit": "^8.5",
-    "donatj/mock-webserver": "^2.4"
+    "donatj/mock-webserver": "^2.4",
+    "phpstan/phpstan": "^0.12.99"
   },
   "autoload-dev": {
     "psr-4": {

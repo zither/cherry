@@ -107,9 +107,8 @@ JSON;
 }
 JSON;
         $webfingerPath = '/.well-known/webfinger';
-        $body = sprintf($webfinger, self::$server->getServerRoot());
         self::$server->setResponseOfPath($webfingerPath, new Response(
-            $body,
+            $webfinger,
             ['Content-Type' => 'application/activity+json'],
         ));
 
@@ -139,9 +138,8 @@ JSON;
 }
 JSON;
         $webfingerPath = '/.well-known/webfinger';
-        $body = sprintf($webfinger, self::$server->getServerRoot());
         self::$server->setResponseOfPath($webfingerPath, new Response(
-            $body,
+            $webfinger,
             ['Content-Type' => 'application/activity+json'],
         ));
 

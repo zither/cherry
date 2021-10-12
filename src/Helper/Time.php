@@ -25,7 +25,7 @@ class Time
 
     public static function utcTimestamp(string $time = 'now')
     {
-        $date = new \DateTime('now', new \DateTimeZone('UTC'));
+        $date = new \DateTime($time, new \DateTimeZone('UTC'));
         return $date->getTimestamp();
     }
 
