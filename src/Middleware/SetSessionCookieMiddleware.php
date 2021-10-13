@@ -2,9 +2,7 @@
 
 namespace Cherry\Middleware;
 
-use Cherry\Helper\SignRequest;
 use Cherry\Session\SessionInterface;
-use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Cookie\SetCookie;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -12,7 +10,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Psr\Http\Server\MiddlewareInterface;
-use GuzzleHttp\Psr7\Response;
 
 class SetSessionCookieMiddleware implements MiddlewareInterface
 {
@@ -32,8 +29,28 @@ class SetSessionCookieMiddleware implements MiddlewareInterface
         $session = $this->container->make(SessionInterface::class, ['request' => $request]);
         $response = $requestHandler->handle($request);
         if ($session->isStarted()) {
+            if (!$this->requestHasSessionId($request, $session)) {
+                $cookie = new SetCookie([
+                    'Name' => $session->getName(),
+                    'Value' => $session->getId(),
+                    'Expires' => time() + 3600 * 24 * 365,
+                    'HttpOnly' => true,
+                ]);
+                $response = $response->withHeader('Set-Cookie', (string)$cookie);
+            }
             $session->commit();
         }
         return $response;
+    }
+
+    protected function requestHasSessionId(ServerRequestInterface $request, SessionInterface $session)
+    {
+        $cookies = $request->getCookieParams();
+        foreach ($cookies as $k => $v) {
+            if ($k === $session->getName()) {
+                return true;
+            }
+        }
+        return false;
     }
 }
