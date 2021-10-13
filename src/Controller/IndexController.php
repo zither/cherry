@@ -435,7 +435,12 @@ class IndexController
             'summary',
         ], ['id' => 1]);
 
-        return $this->render($response, 'login', ['profile' => $profile]);
+        $flash = $this->flash($request);
+        $data = [
+            'profile' => $profile,
+            'errors' => $flash->get('error', []),
+        ];
+        return $this->render($response, 'login', $data);
     }
 
     public function verifyPassword(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
@@ -465,8 +470,20 @@ class IndexController
                     throw new Exception('Invalid password');
                 }
             }
-            $session = $this->session($request);
+            $isAdmin = true;
+            $redirect = '/editor';
+        } catch (\Exception $e) {
+            $isAdmin = false;
+            $redirect = '/login';
+            $flash = $this->flash($request);
+            $flash->error($e->getMessage());
+        }
+
+        $session = $this->session($request);
+        if ($isAdmin) {
             $session['is_admin'] = true;
+        }
+        if (!$this->hasSessionId($request, $session)) {
             $cookie = new SetCookie([
                 'Name' => $session->getName(),
                 'Value' => $session->getId(),
@@ -474,11 +491,6 @@ class IndexController
                 'HttpOnly' => true,
             ]);
             $response = $response->withHeader('Set-Cookie', (string)$cookie);
-            $redirect = '/editor';
-        } catch (\Exception $e) {
-            $redirect = '/login';
-            $flash = $this->flash($request);
-            $flash->error($e->getMessage());
         }
         return $response->withStatus('302')->withHeader('location', $redirect);
     }
@@ -1442,5 +1454,16 @@ class IndexController
     {
         //@Todo remove invalid links in html
         return strip_tags($html, ['a', 'p', 'br', 'img', 'blockquote']);
+    }
+
+    protected function hasSessionId(ServerRequestInterface $request, SessionInterface $session)
+    {
+        $cookies = $request->getCookieParams();
+        foreach ($cookies as $k => $v) {
+            if ($k === $session->getName()) {
+                return true;
+            }
+        }
+        return false;
     }
 }
