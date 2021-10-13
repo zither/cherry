@@ -443,11 +443,27 @@ class IndexController
         try {
             $password = $this->getPostParam($request, 'password');
             if (!$password) {
-                throw new \Exception('Password required');
+                throw new Exception('Password required');
             }
-            $admin = $this->container->make('settings');
-            if (!password_verify($password, $admin['password'])) {
-                throw new \Exception('Invalid password');
+            $keys = ['password', 'login_retry', 'deny_login_until'];
+            $settings = $this->container->make('settings', ['keys' => $keys]);
+            $now = time();
+            if ($now < $settings['deny_login_until']) {
+                throw new Exception('Login Denied');
+            }
+            $maxRetry = 3;
+            $denySeconds = 60 * 60 * 2;
+            if (!password_verify($password, $settings['password'])) {
+                $db = $this->container->get(Medoo::class);
+                $currentRetry = $settings['login_retry'] + 1;
+                if ($currentRetry > $maxRetry) {
+                    $db->update('settings', ['v' => $now + $denySeconds], ['k' => 'deny_login_until', 'cat' => 'system']);
+                    $db->update('settings', ['v' => 0], ['k' => 'login_retry', 'cat' => 'system']);
+                    throw new Exception('Too many failed login attempts');
+                } else {
+                    $db->update('settings', ['v' => $currentRetry], ['k' => 'login_retry', 'cat' => 'system']);
+                    throw new Exception('Invalid password');
+                }
             }
             $session = $this->session($request);
             $session['is_admin'] = true;
@@ -461,6 +477,8 @@ class IndexController
             $redirect = '/editor';
         } catch (\Exception $e) {
             $redirect = '/login';
+            $flash = $this->flash($request);
+            $flash->error($e->getMessage());
         }
         return $response->withStatus('302')->withHeader('location', $redirect);
     }
@@ -1340,6 +1358,8 @@ class IndexController
                 ['cat' => 'system', 'k' => 'password', 'v' => $hash],
                 ['cat' => 'system', 'k' => 'public_key', 'v' => $publicKey],
                 ['cat' => 'system', 'k' => 'private_key', 'v' => $privateKey],
+                ['cat' => 'system', 'k' => 'login_retry', 'v' => 0],
+                ['cat' => 'system', 'k' => 'deny_login_until', 'v' => 0],
             ]);
 
             $profile = [

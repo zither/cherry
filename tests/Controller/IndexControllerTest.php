@@ -220,6 +220,51 @@ class IndexControllerTest extends TestCase
         $this->assertStringNotContainsString('#已登录', (string)$response->getBody());
     }
 
+    public function testVerifyPasswordWithInvalidPassword()
+    {
+        $provider = new PSR7ObjectProvider();
+        $invalidPassword = 'invalid-password';
+        $request = $provider->createServerRequest('/login', 'POST', ['password' => $invalidPassword]);
+        $session = $this->container->make(SessionInterface::class, ['request' => $request]);
+        $sessionName = $session->getName();
+        $sessionId = $session->getId();
+        $request = $request->withCookieParams([$sessionName => $sessionId]);
+        $this->app->handle($request);
+        $this->assertContains('Invalid password', $this->getNextMessagesByTypeFromSession($session, 'error'));
+        $settings = $this->container->make('settings');
+        $this->assertEquals('1', $settings['login_retry']);
+
+        $this->app->handle($request);
+        $settings = $this->container->make('settings');
+        $this->assertEquals('2', $settings['login_retry']);
+
+        $this->app->handle($request);
+        $settings = $this->container->make('settings');
+        $this->assertEquals('3', $settings['login_retry']);
+
+        $session = $this->container->make(SessionInterface::class, ['request' => $request]);
+        $this->app->handle($request);
+        $this->assertContains(
+            'Too many failed login attempts',
+            $this->getNextMessagesByTypeFromSession($session, 'error')
+        );
+
+        $session = $this->container->make(SessionInterface::class, ['request' => $request]);
+        $this->app->handle($request);
+        $this->assertContains(
+            'Login Denied',
+            $this->getNextMessagesByTypeFromSession($session, 'error')
+        );
+
+        $db = $this->container->get(Medoo::class);
+        $db->update('settings', ['v' => 0], ['k' => 'deny_login_until', 'cat' => 'system']);
+        $session = $this->container->make(SessionInterface::class, ['request' => $request]);
+        $this->app->handle($request);
+        $this->assertContains('Invalid password', $this->getNextMessagesByTypeFromSession($session, 'error'));
+        $settings = $this->container->make('settings');
+        $this->assertEquals('1', $settings['login_retry']);
+    }
+
     protected function getNextMessagesByTypeFromSession(SessionInterface $session, string $type): array
     {
         return $session['MemoFlashMessages']['forNext'][$type] ?? [];

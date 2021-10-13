@@ -65,6 +65,8 @@ trait SetupCherryEnv
             ['cat' => 'system', 'k' => 'password', 'v' => $passwordHash],
             ['cat' => 'system', 'k' => 'public_key', 'v' => $publicKey],
             ['cat' => 'system', 'k' => 'private_key', 'v' => $privateKey],
+            ['cat' => 'system', 'k' => 'login_retry', 'v' => 0],
+            ['cat' => 'system', 'k' => 'deny_login_until', 'v' => 0],
         ]);
         $profile = [
             'id' => 1,
