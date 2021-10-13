@@ -238,16 +238,13 @@ class IndexControllerTest extends TestCase
         $settings = $this->container->make('settings');
         $this->assertEquals('2', $settings['login_retry']);
 
-        $this->app->handle($request);
-        $settings = $this->container->make('settings');
-        $this->assertEquals('3', $settings['login_retry']);
-
         $session = $this->container->make(SessionInterface::class, ['request' => $request]);
         $this->app->handle($request);
+        $settings = $this->container->make('settings');
         $this->assertContains(
             'Too many failed login attempts',
             $this->getNextMessagesByTypeFromSession($session, 'error')
-        );
+        );$this->assertEquals('0', $settings['login_retry']);
 
         $session = $this->container->make(SessionInterface::class, ['request' => $request]);
         $this->app->handle($request);

@@ -461,7 +461,7 @@ class IndexController
             if (!password_verify($password, $settings['password'])) {
                 $db = $this->container->get(Medoo::class);
                 $currentRetry = $settings['login_retry'] + 1;
-                if ($currentRetry > $maxRetry) {
+                if ($currentRetry >= $maxRetry) {
                     $db->update('settings', ['v' => $now + $denySeconds], ['k' => 'deny_login_until', 'cat' => 'system']);
                     $db->update('settings', ['v' => 0], ['k' => 'login_retry', 'cat' => 'system']);
                     throw new Exception('Too many failed login attempts');
@@ -470,28 +470,15 @@ class IndexController
                     throw new Exception('Invalid password');
                 }
             }
-            $isAdmin = true;
+            $session = $this->session($request);
+            $session['is_admin'] = true;
             $redirect = '/editor';
         } catch (\Exception $e) {
-            $isAdmin = false;
             $redirect = '/login';
             $flash = $this->flash($request);
             $flash->error($e->getMessage());
         }
 
-        $session = $this->session($request);
-        if ($isAdmin) {
-            $session['is_admin'] = true;
-        }
-        if (!$this->hasSessionId($request, $session)) {
-            $cookie = new SetCookie([
-                'Name' => $session->getName(),
-                'Value' => $session->getId(),
-                'Expires' => time() + 3600 * 24 * 365,
-                'HttpOnly' => true,
-            ]);
-            $response = $response->withHeader('Set-Cookie', (string)$cookie);
-        }
         return $response->withStatus('302')->withHeader('location', $redirect);
     }
 
