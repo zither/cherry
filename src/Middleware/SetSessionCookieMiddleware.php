@@ -26,8 +26,12 @@ class SetSessionCookieMiddleware implements MiddlewareInterface
 
     public function process(Request $request, RequestHandler $requestHandler): ResponseInterface
     {
-        $session = $this->container->make(SessionInterface::class, ['request' => $request]);
         $response = $requestHandler->handle($request);
+        if (!$this->container->has('session')) {
+            return $response;
+        }
+
+        $session = $this->container->get('session');
         if ($session->isStarted()) {
             if (!$this->requestHasSessionId($request, $session)) {
                 $cookie = new SetCookie([
