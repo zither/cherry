@@ -45,13 +45,30 @@ class CreateRequestTask implements TaskInterface
 
         try {
             $db->pdo->beginTransaction();
+            $tags = [];
+            $emojis = [];
+            foreach ($object->tag as $v) {
+                if ($v['type'] === 'Hashtag') {
+                    $tags[] = trim($v['name'], '#');
+                } else if ($v['type'] === 'Emoji' && isset($v['icon']['url'])) {
+                    $emojis[$v['name']] = sprintf(
+                        '<img class="inline-block" src="%s" alt="%s" />',
+                        $v['icon']['url'],
+                        $v['name']
+                    );
+                }
+            }
+            $content = $object->getStringAttribute('content');
+            if (!empty($emojis)) {
+                $content = str_replace(array_keys($emojis), array_values($emojis), $content);
+            }
             $db->insert('objects', [
                 'profile_id' => $profile['id'],
                 'origin_id' => $originId,
                 'parent_id' => $parentId,
                 'raw_object_id' => $object->id,
                 'type' => $object->type,
-                'content' => $object->getStringAttribute('content'),
+                'content' => $content,
                 'summary' => $object->getStringAttribute('summary'),
                 'url' => $object->getStringAttribute('url') ?: $object->id,
                 'published' => Time::utc($object->published),
@@ -62,21 +79,16 @@ class CreateRequestTask implements TaskInterface
             ]);
             $objectId = $db->id();
 
-            if (!empty($object->tag)) {
-                $tags = [];
-                foreach ($object->tag as $v) {
-                    if ($v['type'] !== 'Hashtag') {
-                        continue;
-                    }
-                    $tags[] = [
-                        'term' => trim($v['name'], '#'),
+            if (!empty($tags)) {
+                $hashTags = [];
+                foreach ($tags as $v) {
+                    $hashTags[] = [
+                        'term' => $v,
                         'object_id' => $objectId,
                         'profile_id' => $profile['id'],
                     ];
                 }
-                if (!empty($tags)) {
-                    $db->insert('tags', $tags);
-                }
+                $db->insert('tags', $hashTags);
             }
 
             if (!empty($object->attachment)) {

@@ -1,0 +1,41 @@
+{
+  "@context": "https://www.w3.org/ns/activitystreams",
+  "id": "https://cherry.test/outbox/288226336122601472",
+  "type": "Create",
+  "actor": "https://cherry.test",
+  "published": "2021-10-11T08:36:41Z",
+  "to": [
+    "https://www.w3.org/ns/activitystreams#Public"
+  ],
+  "cc": [
+    "https://cherry.test/followers"
+  ],
+  "object": {
+    "id": "https://cherry.test/outbox/288226336122601472/object",
+    "url": "https://cherry.test/notes/288226336122601472",
+    "type": "Note",
+    "attributedTo": "https://cherry.test",
+    "summary": "",
+    "content": ":icon_weibo:",
+    "published": "2021-10-11T08:36:41Z",
+    "to": [
+      "https://www.w3.org/ns/activitystreams#Public"
+    ],
+    "cc": [
+      "https://cherry.test/followers"
+    ],
+    "tag": [
+      {
+        "id": "https://cherry.test/emojis/1",
+        "type": "Emoji",
+        "name": ":icon_weibo:",
+        "updated": "2020-08-08T04:19:13Z",
+        "icon": {
+          "type": "Image",
+          "mediaType": "image/png",
+          "url": "https://cherry.test/emojis/1.png"
+        }
+      }
+    ]
+  }
+}
