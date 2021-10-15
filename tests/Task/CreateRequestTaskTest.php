@@ -45,7 +45,7 @@ class CreateRequestTaskTest extends TestCase
         $this->assertNotEmpty($objectId);
         $objectContent = $db->get('objects', 'content', ['id' => $objectId]);
         $this->assertNotEmpty($objectContent);
-        $expected = '<img class="inline-block" src="https://cherry.test/emojis/1.png" alt=":icon_weibo:" />';
+        $expected = '<img class="emoji" src="https://cherry.test/emojis/1.png" alt=":icon_weibo:" referrerpolicy="no-referrer" />';
         $this->assertStringContainsString($expected, $objectContent);
     }
 }

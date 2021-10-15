@@ -72,6 +72,7 @@ html {background-color: #dfe2f1}
 .content img {max-width: 100%;font-weight: normal}
 .content h2 {font-size: 1rem}
 .others a{color: #6b7394; text-decoration: none}
+.emoji {height: 1.0em}
 .blog-header a{
     color: #a9afca;
     text-decoration: none

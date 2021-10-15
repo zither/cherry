@@ -52,7 +52,7 @@ class CreateRequestTask implements TaskInterface
                     $tags[] = trim($v['name'], '#');
                 } else if ($v['type'] === 'Emoji' && isset($v['icon']['url'])) {
                     $emojis[$v['name']] = sprintf(
-                        '<img class="inline-block" src="%s" alt="%s" />',
+                        '<img class="emoji" src="%s" alt="%s" referrerpolicy="no-referrer" />',
                         $v['icon']['url'],
                         $v['name']
                     );
