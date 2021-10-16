@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" content="width=device-width,initial-scale=1,user-scalable=no" name="viewport">
     <title><?=empty($profile) ? 'ActivityPub' : ($profile['name'] ?: $profile['preferred_name'])?></title>
-    <link rel="stylesheet" href="/default/css/app.css" type="text/css">
+    <link rel="stylesheet" href="/default/css/app.css?v=<?=CHERRY_VERSION?>" type="text/css">
 </head>
 <body>
 <div class="main">
