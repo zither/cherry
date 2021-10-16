@@ -8,7 +8,10 @@ class ObjectType extends AbstractType
 {
     const PUBLIC_COLLECTION = 'https://www.w3.org/ns/activitystreams#Public';
 
-    public $context;
+    public $context = [
+        "https://www.w3.org/ns/activitystreams",
+        ['sensitive' => 'as:sensitive']
+    ];
     public $id;
     public $name;
     public $type;
@@ -36,6 +39,7 @@ class ObjectType extends AbstractType
     public $startTime;
     public $endTime;
     public $duration;
+    public $sensitive;
 
     public function isPublic(array $audiences = null): bool
     {

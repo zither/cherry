@@ -1,6 +1,7 @@
 <?php
 namespace Cherry\Controller;
 
+use Cherry\ActivityPub\Activity;
 use Cherry\FlashMessage;
 use Cherry\Helper\SignRequest;
 use Cherry\Helper\Time;
@@ -609,13 +610,12 @@ class IndexController
         $object = array_merge($object, $audiences);
 
         // 新 Activity 信息
-        $activity = array_merge([
-            "@context" => "https://www.w3.org/ns/activitystreams",
+        $activity = Activity::createFromArray(array_merge([
             'id' => "https://$domain/outbox/$objectId",
             'type' => 'Create',
             'actor' => $profile['actor'],
             'published' => $published,
-        ], $audiences);
+        ], $audiences));
 
         try {
             $db->pdo->beginTransaction();
@@ -652,8 +652,6 @@ class IndexController
                     ];
                 }
                 $db->insert('tags', $terms);
-
-
             }
 
             // 添加 tag 信息
@@ -661,15 +659,15 @@ class IndexController
                 $object['tag'] = $objectTags;
             }
 
-            $activity['object'] = $object;
+            $activity->set('object', $object);
 
             // 保存新 Activity
             $db->insert('activities', [
-                'activity_id' => $activity['id'],
+                'activity_id' => $activity->id,
                 'profile_id' => 1,
                 'object_id' => $objectId,
                 'type' => 'Create',
-                'raw' => json_encode($activity, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+                'raw' => json_encode($activity->toArray(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
                 'published' => date('Y-m-d H:i:s'),
                 'is_local' => 1,
                 'is_public' => $scope < 3 ? 1 : 0,
