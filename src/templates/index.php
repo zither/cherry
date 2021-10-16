@@ -52,7 +52,22 @@
                             <div class="flex-grow flex-shrink ellipse mr"><a class="color-black no-decoration" href="<?=$v['profile_url']?>"><?=$v['account']?></a></div>
                             <div class="color-purple flex-grow ml text-right nowrap"><?=$v['date']?></div>
                         </div>
-                        <div class="flex-grow content mt-1"><?=$v['content']?></div>
+                        <div class="flex-grow content mt-1">
+                            <?php if (!$v['is_sensitive']): ?>
+                                <?=$v['content']?>
+                            <?php else:?>
+                                <span id="summary"><?=$v['summary']?></span>
+                                <label for="show-content">
+                                    <span>显示内容</span>
+                                </label>
+                                <input type=radio id="show-content" name="group">
+                                <label for="hide-content">
+                                    <span>隐藏内容</span>
+                                </label>
+                                <input type=radio id="hide-content" name="group">
+                                <div id="content"><?=$v['content']?></div>
+                            <?php endif; ?>
+                        </div>
 
                         <?php if (!empty($v['attachments'])): ?>
                             <div class="flex-grow flex-row mt">
