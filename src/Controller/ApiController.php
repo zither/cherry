@@ -3,6 +3,7 @@ namespace Cherry\Controller;
 
 use Cherry\ActivityPub\Activity;
 use Cherry\ActivityPub\ObjectType;
+use Cherry\ActivityPub\OrderedCollection;
 use Cherry\Helper\SignRequest;
 use Cherry\Helper\Time;
 use Medoo\Medoo;
@@ -113,6 +114,7 @@ class ApiController
         $user = [
             '@context' => [
                 'https://www.w3.org/ns/activitystreams',
+                "https://w3id.org/security/v1",
             ],
             'type' => 'Person',
             'id' => $profile['actor'],
@@ -220,8 +222,6 @@ class ApiController
         $collection = [
             'context' => [
                 "https://www.w3.org/ns/activitystreams",
-                'https://w3id.org/security/v1',
-                ["@language" => "und"]
             ],
             'id' => "{$profile['outbox']}?page={$page}",
             'type' => 'OrderedCollectionPage',
@@ -309,9 +309,7 @@ class ApiController
             return $response->withStatus(401);
         }
 
-        $object['@context'] = ['https://www.w3.org/ns/activitystreams'];
-
-        return $this->ldJson($response, $object);
+        return $this->ldJson($response, $objectType->toArray());
     }
 
     public function activityInfo(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
@@ -347,18 +345,12 @@ class ApiController
         $db = $this->container->get(Medoo::class);
         $profile = $db->get('profiles', ['id', 'followers'], ['id' => 1]);
         $count = $db->count('followers');
-        $collection = [
-            'context' =>[
-                "https://www.w3.org/ns/activitystreams",
-                'https://w3id.org/security/v1',
-                ["@language"=> "und"]
-            ],
+        $collection = OrderedCollection::createFromArray([
             'id' => $profile['followers'],
-            'type' => 'OrderedCollection',
             'totalItems' => $count,
             'orderedItems' => [],
-        ];
-        return $this->ldJson($response, $collection);
+        ]);
+        return $this->ldJson($response, $collection->toArray());
     }
 
     public function following(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
@@ -366,18 +358,12 @@ class ApiController
         $db = $this->container->get(Medoo::class);
         $profile = $db->get('profiles', ['id', 'following'], ['id' => 1]);
         $count = $db->count('following');
-        $collection = [
-            'context' =>[
-                "https://www.w3.org/ns/activitystreams",
-                'https://w3id.org/security/v1',
-                ["@language"=> "und"]
-            ],
+        $collection = OrderedCollection::createFromArray([
             'id' => $profile['following'],
-            'type' => 'OrderedCollection',
             'totalItems' => $count,
             'orderedItems' => [],
-        ];
-        return $this->ldJson($response, $collection);
+        ]);
+        return $this->ldJson($response, $collection->toArray());
     }
 
     protected function json(ResponseInterface $response, array $body = []): ResponseInterface

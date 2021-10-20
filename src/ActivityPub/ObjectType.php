@@ -12,9 +12,15 @@ class ObjectType extends AbstractType
         "https://www.w3.org/ns/activitystreams",
         ['sensitive' => 'as:sensitive']
     ];
+
+    public $type = 'Object';
+
+    /**
+     * @var string
+     */
     public $id;
+
     public $name;
-    public $type;
     public $attributedTo;
     public $content;
     public $summary;
@@ -85,8 +91,11 @@ class ObjectType extends AbstractType
         $properties = $reflection->getProperties(ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PROTECTED);
         $array = [];
         foreach ($properties as $property) {
+            if ($property->isStatic()) {
+                continue;
+            }
             $name = $property->getName();
-            if (empty($this->{$name})) {
+            if (is_null($this->{$name})) {
                 continue;
             }
             $array[$name] = $this->{$name};
