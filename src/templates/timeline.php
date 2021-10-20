@@ -36,16 +36,16 @@
                             <?php if (!$v['is_sensitive']): ?>
                                 <?=$v['content']?>
                             <?php else:?>
-                                <span id="summary"><?=$v['summary']?></span>
-                                <label for="show-content">
+                                <span class="object-summary"><?=$v['summary']?></span>
+                                <label class="show-content" for="show-content-<?=$v['object_id']?>">
                                     <span>显示内容</span>
                                 </label>
-                                <input type=radio id="show-content" name="group">
-                                <label for="hide-content">
+                                <input type=radio id="show-content-<?=$v['object_id']?>" name="group">
+                                <label class="hide-content" for="hide-content-<?=$v['object_id']?>">
                                     <span>隐藏内容</span>
                                 </label>
-                                <input type=radio id="hide-content" name="group">
-                                <div id="content"><?=$v['content']?></div>
+                                <input type=radio id="hide-content-<?=$v['object_id']?>" name="group">
+                                <div class="object-content"><?=$v['content']?></div>
                             <?php endif; ?>
                         </div>
 

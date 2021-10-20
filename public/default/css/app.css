@@ -73,15 +73,15 @@ html {background-color: #dfe2f1}
 .content h2 {font-size: 1rem}
 .others a{color: #6b7394; text-decoration: none}
 .emoji {height: 1.0em}
-label[for=show-content] > span, label[for=hide-content] > span {
+.cw-btn > span {
     cursor: pointer;
     background-color: #dfe2f1;
     border-radius: .2em;
     padding: .05em;
 }
-input#show-content, input#hide-content {display: none}
-div#content {display: none}
-input#show-content:checked ~ div#content{display: block}
+input.show-content, input.hide-content {display: none}
+div.object-content {display: none}
+input.show-content:checked ~ div.object-content{display: block}
 
 .blog-header a{
     color: #a9afca;
