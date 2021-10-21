@@ -40,11 +40,11 @@
                                 <label class="cw-btn" for="show-content-<?=$v['object_id']?>">
                                     <span>显示内容</span>
                                 </label>
-                                <input type=radio class="show-content" id="show-content-<?=$v['object_id']?>" name="group">
+                                <input type=radio class="show-content" id="show-content-<?=$v['object_id']?>" name="group-<?=$v['object_id']?>">
                                 <label class="cw-btn" for="hide-content-<?=$v['object_id']?>">
                                     <span>隐藏内容</span>
                                 </label>
-                                <input type=radio class="hide-content"  id="hide-content-<?=$v['object_id']?>" name="group">
+                                <input type=radio class="hide-content"  id="hide-content-<?=$v['object_id']?>" name="group-<?=$v['object_id']?>">
                                 <div class="object-content"><?=$v['content']?></div>
                             <?php endif; ?>
                         </div>
