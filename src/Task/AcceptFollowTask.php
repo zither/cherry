@@ -50,7 +50,7 @@ class AcceptFollowTask implements TaskInterface
             'profile_id' => 1,
             'type' => 'Accept',
             'raw' => json_encode($message, JSON_UNESCAPED_SLASHES),
-            'published' => Time::utc(),
+            'published' => Time::getLocalTime(),
         ];
         $db->insert('activities', $acceptActivity);
         $newId = $db->id();

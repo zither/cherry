@@ -175,7 +175,7 @@ class SignRequest
         $options = [
             'type' => 'RsaSignature2017',
             'creator' => $this->mainKeyId,
-            'created' => Time::ISO8601(),
+            'created' => Time::UTCTimeISO8601(),
         ];
         $hash1 = $this->hash($this->getSignOptions($options));
         $hash2 = $this->hash($this->getSignData($data));

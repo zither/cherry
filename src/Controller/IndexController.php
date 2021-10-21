@@ -168,7 +168,7 @@ class IndexController
             if (empty($v['profile_id'])) {
                 continue;
             }
-            $v['date'] = Time::getLocalTime($v['published']);
+            $v['date'] = Time::getLocalTime($v['published'], 'Y-m-d');
             $objectInfo = $objectProfiles[$v['profile_id']];
             $v['profile_id'] = $objectInfo['id'];
             $v['actor'] = $objectInfo['actor'];
@@ -361,7 +361,7 @@ class IndexController
             if (empty($v['profile_id'])) {
                 continue;
             }
-            $v['date'] = Time::getLocalTime($v['published']);
+            $v['date'] = Time::getLocalTime($v['published'], 'Y-m-d');
             $objectInfo = $objectProfiles[$v['profile_id']];
             $v['profile_id'] = $objectInfo['id'];
             $v['actor'] = $objectInfo['actor'];
@@ -536,7 +536,7 @@ class IndexController
         // 新嘟文 Object 信息
         $snowflake = $this->container->get(Snowflake::class);
         $objectId = $snowflake->id();
-        $published = Time::ISO8601();
+        $published = Time::UTCTimeISO8601();
         $object = [
             'id' => "{$profile['outbox']}/$objectId/object",
             'url' => "https://$domain/notes/$objectId",
@@ -628,7 +628,7 @@ class IndexController
                 'content' => $object['content'],
                 'summary' => $object['summary'] ?? '',
                 'url' => $object['url'],
-                'published' => Time::utc($object['published']),
+                'published' => Time::UTCToLocalTime($object['published']),
                 'is_local' => 1,
                 'is_public' => $scope < 3 ? 1 : 0,
                 'origin_id' => $replyObject['origin_id'] ?? 0,
@@ -684,7 +684,7 @@ class IndexController
                     'object_id' => $replyObject['id'],
                     'profile_id' => $profile['id'],
                     'type' => 3, // replies
-                    'published' => Time::utc($activity['published']),
+                    'published' => $activity['published'],
                 ]);
             }
 
@@ -781,7 +781,7 @@ class IndexController
         $note = null;
         $replies = [];
         foreach ($notes as $v) {
-            $v['date'] = Time::getLocalTime($v['published']);
+            $v['date'] = Time::getLocalTime($v['published'], 'Y-m-d');
             if ($v['is_local']) {
                 preg_match('#\d{18}#', $v['raw_object_id'], $matches);
                 $v['snowflake_id'] =  $matches[0];
@@ -856,7 +856,7 @@ class IndexController
             'objects.id' => $objectId,
         ]);
 
-        $object['date'] = Time::getLocalTime($object['published']);
+        $object['date'] = Time::getLocalTime($object['published'], 'Y-m-d');
         if ($object['is_local']) {
             preg_match('#\d{18}#', $object['raw_object_id'], $matches);
             $object['snowflake_id'] =  $matches[0];
@@ -940,7 +940,7 @@ class IndexController
                 continue;
             }
             $v['raw'] = json_decode($v['raw'], true);
-            $v['published'] = Time::getLocalTime($v['published']);
+            $v['published'] = Time::getLocalTime($v['published'], 'Y-m-d');
         }
 
         return $this->render($response, 'notifications', ['notifications' => $notifications]);
@@ -1212,7 +1212,7 @@ class IndexController
             ], $selectConditions);
 
             foreach ($activities as &$v) {
-                $v['date'] = Time::getLocalTime($v['published']);
+                $v['date'] = Time::getLocalTime($v['published'], 'Y-m-d');
                 if ($v['is_local']) {
                     preg_match('#\d{18}#', $v['raw_object_id'], $matches);
                     $v['snowflake_id'] =  $matches[0];

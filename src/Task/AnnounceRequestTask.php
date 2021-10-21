@@ -50,7 +50,7 @@ class AnnounceRequestTask implements TaskInterface
                 'object_id' => $object['id'],
                 'profile_id' => $activityProfileId,
                 'type' => 2,
-                'published' => Time::utc($activity['published']),
+                'published' => $activity['published'],
             ]);
             $db->update('objects', ['shares[+]' => 1], ['id' => $object['id']]);
         }

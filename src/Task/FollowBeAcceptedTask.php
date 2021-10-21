@@ -46,7 +46,7 @@ class FollowBeAcceptedTask implements TaskInterface
             'status' => 1,
             'follow_activity_id' => $followActivityId,
             'accept_activity_id' => $activityId,
-            'created_at' => Time::utc($activity['published']),
+            'created_at' => $activity['published'],
         ];
         $db->insert('following', $following);
     }

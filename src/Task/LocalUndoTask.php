@@ -70,7 +70,7 @@ class LocalUndoTask implements TaskInterface
             'object_id' => $targetObject['id'] ?? 0,
             'type' => 'Undo',
             'raw' => json_encode($undo, JSON_UNESCAPED_SLASHES),
-            'published' => Time::utc(),
+            'published' => Time::getLocalTime(),
             'is_local' => 1,
         ];
         try {

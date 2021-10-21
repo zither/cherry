@@ -57,7 +57,7 @@ class RemoteLikeTask implements TaskInterface
                     'object_id' => $object['id'],
                     'profile_id' => $profile['id'],
                     'type' => $types[$rawActivity['type']],
-                    'published' => Time::utc($activity['published']),
+                    'published' => $activity['published'],
                 ]);
             }
             $db->pdo->commit();

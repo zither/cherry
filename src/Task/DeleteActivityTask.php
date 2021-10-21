@@ -43,7 +43,7 @@ class DeleteActivityTask implements TaskInterface
             'activity_id' => $rawActivity['id'],
             'type' => 'Delete',
             'raw' => json_encode($rawActivity, JSON_UNESCAPED_SLASHES),
-            'published' => Time::utc(),
+            'published' => TIme::getLocalTime(),
             'is_local' => 1,
         ];
         $db->insert('activities', $activity);

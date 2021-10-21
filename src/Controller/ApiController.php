@@ -176,7 +176,7 @@ class ApiController
             'type' => $activity['type'],
             'raw' => $rawBody,
             'signature_data' => $signatureData,
-            'published' => $activity['published'] ?? Time::utc(),
+            'published' => isset($activity['published']) ? Time::UTCToLocalTime($activity['published']) : Time::getLocalTime(),
             'is_local' => 0,
             'is_public' => $activityType->isPublic(),
         ];

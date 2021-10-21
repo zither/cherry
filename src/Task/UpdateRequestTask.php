@@ -23,7 +23,6 @@ class UpdateRequestTask implements TaskInterface
         $db = $this->container->get(Medoo::class);
         $activity = $db->get('activities', '*', ['id' => $activityId]);
         $rawActivity = json_decode($activity['raw'], true);
-        //$rawActivity = json_decode(file_get_contents(ROOT . '/data/o3o_update_profile.json'), true);
         $actor = $rawActivity['actor'];
         $object = $rawActivity['object'];
         if (!is_array($object) || $object['type'] !== 'Person' || !isset($rawActivity['signature'])) {

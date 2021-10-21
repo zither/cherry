@@ -63,7 +63,7 @@ class FetchObjectTask implements TaskInterface
             'content' => $object->getStringAttribute('content'),
             'summary' => $object->getStringAttribute('summary'),
             'url' => $object->getStringAttribute('url') ?: $object->id,
-            'published' => Time::utc($object->published),
+            'published' => Time::UTCToLocalTime($object->published),
             'is_local' => 0, // local object always exists, so only remote object goes here
             'is_public' => $object->isPublic(),
             'is_sensitive' => isset($object->sensitive) && $object->sensitive,

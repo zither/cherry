@@ -92,7 +92,7 @@ class FollowTask implements TaskInterface
                 'activity_id' => $followRequest['id'],
                 'type' => 'Follow',
                 'raw' => $jsonRequest,
-                'published' => Time::utc(),
+                'published' => Time::getLocalTime(),
                 'is_local' => 1,
             ];
             $db->insert('activities', $activity);

@@ -75,7 +75,7 @@ class LocalUpdateProfileTask implements TaskInterface
             'object_id' => 0,
             'type' => 'Update',
             'raw' => json_encode($rawActivity, JSON_UNESCAPED_SLASHES),
-            'published' => Time::utc(),
+            'published' => Time::getLocalTime(),
             'is_local' => 1,
         ];
         try {

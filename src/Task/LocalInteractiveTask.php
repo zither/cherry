@@ -59,7 +59,7 @@ class LocalInteractiveTask implements TaskInterface
             'object_id' => $objectId,
             'type' => $interaction,
             'raw' => json_encode($rawActivity, JSON_UNESCAPED_SLASHES),
-            'published' => Time::utc(),
+            'published' => Time::getLocalTime(),
             'is_local' => 1,
             'is_public' => $object['is_public']
         ];
@@ -91,7 +91,7 @@ class LocalInteractiveTask implements TaskInterface
                 'object_id' => $objectId,
                 'profile_id' => $profile['id'],
                 'type' => $types[$column],
-                'published' => Time::utc($activity['published']),
+                'published' => $activity['published'],
             ]);
 
             $db->pdo->commit();
