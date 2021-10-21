@@ -22,4 +22,12 @@ class TimeTest extends TestCase
         $offset = Time::getTimeZoneOffset('Asia/ShangHai');
         $this->assertEquals('+08:00', $offset);
     }
+
+    public function testUTCToLocalTime()
+    {
+        Time::$defaultTimeZone = 'Asia/Shanghai';
+        $UTCTime = '2021-01-01T00:00:00Z';
+        $localTime = Time::UTCToLocalTime($UTCTime);
+        $this->assertEquals('2021-01-01 08:00:00', $localTime);
+    }
 }
