@@ -13,9 +13,9 @@ $app = AppFactory::create();
 
 $configs = require ROOT . '/configs/configs.php';
 $container->set('configs', $configs);
+(require ROOT . '/src/includes/settings.php')($app);
 (require ROOT . '/src/includes/dependencies.php')($app);
 (require ROOT . '/src/includes/middlewares.php')($app);
-(require ROOT . '/src/includes/settings.php')($app);
 (require ROOT . '/src/includes/routes.php')($app);
 
 $app->run();

@@ -10,6 +10,7 @@ use Cherry\Session\MedooSession;
 use Cherry\Session\SessionInterface;
 use Cherry\Markdown;
 use Cherry\Helper\SignRequest;
+use Cherry\Helper\Time;
 use function DI\factory;
 
 if (!function_exists('short')) {
@@ -73,6 +74,7 @@ return function (App $app) {
     $container->set(Medoo::class, function(ContainerInterface $container) {
         $configs = $container->get('configs');
         $database = $configs['database'];
+        $timeZoneOffset = Time::getTimeZoneOffset($configs['default_time_zone']);
         return new Medoo([
             'database_type' => $database['type'],
             'database_name' => $database['name'],
@@ -86,7 +88,7 @@ return function (App $app) {
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_EMULATE_PREPARES => false
             ],
-            'command' => ["SET time_zone='{$database['time_zone']}'"],
+            'command' => ["SET time_zone='{$timeZoneOffset}'"],
         ]);
     });
 

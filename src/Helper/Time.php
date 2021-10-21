@@ -36,4 +36,15 @@ class Time
         $date->add(new DateInterval("PT{$seconds}S"));
         return $date->format('Y-m-d H:i:s');
     }
+
+    public static function getTimeZoneOffset(string $timezone = null): string
+    {
+        $timezone = $timezone ?: self::$defaultTimeZone;
+        if (empty($timezone)) {
+            $timezone = 'UTC';
+        }
+        $dateTimeZone = new DateTimeZone($timezone);
+        $time = new DateTime('now', $dateTimeZone);
+        return $time->format('P');
+    }
 }
