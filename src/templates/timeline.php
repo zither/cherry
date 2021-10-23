@@ -85,51 +85,45 @@
                                         </div>
                                     </a>
                                 </div>
-                                <?php if ($v['replies'] > -1):?>
-                                    <div class="flex-grow-full">
-                                        <a href="/objects/<?=$v['object_id']?>/reply" title="<?=$this->lang('icon_reply')?>">
-                                            <div class="inline-block">
-                                                <i class="gg-corner-double-up-left"></i>
-                                            </div>
-                                            <?php if ($v['is_local']):?>
-                                                <span class="ml"><?=$v['replies']?></span>
-                                            <?php endif;?>
-                                        </a>
-                                    </div>
-                                <?php endif;?>
-                                <?php if ($v['shares'] > -1):?>
-                                    <div class="flex-grow-full">
-                                        <?php if (!$v['is_public']):?>
-                                            <div class="inline-block color-gray">
+                                <div class="flex-grow-full">
+                                    <a href="/objects/<?=$v['object_id']?>/reply" title="<?=$this->lang('icon_reply')?>">
+                                        <div class="inline-block">
+                                            <i class="gg-corner-double-up-left"></i>
+                                        </div>
+                                        <?php if ($v['is_local']):?>
+                                            <span class="ml"><?=$v['replies']?></span>
+                                        <?php endif;?>
+                                    </a>
+                                </div>
+                                <div class="flex-grow-full">
+                                    <?php if (!$v['is_public']):?>
+                                        <div class="inline-block color-gray">
+                                            <i class="gg-path-outline"></i>
+                                        </div>
+                                        <?php if ($v['is_local']):?>
+                                            <span class="ml"><?=$v['shares']?></span>
+                                        <?php endif;?>
+                                    <?php else:?>
+                                        <form class="interaction" method="POST" action="/objects/<?=$v['object_id']?>/boost">
+                                            <button class="inline-block <?=$v['is_boosted'] ? 'color-green' : 'color-purple' ?>" title="<?=$this->lang('icon_announce')?>">
                                                 <i class="gg-path-outline"></i>
-                                            </div>
+                                            </button>
                                             <?php if ($v['is_local']):?>
                                                 <span class="ml"><?=$v['shares']?></span>
                                             <?php endif;?>
-                                        <?php else:?>
-                                            <form class="interaction" method="POST" action="/objects/<?=$v['object_id']?>/boost">
-                                                <button class="inline-block <?=$v['is_boosted'] ? 'color-green' : 'color-purple' ?>" title="<?=$this->lang('icon_announce')?>">
-                                                    <i class="gg-path-outline"></i>
-                                                </button>
-                                                <?php if ($v['is_local']):?>
-                                                    <span class="ml"><?=$v['shares']?></span>
-                                                <?php endif;?>
-                                            </form>
-                                        <?php endif;?>
-                                    </div>
-                                <?php endif;?>
-                                <?php if ($v['likes'] > -1):?>
-                                    <div class="flex-grow-full">
-                                        <form class="interaction" method="POST" action="/objects/<?=$v['object_id']?>/like">
-                                            <button class="inline-block <?=$v['is_liked'] ? 'color-green' : 'color-purple' ?>" title="<?=$this->lang('icon_like')?>">
-                                                <i class="gg-heart"></i>
-                                            </button>
-                                            <?php if ($v['is_local']):?>
-                                                <span class="ml"><?=$v['likes']?></span>
-                                            <?php endif;?>
                                         </form>
-                                    </div>
-                                <?php endif;?>
+                                    <?php endif;?>
+                                </div>
+                                <div class="flex-grow-full">
+                                    <form class="interaction" method="POST" action="/objects/<?=$v['object_id']?>/like">
+                                        <button class="inline-block <?=$v['is_liked'] ? 'color-green' : 'color-purple' ?>" title="<?=$this->lang('icon_like')?>">
+                                            <i class="gg-heart"></i>
+                                        </button>
+                                        <?php if ($v['is_local']):?>
+                                            <span class="ml"><?=$v['likes']?></span>
+                                        <?php endif;?>
+                                    </form>
+                                </div>
                                 <div class="flex-auto">
                                     <div class="more">
                                         <i class="gg-more-alt"> </i>
