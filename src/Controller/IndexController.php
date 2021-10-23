@@ -684,7 +684,7 @@ class IndexController
                     'object_id' => $replyObject['id'],
                     'profile_id' => $profile['id'],
                     'type' => 3, // replies
-                    'published' => $activity['published'],
+                    'published' => $activity->published,
                 ]);
             }
 
