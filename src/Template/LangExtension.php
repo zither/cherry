@@ -2,10 +2,11 @@
 
 namespace Cherry\Template;
 
+use ReflectionObject;
+use InvalidArgumentException;
 use League\Plates\Engine;
 use League\Plates\Template\Template;
 use League\Plates\Extension\ExtensionInterface;
-use InvalidArgumentException;
 
 class LangExtension implements ExtensionInterface
 {
@@ -84,7 +85,7 @@ class LangExtension implements ExtensionInterface
 
     protected function getLangFile()
     {
-        $reflectTemplate = new \ReflectionObject($this->template);
+        $reflectTemplate = new ReflectionObject($this->template);
         $reflectTemplateName = $reflectTemplate->getProperty('name');
         $reflectTemplateName->setAccessible(true);
         $name = $reflectTemplateName->getValue($this->template);
