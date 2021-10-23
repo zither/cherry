@@ -2,15 +2,15 @@
 
 <div class="flex flex-column">
     <div class="flex-auto flex flex-row header nav">
-        <div class="bold mr">管理</div>
+        <div class="bold mr"><?=$this->lang('nav_admin')?></div>
         <div class="mr">
-            <a href="/web/following">关注</a>
+            <a href="/web/following"><?=$this->lang('nav_following')?></a>
         </div>
         <div class="mr">
-            <a href="/web/followers">关注者</a>
+            <a href="/web/followers"><?=$this->lang('nav_followers')?></a>
         </div>
         <div>
-            <a href="/timeline">返回</a>
+            <a href="/timeline"><?=$this->lang('nav_back')?></a>
         </div>
     </div>
     <div class="mt-1 container">
@@ -37,7 +37,7 @@
                     </div>
                     <div class="flex flex-align-center">
                         <form action="/followers/<?=$v['id']?>/delete" method="POST">
-                            <button>删除</button>
+                            <button><?=$this->lang('undo_button')?></button>
                         </form>
                     </div>
                 </div>

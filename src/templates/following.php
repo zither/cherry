@@ -2,32 +2,32 @@
 
 <div class="flex flex-column">
     <div class="flex-auto flex flex-row header nav">
-        <div class="bold mr">管理</div>
+        <div class="bold mr"><?=$this->lang('nav_admin')?></div>
         <div class="mr">
-            <a href="/web/following">关注</a>
+            <a href="/web/following"><?=$this->lang('nav_following')?></a>
         </div>
         <div class="mr">
-            <a href="/web/followers">关注者</a>
+            <a href="/web/followers"><?=$this->lang('nav_followers')?></a>
         </div>
         <div>
-            <a href="/timeline">返回</a>
+            <a href="/timeline"><?=$this->lang('nav_back')?></a>
         </div>
     </div>
 
     <div class="mt-1 container">
         <div>
             <?php foreach ($errors as $error):?>
-                <span class="color-red">错误：<?=$error?></span>
+                <span class="color-red"><?=$this->lang('flash_error')?><?=$error?></span>
             <?php endforeach;?>
             <?php foreach ($messages as $message):?>
-                <span class="color-green">消息：<?=$message?></span>
+                <span class="color-green"><?=$this->lang('flash_message')?><?=$message?></span>
             <?php endforeach;?>
         </div>
         <form action="/following" method="POST">
-            <label>关注帐号：
+            <label><?=$this->lang('form_label')?>
                 <input type="text" name="account" />
             </label>
-            <button>发送请求</button>
+            <button><?=$this->lang('form_button')?></button>
         </form>
     </div>
 
@@ -55,7 +55,7 @@
                     </div>
                     <div class="flex flex-align-center">
                         <form action="/following/<?=$v['id']?>/delete" method="POST">
-                            <button>取消</button>
+                            <button><?=$this->lang('undo_button')?></button>
                         </form>
                     </div>
                 </div>

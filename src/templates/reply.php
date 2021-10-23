@@ -17,7 +17,7 @@
                         <div class="flex-grow flex-row ml color-purple">
                             <div class="flex-grow flex-row ml color-purple">
                                 <div class="flex-grow-full">
-                                    <a href="<?=$note['url']?>" title="链接">
+                                    <a href="<?=$note['url']?>" title="<?=$this->lang('icon_link')?>">
                                         <div class="inline-block">
                                             <i class="gg-link icon"></i>
                                         </div>
@@ -25,7 +25,7 @@
                                 </div>
                                 <?php if ($note['replies'] > 0):?>
                                     <div class="flex-grow-full color-gray">
-                                        <div class="inline-block" title="回复">
+                                        <div class="inline-block" title="<?=$this->lang('icon_reply')?>">
                                             <i class="gg-corner-double-up-left"></i>
                                         </div>
                                         <?php if ($note['is_local']):?>
@@ -46,7 +46,7 @@
                                 <?php if ($note['likes'] > 0):?>
                                     <div class="flex-grow-full">
                                         <form class="interaction" method="POST" action="/liked/<?=$note['id']?>">
-                                            <button class="inline-block <?=$note['is_liked'] ? 'color-green' : 'color-purple' ?>" title="喜欢">
+                                            <button class="inline-block <?=$note['is_liked'] ? 'color-green' : 'color-purple' ?>" title="<?=$this->lang('icon_like')?>">
                                                 <i class="gg-heart"></i>
                                             </button>
                                             <?php if ($note['is_local']):?>
@@ -84,14 +84,14 @@
                 <div class="flex-row">
                     <div class="flex-grow-full">
                         <select name="scope" class="scope">
-                            <option value="1">公开</option>
-                            <option value="2">不公开</option>
-                            <option value="3">仅关注者</option>
-                            <option value="4">私信</option>
+                            <option value="1"><?=$this->lang('editor_scope_1')?></option>
+                            <option value="2"><?=$this->lang('editor_scope_2')?></option>
+                            <option value="3"><?=$this->lang('editor_scope_3')?></option>
+                            <option value="4"><?=$this->lang('editor_scope_4')?></option>
                         </select>
                     </div>
                     <div class="flex-grow-full text-right">
-                        <button>嘟嘟</button>
+                        <button><?=$this->lang('editor_button')?></button>
                     </div>
             </form>
         </div>

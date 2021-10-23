@@ -6,11 +6,15 @@
         <?php foreach ($blogs as $v): ?>
             <?php if ($v['show_boosted']):?>
                 <div class="flex-grow bg-color-gray mt-1 color-purple blog-header">
-                    Boosted by <a href="<?=$v['activity_profile_url']?>"><?=$v['activity_name'] ?: $v['activity_preferred_name']?></a>
+                    <a href="<?=$v['activity_profile_url']?>">
+                        <?=$this->lang('header_announce', $v['activity_name'] ?: $v['activity_preferred_name'])?>
+                    </a>
                 </div>
             <?php elseif (!empty($v['parent_profile'])): ?>
                 <div class="flex-grow bg-color-gray mt-1 color-purple blog-header">
-                    In reply to  <a href="<?=$v['parent_profile']['raw_object_id']?>"><?=$v['parent_profile']['name'] ?: $v['parent_profile']['preferred_name']?></a>
+                    <a href="<?=$v['parent_profile']['raw_object_id']?>">
+                        <?=$this->lang('header_reply', $v['parent_profile']['name'] ?: $v['parent_profile']['preferred_name'])?>
+                    </a>
                 </div>
             <?php else: ?>
                 <div class="flex-grow mt-1">
@@ -38,11 +42,11 @@
                             <?php else:?>
                                 <span class="object-summary"><?=$v['summary']?></span>
                                 <label class="cw-btn" for="show-content-<?=$v['object_id']?>">
-                                    <span>显示内容</span>
+                                    <span><?=$this->lang('show_content')?></span>
                                 </label>
                                 <input type=radio class="show-content" id="show-content-<?=$v['object_id']?>" name="group-<?=$v['object_id']?>">
                                 <label class="cw-btn" for="hide-content-<?=$v['object_id']?>">
-                                    <span>隐藏内容</span>
+                                    <span><?=$this->lang('hide_content')?></span>
                                 </label>
                                 <input type=radio class="hide-content"  id="hide-content-<?=$v['object_id']?>" name="group-<?=$v['object_id']?>">
                                 <div class="object-content"><?=$v['content']?></div>
@@ -75,7 +79,7 @@
                         <div class="flex-grow flex-row others mt-1">
                             <div class="flex-grow flex-row ml color-purple">
                                 <div class="flex-grow-full">
-                                    <a href="<?=$v['url']?>" title="链接">
+                                    <a href="<?=$v['url']?>" title="<?=$this->lang('icon_link')?>">
                                         <div class="inline-block">
                                             <i class="gg-link icon"></i>
                                         </div>
@@ -83,7 +87,7 @@
                                 </div>
                                 <?php if ($v['replies'] > -1):?>
                                     <div class="flex-grow-full">
-                                        <a href="/objects/<?=$v['object_id']?>/reply" title="回复">
+                                        <a href="/objects/<?=$v['object_id']?>/reply" title="<?=$this->lang('icon_reply')?>">
                                             <div class="inline-block">
                                                 <i class="gg-corner-double-up-left"></i>
                                             </div>
@@ -104,7 +108,7 @@
                                             <?php endif;?>
                                         <?php else:?>
                                             <form class="interaction" method="POST" action="/objects/<?=$v['object_id']?>/boost">
-                                                <button class="inline-block <?=$v['is_boosted'] ? 'color-green' : 'color-purple' ?>" title="转嘟">
+                                                <button class="inline-block <?=$v['is_boosted'] ? 'color-green' : 'color-purple' ?>" title="<?=$this->lang('icon_announce')?>">
                                                     <i class="gg-path-outline"></i>
                                                 </button>
                                                 <?php if ($v['is_local']):?>
@@ -117,7 +121,7 @@
                                 <?php if ($v['likes'] > -1):?>
                                     <div class="flex-grow-full">
                                         <form class="interaction" method="POST" action="/objects/<?=$v['object_id']?>/like">
-                                            <button class="inline-block <?=$v['is_liked'] ? 'color-green' : 'color-purple' ?>" title="喜欢">
+                                            <button class="inline-block <?=$v['is_liked'] ? 'color-green' : 'color-purple' ?>" title="<?=$this->lang('icon_like')?>">
                                                 <i class="gg-heart"></i>
                                             </button>
                                             <?php if ($v['is_local']):?>
@@ -133,7 +137,7 @@
                                     <div class="dropdown-menu flex-column">
                                         <div class="item">
                                             <form action="/profiles/<?=$v['profile_id']?>/fetch" METHOD="POST">
-                                                <input class="btn" type="submit" value="更新资料" />
+                                                <input class="btn" type="submit" value="<?=$this->lang('menu_update_profile')?>" />
                                             </form>
                                         </div>
                                     </div>
@@ -148,16 +152,16 @@
     <div class="flex-row mt-1">
         <div class="flex-grow-full text-center navigator mr">
             <?php if ($prev):?>
-                <a class="color-purple no-decoration" href="/timeline?<?=$prev?>">上一页</a>
+                <a class="color-purple no-decoration" href="/timeline?<?=$prev?>"><?=$this->lang('pagination_prev')?></a>
             <?php else: ?>
-                <span class="color-gray"> 上一页</span>
+                <span class="color-gray"><?=$this->lang('pagination_prev')?></span>
             <?php endif;?>
         </div>
         <div class="flex-grow-full text-center navigator ml">
             <?php if ($next):?>
-                <a class="color-purple no-decoration" href="/timeline?<?=$next?>">下一页</a>
+                <a class="color-purple no-decoration" href="/timeline?<?=$next?>"><?=$this->lang('pagination_next')?></a>
             <?php else: ?>
-                <span class="color-gray"> 下一页</span>
+                <span class="color-gray"><?=$this->lang('pagination_next')?></span>
             <?php endif;?>
         </div>
     </div>

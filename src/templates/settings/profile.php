@@ -5,26 +5,26 @@
     <div class="mt-2 container">
         <div>
             <?php foreach ($errors as $error):?>
-                <span class="color-red">错误：<?=$error?></span>
+                <span class="color-red"><?=$this->lang('flash_error')?><?=$error?></span>
             <?php endforeach;?>
             <?php foreach ($messages as $message):?>
-                <span class="color-green">消息：<?=$message?></span>
+                <span class="color-green"><?=$this->lang('flash_message')?><?=$message?></span>
             <?php endforeach;?>
         </div>
         <form class="mt" action="/profiles/<?=$profile['id']?>/update" method="POST">
             <div class="mt label">
-                <label for="name">昵称</label>
-                <input id="name" type="text" name="name" placeholder="昵称" value="<?=$profile['name']?>" />
+                <label for="name"><?=$this->lang('form_name_label')?></label>
+                <input id="name" type="text" name="name" placeholder="<?=$this->lang('form_name_placeholder')?>" value="<?=$profile['name']?>" />
             </div>
             <div class="mt label">
-                <label for="avatar">头像</label>
-                <input id="avatar" type="text" name="avatar"  placeholder="外链地址" value="<?=$profile['avatar']?>"/>
+                <label for="avatar"><?=$this->lang('form_avatar_label')?></label>
+                <input id="avatar" type="text" name="avatar"  placeholder="<?=$this->lang('form_avatar_placeholder')?>" value="<?=$profile['avatar']?>"/>
             </div>
             <div class="mt label">
-                <label for="summary">简介</label>
+                <label for="summary"><?=$this->lang('form_summary_label')?></label>
                 <textarea id="summary" name="summary" rows="5"><?=$profile['summary']?></textarea>
             </div>
-            <button class="mt">保存更改</button>
+            <button class="mt"><?=$this->lang('form_button')?></button>
         </form>
     </div>
 </div>

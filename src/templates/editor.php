@@ -10,14 +10,14 @@
             <div class="flex-row">
                 <div class="flex-grow-full">
                     <select name="scope" class="scope">
-                        <option value="1">公开</option>
-                        <option value="2">不公开</option>
-                        <option value="3">仅关注者</option>
-                        <option value="4">私信</option>
+                        <option value="1"><?=$this->lang('editor_scope_1')?></option>
+                        <option value="2"><?=$this->lang('editor_scope_2')?></option>
+                        <option value="3"><?=$this->lang('editor_scope_3')?></option>
+                        <option value="4"><?=$this->lang('editor_scope_4')?></option>
                     </select>
                 </div>
                 <div class="flex-grow-full text-right">
-                    <button>嘟嘟</button>
+                    <button><?=$this->lang('editor_btn')?></button>
                 </div>
         </form>
     </div>

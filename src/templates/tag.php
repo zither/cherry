@@ -20,7 +20,7 @@
                         <div class="flex-grow flex-row others">
                             <div class="flex-grow flex-row ml color-purple">
                                 <div class="flex-grow">
-                                    <a href="<?=$v['url']?>" title="链接">
+                                    <a href="<?=$v['url']?>" title="<?=$this->lang('icon_link')?>">
                                         <div class="inline-block mr">
                                             <i class="gg-link icon"></i>
                                         </div>
@@ -29,7 +29,7 @@
                                 <?php if ($v['is_local']):?>
                                     <?php if ($v['replies'] > -1):?>
                                         <div class="flex-grow ">
-                                            <a href="/" title="回复">
+                                            <a href="/" title="<?=$this->lang('icon_reply')?>">
                                                 <div class="inline-block mr">
                                                     <i class="gg-corner-double-up-left"></i>
                                                 </div>
@@ -39,7 +39,7 @@
                                     <?php endif;?>
                                     <?php if ($v['shares'] > -1):?>
                                         <div class="flex-grow">
-                                            <a href="/" title="转嘟">
+                                            <a href="/" title="<?=$this->lang('icon_announce')?>">
                                                 <div class="inline-block mr">
                                                     <i class="gg-path-outline"></i>
                                                 </div>
@@ -49,7 +49,7 @@
                                     <?php endif;?>
                                     <?php if ($v['likes'] > -1):?>
                                         <div class="flex-grow">
-                                            <a href="/" title="喜欢">
+                                            <a href="/" title="<?=$this->lang('icon_like')?>">
                                                 <div class="inline-block mr">
                                                     <i class="gg-heart"></i>
                                                 </div>
@@ -60,7 +60,7 @@
                                 <?php endif;?>
                                 <?php if ($is_admin && $v['is_local']): ?>
                                     <div class="flex-auto mr">
-                                        <a href="/notes/<?=$v['snowflake_id']?>/delete" title="删除">
+                                        <a href="/notes/<?=$v['snowflake_id']?>/delete" title="<?=$this->lang('menu_delete_activity')?>">
                                             <div class="inline-block">
                                                 <i class="gg-trash"></i>
                                             </div>

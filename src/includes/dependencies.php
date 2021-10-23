@@ -11,6 +11,7 @@ use Cherry\Session\SessionInterface;
 use Cherry\Markdown;
 use Cherry\Helper\SignRequest;
 use Cherry\Helper\Time;
+use Cherry\Template\LangExtension;
 use function DI\factory;
 
 if (!function_exists('short')) {
@@ -93,8 +94,14 @@ return function (App $app) {
     });
 
     // Template
-    $container->set(Engine::class, function() {
-        return new Engine(ROOT . '/src/templates');
+    $container->set(Engine::class, function(ContainerInterface $container) {
+        $configs = $container->get('configs');
+        $lang = $configs['language'] ?? 'en';
+        $engine = new Engine(ROOT . '/src/templates');
+        $langExtension = new LangExtension();
+        $langExtension->setLang(ROOT . '/src/lang', $lang);
+        $engine->loadExtension($langExtension);
+        return $engine;
     });
 
     // RouterCollector

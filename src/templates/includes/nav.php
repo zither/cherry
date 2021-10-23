@@ -1,21 +1,21 @@
 <div class="flex-auto flex flex-row header nav">
-    <div class="bold mr">管理</div>
+    <div class="bold mr"><?=$this->lang('nav_admin')?></div>
     <div class="mr">
-        <a href="/timeline">时间轴</a>
+        <a href="/timeline"><?=$this->lang('nav_timeline')?></a>
     </div>
     <div class="mr">
-        <a href="/notifications">通知</a>
+        <a href="/notifications"><?=$this->lang('nav_notifications')?></a>
     </div>
     <div class="mr">
-        <a href="/editor">嘟嘟</a>
+        <a href="/editor"><?=$this->lang('nav_editor')?></a>
     </div>
     <div class="mr">
-        <a href="/web/following">关系</a>
+        <a href="/web/following"><?=$this->lang('nav_relations')?></a>
     </div>
     <div class="mr">
-        <a href="/settings/profile">资料</a>
+        <a href="/settings/profile"><?=$this->lang('nav_settings')?></a>
     </div>
     <div>
-        <a href="/">返回</a>
+        <a href="/"><?=$this->lang('nav_back')?></a>
     </div>
 </div>

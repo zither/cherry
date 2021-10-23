@@ -3,21 +3,21 @@
 <div class="flex flex-column">
     <div class="header">
         <div class="title">
-            <h1 class="mr">登录</h1>
+            <h1 class="mr"><?=$this->lang('header_title')?></h1>
             <span class="mr">@<?=$profile['account']?></span>
         </div>
     </div>
     <div class="mt-2 container">
         <div>
             <?php foreach ($errors as $error):?>
-                <span class="color-red mb">错误：<?=$error?></span>
+                <span class="color-red mb"><?=$this->lang('flash_error')?><?=$error?></span>
             <?php endforeach;?>
         </div>
         <form action="/login" method="POST">
-            <label>请输入密码：
+            <label><?=$this->lang('form_password_label')?>
             <input type="password" name="password" />
             </label>
-            <button>登录</button>
+            <button><?=$this->lang('form_button')?></button>
         </form>
     </div>
 </div>
