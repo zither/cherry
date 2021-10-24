@@ -5,6 +5,6 @@ return [
     'nav_following' => '关注',
     'nav_followers' => '关注者',
     'nav_back' => '返回',
-    'undo_button' => '取消',
+    'undo_button' => '移除',
 ];
 

@@ -9,6 +9,6 @@ return [
     'flash_message' => 'message:',
     'form_label' => 'Follow account:',
     'form_button' => 'Send',
-    'undo_button' => 'Cancel',
+    'undo_button' => 'Unfollow',
 ];
 
