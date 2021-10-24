@@ -1189,34 +1189,119 @@ class IndexController
             ], [
                 'activities.id',
                 'activities.object_id',
-                'objects.raw_object_id',
+                'activities.activity_id',
+                'activities.profile_id(activity_profile_id)',
+                'activities.published',
+                'activities.type(activity_type)',
+                'profiles.actor(activity_actor)',
+                'profiles.name(activity_name)',
+                'profiles.preferred_name(activity_preferred_name)',
+                'profiles.url(activity_profile_url)',
+                'profiles.avatar(activity_avatar)',
                 'objects.profile_id',
                 'objects.type',
                 'objects.content',
                 'objects.summary',
                 'objects.url',
+                'objects.parent_id',
                 'objects.likes',
                 'objects.replies',
                 'objects.shares',
-                'objects.published',
                 'objects.is_local',
                 'objects.is_public',
-                'objects.is_boosted',
                 'objects.is_sensitive',
-                'profiles.actor',
-                'profiles.name',
-                'profiles.preferred_name',
-                'profiles.url(profile_url)',
-                'profiles.avatar',
-                'profiles.account',
+                'objects.is_liked',
+                'objects.is_boosted',
             ], $selectConditions);
 
+            $objectProfileIds = [];
+            $objectIds = [];
+            $parentIds = [];
+            foreach ($activities as $v) {
+                if ($v['profile_id']) {
+                    $objectProfileIds[] = $v['profile_id'];
+                }
+                if ($v['object_id']) {
+                    $objectIds[] = $v['object_id'];
+                }
+                if ($v['parent_id']) {
+                    $parentIds[] = $v['parent_id'];
+                }
+            }
+
+            $objectProfiles = [];
+            if (!empty($objectProfileIds)) {
+                $profiles = $db->select('profiles', [
+                    'id',
+                    'actor',
+                    'name',
+                    'preferred_name',
+                    'url',
+                    'avatar',
+                    'account'
+                ], ['id' => $objectProfileIds]);
+                foreach ($profiles as $v) {
+                    $objectProfiles[$v['id']] = $v;
+                }
+            }
+
+            $parentProfiles = [];
+            if (!empty($parentIds)) {
+                $tmpProfiles = $db->select('objects', [
+                    '[>]profiles' => ['profile_id' => 'id'],
+                ], [
+                    'objects.id(object_id)',
+                    'objects.raw_object_id',
+                    'objects.profile_id(id)',
+                    'profiles.actor',
+                    'profiles.name',
+                    'profiles.preferred_name',
+                    'profiles.url',
+                    'profiles.avatar',
+                    'profiles.account'
+                ],[
+                    'objects.id' => $parentIds,
+                ]);
+                foreach ($tmpProfiles as $v) {
+                    $parentProfiles[$v['object_id']] = $v;
+                }
+            }
+
+            $objectAttachments = [];
+            if (!empty($objectIds)) {
+                $attachments = $db->select('attachments', '*', ['object_id' => $objectIds]);
+                foreach ($attachments as $v) {
+                    if (!isset($objectAttachments[$v['object_id']])) {
+                        $objectAttachments[$v['object_id']] = [];
+                    }
+                    $objectAttachments[$v['object_id']][] = $v;
+                }
+            }
+
             foreach ($activities as &$v) {
+                if (empty($v['profile_id'])) {
+                    continue;
+                }
                 $v['date'] = Time::getLocalTime($v['published'], 'Y-m-d');
+                $objectInfo = $objectProfiles[$v['profile_id']];
+                $v['profile_id'] = $objectInfo['id'];
+                $v['actor'] = $objectInfo['actor'];
+                $v['preferred_name'] = $objectInfo['preferred_name'];
+                $v['name'] = $objectInfo['name'];
+                $v['content'] = $this->stripTags($v['content']);
+                $v['profile_url'] = $objectInfo['url'];
+                $v['avatar'] = $objectInfo['avatar'];
+                $v['account'] = "@{$objectInfo['account']}";
+                $v['show_boosted'] = $v['activity_type'] === 'Announce';
                 if ($v['is_local']) {
-                    preg_match('#\d{18}#', $v['raw_object_id'], $matches);
+                    preg_match('#\d{18}#', $v['activity_id'], $matches);
                     $v['snowflake_id'] =  $matches[0];
                 }
+                if ($v['parent_id']) {
+                    $v['parent_profile'] = $parentProfiles[$v['parent_id']] ?? [];
+                }
+                $v['attachments'] = $objectAttachments[$v['object_id']] ?? [];
+                unset($v);
             }
         }
 
