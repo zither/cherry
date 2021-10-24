@@ -64,7 +64,7 @@ p {margin: 0;line-height: 1.3rem}
 textarea {width: 100%;box-sizing: border-box;padding: .5em;border-radius: .3em;border: 1px solid #f0f0f0;font-size: 1rem}
 html {background-color: #dfe2f1}
 .blog {background-color: #f5f7ff;; padding: 1em .5em;border-radius: .2em}
-.blog + .blog {margin-top: 1em}
+.blog ~ .blog {margin-top: 1em}
 .blog, .container {background-color: #f5f7ff;; padding: 1em .5em;border-radius: .2em}
 .content {color:#5e6687}
 .content a, .nav a{color: #293256}
