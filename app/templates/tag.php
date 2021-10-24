@@ -84,56 +84,108 @@
                                         </div>
                                     </a>
                                 </div>
-                                <div class="flex-grow-full">
-                                    <a href="/objects/<?=$v['object_id']?>/reply" title="<?=$this->lang('icon_reply')?>">
+                                <?php if ($is_admin):?>
+                                    <div class="flex-grow-full">
+                                        <a href="/objects/<?=$v['object_id']?>/reply" title="<?=$this->lang('icon_reply')?>">
+                                            <div class="inline-block">
+                                                <i class="gg-corner-double-up-left"></i>
+                                            </div>
+                                            <?php if ($v['is_local']):?>
+                                                <span class="ml"><?=$v['replies']?></span>
+                                            <?php endif;?>
+                                        </a>
+                                    </div>
+                                <?php else:?>
+                                    <div class="flex-grow-full">
                                         <div class="inline-block">
                                             <i class="gg-corner-double-up-left"></i>
                                         </div>
                                         <?php if ($v['is_local']):?>
                                             <span class="ml"><?=$v['replies']?></span>
                                         <?php endif;?>
-                                    </a>
-                                </div>
-                                <div class="flex-grow-full">
-                                    <?php if (!$v['is_public']):?>
-                                        <div class="inline-block color-gray">
-                                            <i class="gg-path-outline"></i>
-                                        </div>
-                                        <?php if ($v['is_local']):?>
-                                            <span class="ml"><?=$v['shares']?></span>
-                                        <?php endif;?>
-                                    <?php else:?>
-                                        <form class="interaction" method="POST" action="/objects/<?=$v['object_id']?>/boost">
-                                            <button class="inline-block <?=$v['is_boosted'] ? 'color-green' : 'color-purple' ?>" title="<?=$this->lang('icon_announce')?>">
+                                    </div>
+                                <?php endif;?>
+                                <?php if ($is_admin): ?>
+                                    <div class="flex-grow-full">
+                                        <?php if (!$v['is_public']):?>
+                                            <div class="inline-block color-gray">
                                                 <i class="gg-path-outline"></i>
-                                            </button>
+                                            </div>
                                             <?php if ($v['is_local']):?>
                                                 <span class="ml"><?=$v['shares']?></span>
                                             <?php endif;?>
+                                        <?php else:?>
+                                            <form class="interaction" method="POST" action="/objects/<?=$v['object_id']?>/boost">
+                                                <button class="inline-block <?=$v['is_boosted'] ? 'color-green' : 'color-purple' ?>" title="<?=$this->lang('icon_announce')?>">
+                                                    <i class="gg-path-outline"></i>
+                                                </button>
+                                                <?php if ($v['is_local']):?>
+                                                    <span class="ml"><?=$v['shares']?></span>
+                                                <?php endif;?>
+                                            </form>
+                                        <?php endif;?>
+                                    </div>
+                                <?php else:?>
+                                    <div class="flex-grow-full">
+                                        <?php if (!$v['is_public']):?>
+                                            <div class="inline-block <?=$v['is_boosted'] ? 'color-green' : 'color-purple' ?>">
+                                                <i class="gg-path-outline"></i>
+                                            </div>
+                                            <?php if ($v['is_local']):?>
+                                                <span class="ml"><?=$v['shares']?></span>
+                                            <?php endif;?>
+                                        <?php else: ?>
+                                            <div class="inline-block <?=$v['is_boosted'] ? 'color-green' : 'color-purple' ?>" title="<?=$this->lang('icon_announce')?>">
+                                                <i class="gg-path-outline"></i>
+                                            </div>
+                                            <?php if ($v['is_local']):?>
+                                                <span class="ml"><?=$v['shares']?></span>
+                                            <?php endif;?>
+                                        <?php endif;?>
+                                    </div>
+                                <?php endif;?>
+                                <?php if ($is_admin):?>
+                                    <div class="flex-grow-full">
+                                        <form class="interaction" method="POST" action="/objects/<?=$v['object_id']?>/like">
+                                            <button class="inline-block <?=$v['is_liked'] ? 'color-green' : 'color-purple' ?>" title="<?=$this->lang('icon_like')?>">
+                                                <i class="gg-heart"></i>
+                                            </button>
+                                            <?php if ($v['is_local']):?>
+                                                <span class="ml"><?=$v['likes']?></span>
+                                            <?php endif;?>
                                         </form>
-                                    <?php endif;?>
-                                </div>
-                                <div class="flex-grow-full">
-                                    <form class="interaction" method="POST" action="/objects/<?=$v['object_id']?>/like">
-                                        <button class="inline-block <?=$v['is_liked'] ? 'color-green' : 'color-purple' ?>" title="<?=$this->lang('icon_like')?>">
+                                    </div>
+                                <?php else:?>
+                                    <div class="flex-grow-full">
+                                        <div class="inline-block <?=$v['is_liked'] ? 'color-green' : 'color-purple' ?>" title="<?=$this->lang('icon_like')?>">
                                             <i class="gg-heart"></i>
-                                        </button>
+                                        </div>
                                         <?php if ($v['is_local']):?>
                                             <span class="ml"><?=$v['likes']?></span>
                                         <?php endif;?>
-                                    </form>
-                                </div>
+                                    </div>
+                                <?php endif;?>
                                 <div class="flex-auto">
                                     <div class="more">
                                         <i class="gg-more-alt"> </i>
                                     </div>
-                                    <div class="dropdown-menu flex-column">
-                                        <div class="item">
-                                            <form action="/profiles/<?=$v['profile_id']?>/fetch" METHOD="POST">
-                                                <input class="btn" type="submit" value="<?=$this->lang('menu_update_profile')?>" />
-                                            </form>
+                                    <?php if ($is_admin): ?>
+                                        <div class="dropdown-menu flex-column">
+                                            <?php if ($v['is_local']):?>
+                                                <div class="item">
+                                                    <form action="/notes/<?=$v['snowflake_id']?>/delete" METHOD="POST">
+                                                        <input class="btn" type="submit" value="<?=$this->lang('menu_delete_activity')?>" />
+                                                    </form>
+                                                </div>
+                                            <?php else: ?>
+                                                <div class="item">
+                                                    <form action="/profiles/<?=$v['profile_id']?>/fetch" METHOD="POST">
+                                                        <input class="btn" type="submit" value="<?=$this->lang('menu_update_profile')?>" />
+                                                    </form>
+                                                </div>
+                                            <?php endif;?>
                                         </div>
-                                    </div>
+                                    <?php endif;?>
                                 </div>
                             </div>
                         </div>
