@@ -3,7 +3,7 @@
 <div class="flex flex-column">
     <div class="blogs mt-1">
         <?php foreach ($notes as $v): ?>
-            <div class="flex-column blog">
+            <div class="flex-column blog <?=$v['object_id'] == $note_id ? '' : 'mt-1'?>">
                 <div class="flex-row">
                     <div class="flex-column flex-grow flex-shrink box">
                         <div class="flex-grow flex-row">
