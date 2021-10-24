@@ -16,11 +16,11 @@ class ObjectTypeTest extends TestCase
         ];
         $objectType = ObjectType::createFromArray($object);
         $objectArray = $objectType->toArray();
-        $this->assertArrayHasKey('context', $objectArray);
+        $this->assertArrayHasKey('@context', $objectArray);
         $expected = [
             "https://www.w3.org/ns/activitystreams",
             ['sensitive' => 'as:sensitive']
         ];
-        $this->assertEquals($expected, $objectArray['context']);
+        $this->assertEquals($expected, $objectArray['@context']);
     }
 }

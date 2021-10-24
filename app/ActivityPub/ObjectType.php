@@ -98,7 +98,11 @@ class ObjectType extends AbstractType
             if (is_null($this->{$name})) {
                 continue;
             }
-            $array[$name] = $this->{$name};
+            $key = $name;
+            if ($name === 'context') {
+                $key = '@' . $name;
+            }
+            $array[$key] = $this->{$name};
         }
         return $array;
     }
