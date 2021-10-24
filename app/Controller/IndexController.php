@@ -882,7 +882,7 @@ class IndexController
         }
         $object['show_boosted'] = false;
 
-        $at = "[@{$object['preferred_name']}]({$object['profile_url']}) ";
+        $at = "@{$object['account']} ";
 
         return $this->render($response, 'reply', [
             'note' => $object,
