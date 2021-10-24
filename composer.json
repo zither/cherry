@@ -1,6 +1,6 @@
 {
   "name": "zither/cherry",
-  "description": "A self-hosted, single-user, ActivityPub powered microblog.",
+  "description": "An ActivityPub-based microblog.",
   "type": "project",
   "keywords": [
     "activitypub",
@@ -31,7 +31,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Cherry\\": "src/",
+      "Cherry\\": "app/",
       "adrianfalleiro\\": "third/adrianfalleiro/"
     },
     "files": [

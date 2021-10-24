@@ -97,9 +97,9 @@ return function (App $app) {
     $container->set(Engine::class, function(ContainerInterface $container) {
         $configs = $container->get('configs');
         $lang = $configs['language'] ?? 'en';
-        $engine = new Engine(ROOT . '/src/templates');
+        $engine = new Engine(ROOT . '/app/templates');
         $langExtension = new LangExtension();
-        $langExtension->setLang(ROOT . '/src/lang', $lang);
+        $langExtension->setLang(ROOT . '/app/lang', $lang);
         $engine->loadExtension($langExtension);
         return $engine;
     });

@@ -28,10 +28,10 @@ trait SetupCherryEnv
 
         $configs = require ROOT . '/tests/configs/configs_testing.php';
         $container->set('configs', $configs);
-        (require ROOT . '/src/includes/settings.php')($app);
-        (require ROOT . '/src/includes/dependencies.php')($app);
-        (require ROOT . '/src/includes/middlewares.php')($app);
-        (require ROOT . '/src/includes/routes.php')($app);
+        (require ROOT . '/app/includes/settings.php')($app);
+        (require ROOT . '/app/includes/dependencies.php')($app);
+        (require ROOT . '/app/includes/middlewares.php')($app);
+        (require ROOT . '/app/includes/routes.php')($app);
 
         $this->app = $app;
         $this->container = $container;
