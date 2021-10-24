@@ -749,6 +749,7 @@ class IndexController
             '[>]profiles' => ['profile_id' => 'id'],
         ], [
             'objects.id',
+            'objects.id(object_id)',
             'objects.raw_object_id',
             'objects.profile_id',
             'objects.type',
@@ -762,6 +763,7 @@ class IndexController
             'objects.is_local',
             'objects.is_public',
             'objects.is_boosted',
+            'objects.is_liked',
             'objects.is_sensitive',
             'profiles.actor',
             'profiles.name',
@@ -778,6 +780,21 @@ class IndexController
             'ORDER' => ['published' => 'ASC']
         ]);
 
+        $objectIds = [];
+        foreach ($notes as $v) {
+            $objectIds[] = $v['id'];
+        }
+        $objectAttachments = [];
+        if (!empty($objectIds)) {
+            $attachments = $db->select('attachments', '*', ['object_id' => $objectIds]);
+            foreach ($attachments as $v) {
+                if (!isset($objectAttachments[$v['id']])) {
+                    $objectAttachments[$v['id']] = [];
+                }
+                $objectAttachments[$v['id']][] = $v;
+            }
+        }
+
         $note = null;
         $replies = [];
         foreach ($notes as $v) {
@@ -786,6 +803,7 @@ class IndexController
                 preg_match('#\d{18}#', $v['raw_object_id'], $matches);
                 $v['snowflake_id'] =  $matches[0];
             }
+            $v['attachments'] = $objectAttachments[$v['id']] ?? [];
             if ($v['id'] == $activity['object_id']) {
                 $note = $v;
             } else {
@@ -814,10 +832,11 @@ class IndexController
             $v['title'] = $v['type']  == 1 ? $v['name'] . '喜欢' : $v['name'] . '转嘟';
         }
 
+        array_unshift($replies, $note);
         return $this->render($response, 'note', [
-            'note' => $note,
+            'notes' => $replies,
+            'note_id' => $note['id'],
             'interactions' => $interactions,
-            'replies' => $replies,
             'is_admin' => $this->isLoggedIn($request),
         ]);
     }
