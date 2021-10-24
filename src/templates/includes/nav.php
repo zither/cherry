@@ -1,4 +1,4 @@
-<div class="flex-auto flex flex-row header nav">
+<div class="flex-auto flex flex-row flex-wrap header nav">
     <div class="bold mr"><?=$this->lang('nav_admin')?></div>
     <div class="mr">
         <a href="/timeline"><?=$this->lang('nav_timeline')?></a>
