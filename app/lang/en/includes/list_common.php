@@ -9,6 +9,7 @@ return [
     'icon_reply' => 'Reply',
     'icon_like' => 'Like',
     'icon_announce' => 'Announce',
+    'menu_expand_thread' => 'Expand',
     'menu_delete_activity' => 'Delete',
     'menu_update_profile' => 'Update profile',
     'pagination_prev' => 'Prev',

@@ -739,7 +739,11 @@ class IndexController
         $db = $this->container->get(Medoo::class);
         $profile = $db->get('profiles', ['id', 'outbox'], ['id' => 1]);
         $outboxId = sprintf('%s/%s', $profile['outbox'], $snowflakeId);
-        $activity = $db->get('activities', ['id', 'object_id'], ['activity_id' => $outboxId]);
+        $activity = $db->get('activities', ['id', 'object_id'], [
+            'activity_id' => $outboxId,
+            'is_public' => 1,
+            'is_delete' => 0,
+        ]);
 
         if (empty($activity)) {
             throw new HttpNotFoundException($request);
@@ -777,6 +781,7 @@ class IndexController
                 'objects.parent_id' => $activity['object_id'],
                 'objects.origin_id' => $activity['object_id'],
             ],
+            'objects.is_public' => 1,
             'ORDER' => ['published' => 'ASC']
         ]);
 
@@ -888,6 +893,82 @@ class IndexController
             'note' => $object,
             'profile' => $profile,
             'at' => $at,
+            'is_admin' => $this->isLoggedIn($request),
+        ]);
+    }
+
+    public function showThread(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    {
+        $objectId = $args['object_id'];
+        $db = $this->container->get(Medoo::class);
+        $object = $db->get('objects', ['origin_id', 'parent_id'], ['id' => $objectId]);
+        if (empty($object)) {
+            throw new HttpNotFoundException($request, 'Object Not Found');
+        }
+        $rootObjectId = $object['origin_id'] ?: $objectId;
+        $notes = $db->select('objects', [
+            '[>]profiles' => ['profile_id' => 'id'],
+        ], [
+            'objects.id',
+            'objects.id(object_id)',
+            'objects.raw_object_id',
+            'objects.profile_id',
+            'objects.type',
+            'objects.content',
+            'objects.summary',
+            'objects.url',
+            'objects.likes',
+            'objects.replies',
+            'objects.shares',
+            'objects.published',
+            'objects.is_local',
+            'objects.is_public',
+            'objects.is_boosted',
+            'objects.is_liked',
+            'objects.is_sensitive',
+            'profiles.actor',
+            'profiles.name',
+            'profiles.preferred_name',
+            'profiles.url(profile_url)',
+            'profiles.avatar',
+            'profiles.account',
+        ], [
+            'OR' => [
+                'objects.id' => $rootObjectId,
+                'objects.parent_id' => $rootObjectId,
+                'objects.origin_id' => $rootObjectId,
+            ],
+            'ORDER' => ['published' => 'ASC']
+        ]);
+
+        $objectIds = [];
+        foreach ($notes as $v) {
+            $objectIds[] = $v['id'];
+        }
+        $objectAttachments = [];
+        if (!empty($objectIds)) {
+            $attachments = $db->select('attachments', '*', ['object_id' => $objectIds]);
+            foreach ($attachments as $v) {
+                if (!isset($objectAttachments[$v['id']])) {
+                    $objectAttachments[$v['id']] = [];
+                }
+                $objectAttachments[$v['id']][] = $v;
+            }
+        }
+
+        foreach ($notes as &$v) {
+            $v['date'] = Time::getLocalTime($v['published'], 'Y-m-d');
+            if ($v['is_local']) {
+                preg_match('#\d{18}#', $v['raw_object_id'], $matches);
+                $v['snowflake_id'] =  $matches[0];
+            }
+            $v['attachments'] = $objectAttachments[$v['id']] ?? [];
+        }
+
+        return $this->render($response, 'note', [
+            'notes' => $notes,
+            'note_id' => -1,
+            'interactions' => [],
             'is_admin' => $this->isLoggedIn($request),
         ]);
     }

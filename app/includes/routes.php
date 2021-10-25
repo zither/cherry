@@ -32,6 +32,7 @@ return function (App $app) {
         $group->post('/objects/{object_id}/like', IndexController::class . ':liked');
         $group->post('/objects/{object_id}/boost', IndexController::class . ':boosted');
         $group->get('/objects/{object_id}/reply', IndexController::class . ':replyTo');
+        $group->get('/web/threads/{object_id}', IndexController::class . ':showThread');
         $group->get('/web/following', IndexController::class . ':following');
         $group->get('/web/followers', IndexController::class . ':followers');
         $group->post('/following/{id}/delete', IndexController::class . ':deleteFollowing');

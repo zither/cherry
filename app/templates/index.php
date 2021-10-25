@@ -190,6 +190,9 @@
                                     </div>
                                     <?php if ($is_admin): ?>
                                     <div class="dropdown-menu flex-column">
+                                        <div class="item">
+                                            <a href="/web/threads/<?=$v['object_id']?>"><?=$this->lang('menu_expand_thread')?></a>
+                                        </div>
                                         <?php if ($v['is_local']):?>
                                             <div class="item">
                                                 <form action="/notes/<?=$v['snowflake_id']?>/delete" METHOD="POST">

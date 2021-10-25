@@ -9,6 +9,7 @@ return [
     'icon_reply' => '回复',
     'icon_like' => '喜欢',
     'icon_announce' => '转嘟',
+    'menu_expand_thread' => '展开嘟文',
     'menu_delete_activity' => '删除嘟文',
     'menu_update_profile' => '更新资料',
     'pagination_prev' => '上一页',
