@@ -742,7 +742,7 @@ class IndexController
         $activity = $db->get('activities', ['id', 'object_id'], [
             'activity_id' => $outboxId,
             'is_public' => 1,
-            'is_delete' => 0,
+            'is_deleted' => 0,
         ]);
 
         if (empty($activity)) {
