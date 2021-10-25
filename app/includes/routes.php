@@ -18,10 +18,6 @@ return function (App $app) {
         $group->post('/init', IndexController::class . ':init');
     })->add(InitialMiddleware::class);
 
-    /**
-     * @deprecated
-     */
-    $app->get('/note/{snowflake_id}', IndexController::class . ':note');
     $app->get('/notes/{snowflake_id}', IndexController::class . ':note');
     $app->get('/tags/{tag}', IndexController::class . ':tags');
 
