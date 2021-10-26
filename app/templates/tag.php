@@ -53,7 +53,7 @@
                         </div>
 
                         <?php if (!empty($v['attachments'])): ?>
-                            <div class="flex-grow flex-row mt">
+                            <div class="attachment-box flex-grow flex-row mt">
                                 <?php foreach ($v['attachments'] as $i => $image): ?>
                                     <div class="flex-grow-full">
                                         <?php if (strpos($image['media_type'], 'image') !== false): ?>
