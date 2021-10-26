@@ -793,10 +793,10 @@ class IndexController
         if (!empty($objectIds)) {
             $attachments = $db->select('attachments', '*', ['object_id' => $objectIds]);
             foreach ($attachments as $v) {
-                if (!isset($objectAttachments[$v['id']])) {
-                    $objectAttachments[$v['id']] = [];
+                if (!isset($objectAttachments[$v['object_id']])) {
+                    $objectAttachments[$v['object_id']] = [];
                 }
-                $objectAttachments[$v['id']][] = $v;
+                $objectAttachments[$v['object_id']][] = $v;
             }
         }
 
@@ -949,10 +949,10 @@ class IndexController
         if (!empty($objectIds)) {
             $attachments = $db->select('attachments', '*', ['object_id' => $objectIds]);
             foreach ($attachments as $v) {
-                if (!isset($objectAttachments[$v['id']])) {
-                    $objectAttachments[$v['id']] = [];
+                if (!isset($objectAttachments[$v['object_id']])) {
+                    $objectAttachments[$v['object_id']] = [];
                 }
-                $objectAttachments[$v['id']][] = $v;
+                $objectAttachments[$v['object_id']][] = $v;
             }
         }
 
