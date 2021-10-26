@@ -54,26 +54,29 @@
                         </div>
 
                         <?php if (!empty($v['attachments'])): ?>
-                        <div class="attachment-box flex-grow flex-row mt">
-                            <?php foreach ($v['attachments'] as $i => $image): ?>
-                            <div class="flex-grow-full">
-                                <?php if (strpos($image['media_type'], 'image') !== false): ?>
-                                    <a href="#release-target" class="JesterBox">
-                                        <div id="object-<?=$v['object_id']?>-<?=$i?>">
-                                            <img src="<?=$image['url']?>" alt="<?=$image['name']?>" referrerpolicy="no-referrer"/>
-                                        </div>
-                                    </a>
-                                    <a href="#object-<?=$v['object_id']?>-<?=$i?>">
-                                        <img class="attachment" src="<?=$image['url']?>" alt="<?=$image['name']?>"  referrerpolicy="no-referrer"/>
-                                    </a>
-                                <?php elseif (strpos($image['media_type'], 'video') !== false):?>
-                                    <video style="width:100%" controls>
-                                        <source src="<?=$image['url']?>" type="<?=$image['media_type']?>">
-                                    </video>
-                                <?php endif;?>
+                            <div class="attachment-box flex-grow flex-row mt">
+                                <?php foreach ($v['attachments'] as $i => $image): ?>
+                                    <div class="flex-grow-full">
+                                        <?php if (strpos($image['media_type'], 'image') !== false): ?>
+                                            <a href="#release-target" class="JesterBox">
+                                                <div id="object-<?=$v['object_id']?>-<?=$i?>">
+                                                    <img src="<?=$image['url']?>" alt="<?=$image['name']?>" referrerpolicy="no-referrer"/>
+                                                </div>
+                                            </a>
+                                            <a href="#object-<?=$v['object_id']?>-<?=$i?>">
+                                                <img class="attachment" src="<?=$image['url']?>" alt="<?=$image['name']?>"  referrerpolicy="no-referrer"/>
+                                            </a>
+                                        <?php elseif (strpos($image['media_type'], 'video') !== false):?>
+                                            <video style="width:100%" controls>
+                                                <source src="<?=$image['url']?>" type="<?=$image['media_type']?>">
+                                            </video>
+                                        <?php endif;?>
+                                    </div>
+                                    <?php if ($i + 1 < count($v['attachments'])):?>
+                                        <div class="flex-gap"></div>
+                                    <?php endif;?>
+                                <?php endforeach; ?>
                             </div>
-                            <?php endforeach; ?>
-                        </div>
                         <?php endif;?>
 
                         <div class="flex-grow flex-row others mt-1">

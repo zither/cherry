@@ -54,6 +54,9 @@
                                             </video>
                                         <?php endif;?>
                                     </div>
+                                    <?php if ($i + 1 < count($v['attachments'])):?>
+                                        <div class="flex-gap"></div>
+                                    <?php endif;?>
                                 <?php endforeach; ?>
                             </div>
                         <?php endif;?>

@@ -44,13 +44,14 @@ p {margin: 0;line-height: 1.3rem}
 .flex-grow-full{flex-grow: 1; flex-basis: 100%;}
 .flex-shrink{flex-shrink: 1; min-width: 0}
 .flex-align-center {align-items: center}
+.flex-gap {flex-grow: 1;flex-basis: 1em}
 .avatar {width:2.6em;height: 2.6em; border: 1px solid #555; background-color: lightgray;overflow: hidden;border-radius: .1em}
 .avatar-min {width:1.2em;height: 1.2em; border: 0 solid #555; background-color: lightgray;overflow: hidden;border-radius: .1em}
 .avatar-min-none {width:1.2em;height: 1.2em; overflow: hidden;background-color: lightgray;border-radius: .1em}
 .avatar-min img {width: 1.2em;height: 1.2em;padding: 0;margin: 0;border-radius: .1em}
 .avatar-none {width:2.6em;height: 2.6em;background-color: lightgray;border-radius: .1em;border:1px solid lightgray}
 .avatar img {width: 2.6em;height: 2.6em;padding: 0;margin: 0}
-.attachment {width: 100%;object-fit: cover;height: 10em}
+.attachment {width: 100%;object-fit: cover;height: 10em;border-radius: .3em}
 .bold {font-weight: bold}
 .tag {background: #ededed; color: #333; padding: .1em .5em;text-decoration: none;word-break: keep-all; border-radius: .1em}
 .tag-min {background: #f0f0f0; color: #333; text-decoration: none;word-break: keep-all}
