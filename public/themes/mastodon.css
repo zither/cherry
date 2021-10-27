@@ -26,6 +26,8 @@
     --fg-button: #ffffff;
     --fg-navigator: #3b4459;
     --fg-navigator-link: var(--fg-content-header-date);
+    --fg-error: red;
+    --fg-message: green;
 
     --bd-avatar: #4f4f4f;
     --bd-button: var(--bg-button);

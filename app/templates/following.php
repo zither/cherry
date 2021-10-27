@@ -17,10 +17,10 @@
     <div class="mt-1 container">
         <div>
             <?php foreach ($errors as $error):?>
-                <span class="color-red"><?=$this->lang('flash_error')?><?=$error?></span>
+                <span class="error"><?=$this->lang('flash_error')?><?=$error?></span>
             <?php endforeach;?>
             <?php foreach ($messages as $message):?>
-                <span class="color-green"><?=$this->lang('flash_message')?><?=$message?></span>
+                <span class="message"><?=$this->lang('flash_message')?><?=$message?></span>
             <?php endforeach;?>
         </div>
         <form action="/following" method="POST">

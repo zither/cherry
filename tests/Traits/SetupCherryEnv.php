@@ -67,6 +67,7 @@ trait SetupCherryEnv
             ['cat' => 'system', 'k' => 'private_key', 'v' => $privateKey],
             ['cat' => 'system', 'k' => 'login_retry', 'v' => 0],
             ['cat' => 'system', 'k' => 'deny_login_until', 'v' => 0],
+            ['cat' => 'system', 'k' => 'theme', 'v' => 'default'],
         ]);
         $profile = [
             'id' => 1,

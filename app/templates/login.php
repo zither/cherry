@@ -10,7 +10,7 @@
     <div class="mt-2 container">
         <div>
             <?php foreach ($errors as $error):?>
-                <span class="color-red mb"><?=$this->lang('flash_error')?><?=$error?></span>
+                <span class="error mb"><?=$this->lang('flash_error')?><?=$error?></span>
             <?php endforeach;?>
         </div>
         <form action="/login" method="POST">

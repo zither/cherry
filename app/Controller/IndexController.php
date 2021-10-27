@@ -19,6 +19,7 @@ use Slim\Interfaces\RouteCollectorInterface;
 use GuzzleHttp\Cookie\SetCookie;
 use Exception;
 use InvalidArgumentException;
+use DirectoryIterator;
 
 class IndexController
 {
@@ -1410,11 +1411,26 @@ class IndexController
         if (empty($profile)) {
             throw new HttpException($request, 'profile not found', 400);
         }
+
+        $settings = $this->getSettings();
+        $themes = ['default'];
+        $dir = new DirectoryIterator(ROOT . '/public/themes');
+        foreach ($dir as $file) {
+            if ($file->isDot()) {
+                continue;
+            }
+            if ($file->isFile() && $file->getExtension() === 'css') {
+                $themes[] = str_replace('.css', '', $file->getFilename());
+            }
+        }
+
         $flash = $this->flash($request);
         $data = [
             'errors' => $flash->get('error', []),
             'messages' => $flash->get('success', []),
-            'profile' => $profile
+            'profile' => $profile,
+            'settings' => $settings,
+            'themes' => $themes,
         ];
         return $this->render($response, 'settings/profile', $data);
     }
@@ -1455,6 +1471,16 @@ class IndexController
             $flash->error($e->getMessage());
         }
 
+        return $this->redirectBack($request, $response);
+    }
+
+    public function updatePreferences(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $theme = $this->getPostParam($request, 'theme', 'default');
+        $db = $this->container->get(Medoo::class);
+        $db->update('settings', ['v' => $theme], ['cat' => 'system', 'k' => 'theme']);
+        $flash = $this->flash($request);
+        $flash->success('Updated successfully');
         return $this->redirectBack($request, $response);
     }
 
@@ -1510,6 +1536,7 @@ class IndexController
                 ['cat' => 'system', 'k' => 'private_key', 'v' => $privateKey],
                 ['cat' => 'system', 'k' => 'login_retry', 'v' => 0],
                 ['cat' => 'system', 'k' => 'deny_login_until', 'v' => 0],
+                ['cat' => 'system', 'k' => 'theme', 'v' => 'default'],
             ]);
 
             $profile = [

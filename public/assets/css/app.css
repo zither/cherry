@@ -30,6 +30,8 @@
     --fg-button: var(--fg-cw-button);
     --fg-navigator: #cccccc;
     --fg-navigator-link: var(--fg-content-header-date);
+    --fg-error: red;
+    --fg-message: green;
 
     --bd-avatar: lightgray;
     --bd-button: #333333;
@@ -73,6 +75,12 @@ textarea {
     max-width: 35em;
     margin: .5em auto;
     padding: .5em .5em;
+}
+.error {
+    color: var(--fg-error);
+}
+.message {
+    color: var(--fg-message);
 }
 .description a {
    color: var(--fg-link);

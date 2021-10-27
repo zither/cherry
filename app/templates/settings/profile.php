@@ -2,14 +2,21 @@
 
 <div class="flex flex-column">
     <?php $this->insert('includes/nav')?>
-    <div class="mt-2 container">
-        <div>
+
+    <?php if (!empty($errors) || !empty($messages)):?>
+        <div class="mt-2">
             <?php foreach ($errors as $error):?>
-                <span class="color-red"><?=$this->lang('flash_error')?><?=$error?></span>
+                <span class="error"><?=$this->lang('flash_error')?><?=$error?></span>
             <?php endforeach;?>
             <?php foreach ($messages as $message):?>
-                <span class="color-green"><?=$this->lang('flash_message')?><?=$message?></span>
+                <span class="message"><?=$this->lang('flash_message')?><?=$message?></span>
             <?php endforeach;?>
+        </div>
+    <?php endif;?>
+
+    <div class="container mt">
+        <div class="bold">
+            <span><?=$this->lang('profile_title')?></span>
         </div>
         <form class="mt" action="/profiles/<?=$profile['id']?>/update" method="POST">
             <div class="mt label">
@@ -23,6 +30,23 @@
             <div class="mt label">
                 <label for="summary"><?=$this->lang('form_summary_label')?></label>
                 <textarea id="summary" name="summary" rows="5"><?=$profile['summary']?></textarea>
+            </div>
+            <button class="mt"><?=$this->lang('form_button')?></button>
+        </form>
+    </div>
+
+    <div class="container mt">
+        <div class="bold">
+            <span><?=$this->lang('preference_title')?></span>
+        </div>
+        <form class="mt" action="/web/preferences/update" method="POST">
+            <div class="mt label">
+                <label for="theme"><?=$this->lang('form_theme_label')?></label>
+                <select id="theme" name="theme">
+                    <?php foreach ($themes as $theme): ?>
+                        <option value="<?=$theme?>" <?=$theme === $settings['theme'] ? 'selected' : ''?>><?=$theme?></option>
+                    <?php endforeach;?>
+                </select>
             </div>
             <button class="mt"><?=$this->lang('form_button')?></button>
         </form>

@@ -6,6 +6,6 @@ return [
     'nav_notifications' => '通知',
     'nav_editor' => '嘟嘟',
     'nav_relations' => '关系',
-    'nav_settings' => '资料',
+    'nav_settings' => '设置',
     'nav_back' => '返回',
 ];

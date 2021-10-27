@@ -40,6 +40,7 @@ return function (App $app) {
         $group->post('/profiles/{profile_id}/fetch', IndexController::class . ':fetchProfile');
         $group->post('/profiles/{profile_id}/update', IndexController::class . ':updateProfile');
         $group->get('/settings/profile', IndexController::class . ':showProfileForm');
+        $group->post('/web/preferences/update', IndexController::class . ':updatePreferences');
     })->add(AuthMiddleware::class);
 
     // Server API Routes
