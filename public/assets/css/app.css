@@ -35,6 +35,7 @@
 
     --bd-avatar: lightgray;
     --bd-button: #333333;
+    --bd-line: #dddddd;
 }
 :root {
     box-sizing: border-box;
@@ -266,7 +267,7 @@ input.show-content:checked ~ div.object-content {
 .line {
     margin: .5em 0;
     padding: .5em 0;
-    border-bottom: 1px solid #dddddd;
+    border-bottom: 1px solid var(--bd-line);
 }
 .line:first-child {
     margin-top: 0;
