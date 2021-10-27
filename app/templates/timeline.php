@@ -106,7 +106,7 @@
                                         <?php endif;?>
                                     <?php else:?>
                                         <form class="interaction" method="POST" action="/objects/<?=$v['object_id']?>/boost">
-                                            <button class="inline-block <?=$v['is_boosted'] ? 'color-green' : 'color-purple' ?>" title="<?=$this->lang('icon_announce')?>">
+                                            <button class="inline-block <?=$v['is_boosted'] ? 'toggled' : '' ?>" title="<?=$this->lang('icon_announce')?>">
                                                 <i class="gg-path-outline"></i>
                                             </button>
                                             <?php if ($v['is_local']):?>
@@ -117,7 +117,7 @@
                                 </div>
                                 <div class="flex-grow-full">
                                     <form class="interaction" method="POST" action="/objects/<?=$v['object_id']?>/like">
-                                        <button class="inline-block <?=$v['is_liked'] ? 'color-green' : 'color-purple' ?>" title="<?=$this->lang('icon_like')?>">
+                                        <button class="inline-block <?=$v['is_liked'] ? 'toggled' : '' ?>" title="<?=$this->lang('icon_like')?>">
                                             <i class="gg-heart"></i>
                                         </button>
                                         <?php if ($v['is_local']):?>
