@@ -223,8 +223,7 @@ class IndexController
             'followers' => $followersCount,
         ];
 
-        $template = $this->container->get(Engine::class);
-        $view = $template->render('index', [
+        return $this->render($response, 'index', [
             'profile' => $profile,
             'blogs' => $blogs,
             'counts' => $counts,
@@ -233,8 +232,6 @@ class IndexController
             'prev' => $prevIndex,
             'next' => $nextIndex,
         ]);
-        $response->getBody()->write($view);
-        return $response;
     }
 
     public function timeline(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
@@ -410,14 +407,11 @@ class IndexController
             }
         }
 
-        $template = $this->container->get(Engine::class);
-        $view = $template->render('timeline', [
+        return $this->render($response, 'timeline', [
             'blogs' => $blogs,
             'prev' => empty($prevArgs['index']) ? null : http_build_query($prevArgs),
             'next' => empty($nextArgs['index']) ? null : http_build_query($nextArgs),
         ]);
-        $response->getBody()->write($view);
-        return $response;
     }
 
     public function login(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
