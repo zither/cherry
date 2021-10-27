@@ -12,6 +12,7 @@ use Cherry\Markdown;
 use Cherry\Helper\SignRequest;
 use Cherry\Helper\Time;
 use Cherry\Template\LangExtension;
+use Cherry\Template\ThemeExtension;
 use function DI\factory;
 
 if (!function_exists('short')) {
@@ -100,7 +101,9 @@ return function (App $app) {
         $engine = new Engine(ROOT . '/app/templates');
         $langExtension = new LangExtension();
         $langExtension->setLang(ROOT . '/app/lang', $lang);
-        $engine->loadExtension($langExtension);
+        $themeExtension = new ThemeExtension($container);
+        $themeExtension->setThemePath(ROOT . '/public/themes');
+        $engine->loadExtensions([$langExtension, $themeExtension]);
         return $engine;
     });
 
