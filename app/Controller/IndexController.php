@@ -1144,32 +1144,6 @@ class IndexController
         return $response->withStatus('302')->withHeader('location', $redirect);
     }
 
-    public function test(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
-    {
-        $helper = new SignRequest();
-        $signature = sprintf(
-            'keyId="%s",algorithm="rsa-sha256",headers="(request-target) host date digest content-type",signature="%s"',
-            'https://chokecherry.cc#main-key',
-            'sdfsfsfsfsffff'
-        );
-        $request = $request->withHeader('Signature', $signature);
-        $request = $request->withHeader('date', date('Y-m-d H:i:s'));
-        $request = $request->withHeader('digest', date('Y-m-d H:i:s'));
-        $request = $request->withHeader('content-type', 'text/html');
-
-        $data = '{"key":"https://o3o.ca/users/yue#main-key","signature":"AqhTapM1FiwZIjg8CqXSK2Xe67xP7BYt/89CQGTuFL/VZ1UGXWrbmvlHPv3iyW1g04oZIerQn2iWlYMPUR/kmwEApL5TrDoEYDmEFsXDI5lSC0TOgPuqrfRJNng6OLRgKwuEJTHUirqt1enoS+Dn1IKWHmSMAH9+emSjzBYZDHUQfhFPiBvoqhhLn2zVY0gR2qiCfne6VJYrN51gTrbzwmnMOQzty70PPM1C2hfSMfl5N5xL0U0ZZBvhiUzjdixoYvvrO+GndBYQThGGa4EFK3Z+TrtX90QUAb1Mj+eZlQQMQN15HdSgiKj/KhabXqSO1Q6lcEQCyYkLhUjDjDAagQ","algorithm":"rsa-sha256","data":"(request-target): post /inbox\nhost: chokecherry.cc\ndate: Sat, 20 Feb 2021 08:08:14 GMT\ndigest: SHA-256=a17hcVru6fQq1lXgLuROvJQdQfSVO2Xfcm5GdWiKzRA=\ncontent-type: application/activity+json"}';
-        $data = json_decode($data, true);
-
-        $settings = $this->container->make('settings');
-        $helper->withKey($settings['public_key'], $settings['private_key']);
-        $res = $helper->verifyHttpSignature($data['data'], $data['signature']);
-
-        $data =  json_encode($helper->getHttpSignatureDataFromRequest($request), JSON_UNESCAPED_SLASHES);
-        $response->getBody()->write($data);
-
-        return $response;
-    }
-
     public function followers(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $db = $this->container->get(Medoo::class);

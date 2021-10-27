@@ -42,8 +42,6 @@ return function (App $app) {
         $group->get('/settings/profile', IndexController::class . ':showProfileForm');
     })->add(AuthMiddleware::class);
 
-    $app->get('/test', IndexController::class . ':test');
-
     // Server API Routes
     $app->post('/inbox', ApiController::class . ':inbox');
     $app->group('', function (RouteCollectorProxy $group) {
