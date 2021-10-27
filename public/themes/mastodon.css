@@ -1,0 +1,32 @@
+:root{
+    --bg-page: #191B21;
+    --bg-container: #282C36;
+    --bg-blog-header: #202530;
+    --bg-counter: #282C36;
+    --bg-cw-button: #191B21;
+    --bg-dropdown-menu: #d9e1e8;
+    --bg-dropdown-menu-hover: #2B90D6;
+    --bg-content-image: #191B21;
+    --bg-button: #2b90d9;
+    --bg-navigator: #282C36;
+    --bg-avatar: #444b62;
+
+    --fg-page: #9BAEC7;
+    --fg-link: #9BAEC7;
+    --fg-blog-header: #7c85a3cf;
+    --fg-counter: #ffffff;
+    --fg-cw-button: #9BAEC7;
+    --fg-dropdown-menu: #282c37;
+    --fg-dropdown-menu-hover: #ffffff;
+    --fg-content: #ffffff;
+    --fg-content-header: #ffffff;
+    --fg-content-header-link: #9BAEC7;
+    --fg-content-header-date: #9BAEC7;
+    --fg-toggled: #CA8F02;
+    --fg-button: #ffffff;
+    --fg-navigator: #3b4459;
+    --fg-navigator-link: var(--fg-content-header-date);
+
+    --bd-avatar: #4f4f4f;
+    --bd-button: var(--bg-button);
+}

@@ -18,9 +18,9 @@
             <?=$profile['summary']?>
         </div>
         <div class="counts">
-            <a href="/" class="btn mr bg-color-purple color-white"><span><?=$this->lang('activity_count', $counts['objects'])?></span></a>
-            <a href="/" class="btn mr bg-color-purple color-white"><span><?=$this->lang('following_count', $counts['following'])?></span></a>
-            <a href="/" class="btn mr bg-color-purple color-white"><span><?=$this->lang('follower_count', $counts['followers'])?></span></a>
+            <a href="/" class="btn mr"><span><?=$this->lang('activity_count', $counts['objects'])?></span></a>
+            <a href="/" class="btn mr"><span><?=$this->lang('following_count', $counts['following'])?></span></a>
+            <a href="/" class="btn mr"><span><?=$this->lang('follower_count', $counts['followers'])?></span></a>
         </div>
     </div>
 
@@ -46,15 +46,15 @@
             <div class="flex-column blog">
                 <div class="flex-row">
                     <div class="flex-column flex-grow flex-shrink box">
-                        <div class="flex-grow flex-row">
+                        <div class="content-header flex-grow flex-row">
                             <?php if (!empty($v['avatar'])):?>
                                 <div class="flex-auto avatar-min mr"><img src="<?=$v['avatar']?>" referrerpolicy="no-referrer"></div>
                             <?php else:?>
                                 <div class="flex-auto avatar-min-none mr"></div>
                             <?php endif;?>
-                            <div class="flex-auto flex-shrink ellipse mr bold color-black"><?=$v['name'] ?: $v['preferred_name']?></div>
-                            <div class="flex-grow flex-shrink ellipse mr"><a class="color-black no-decoration" href="<?=$v['profile_url']?>"><?=$v['account']?></a></div>
-                            <div class="color-purple flex-grow ml text-right nowrap"><?=$v['date']?></div>
+                            <div class="content-header-name flex-auto flex-shrink ellipse mr bold"><?=$v['name'] ?: $v['preferred_name']?></div>
+                            <div class="content-header-account flex-grow flex-shrink ellipse mr"><a class="no-decoration" href="<?=$v['profile_url']?>"><?=$v['account']?></a></div>
+                            <div class="content-header-date flex-grow ml text-right nowrap"><?=$v['date']?></div>
                         </div>
                         <div class="flex-grow content mt-1">
                             <?php if (!$v['is_sensitive']): ?>
@@ -99,8 +99,8 @@
                             </div>
                         <?php endif;?>
 
-                        <div class="flex-grow flex-row others mt-1">
-                            <div class="flex-grow flex-row ml color-purple">
+                        <div class="content-others flex-grow flex-row mt-1">
+                            <div class="flex-grow flex-row ml">
                                 <div class="flex-grow-full">
                                     <a href="<?=$v['url']?>" title="<?=$this->lang('icon_link')?>">
                                         <div class="inline-block">
@@ -140,7 +140,7 @@
                                             <?php endif;?>
                                         <?php else:?>
                                             <form class="interaction" method="POST" action="/objects/<?=$v['object_id']?>/boost">
-                                                <button class="inline-block <?=$v['is_boosted'] ? 'color-green' : 'color-purple' ?>" title="<?=$this->lang('icon_announce')?>">
+                                                <button class="inline-block <?=$v['is_boosted'] ? 'toggled' : '' ?>" title="<?=$this->lang('icon_announce')?>">
                                                     <i class="gg-path-outline"></i>
                                                 </button>
                                                 <?php if ($v['is_local']):?>
@@ -152,14 +152,14 @@
                                 <?php else:?>
                                     <div class="flex-grow-full">
                                         <?php if (!$v['is_public']):?>
-                                            <div class="inline-block <?=$v['is_boosted'] ? 'color-green' : 'color-purple' ?>">
+                                            <div class="inline-block <?=$v['is_boosted'] ? 'toggled' : '' ?>">
                                                 <i class="gg-path-outline"></i>
                                             </div>
                                             <?php if ($v['is_local']):?>
                                                 <span class="ml"><?=$v['shares']?></span>
                                             <?php endif;?>
                                         <?php else: ?>
-                                            <div class="inline-block <?=$v['is_boosted'] ? 'color-green' : 'color-purple' ?>" title="<?=$this->lang('icon_announce')?>">
+                                            <div class="inline-block <?=$v['is_boosted'] ? 'toggled' : '' ?>" title="<?=$this->lang('icon_announce')?>">
                                                 <i class="gg-path-outline"></i>
                                             </div>
                                             <?php if ($v['is_local']):?>
@@ -171,7 +171,7 @@
                                 <?php if ($is_admin):?>
                                     <div class="flex-grow-full">
                                         <form class="interaction" method="POST" action="/objects/<?=$v['object_id']?>/like">
-                                            <button class="inline-block <?=$v['is_liked'] ? 'color-green' : 'color-purple' ?>" title="<?=$this->lang('icon_like')?>">
+                                            <button class="inline-block <?=$v['is_liked'] ? 'toggled' : '' ?>" title="<?=$this->lang('icon_like')?>">
                                                 <i class="gg-heart"></i>
                                             </button>
                                             <?php if ($v['is_local']):?>
@@ -181,7 +181,7 @@
                                     </div>
                                 <?php else:?>
                                     <div class="flex-grow-full">
-                                        <div class="inline-block <?=$v['is_liked'] ? 'color-green' : 'color-purple' ?>" title="<?=$this->lang('icon_like')?>">
+                                        <div class="inline-block <?=$v['is_liked'] ? 'toggled' : '' ?>" title="<?=$this->lang('icon_like')?>">
                                             <i class="gg-heart"></i>
                                         </div>
                                         <?php if ($v['is_local']):?>
@@ -225,16 +225,16 @@
     <div class="flex-row mt-1">
         <div class="flex-grow-full text-center navigator mr">
             <?php if ($prev):?>
-                <a class="color-purple no-decoration" href="/?index=<?=$prev?>"><?=$this->lang('pagination_prev')?></a>
+                <a class="no-decoration" href="/?index=<?=$prev?>"><?=$this->lang('pagination_prev')?></a>
             <?php else: ?>
-                <span class="color-gray"><?=$this->lang('pagination_prev')?></span>
+                <span class=""><?=$this->lang('pagination_prev')?></span>
             <?php endif;?>
         </div>
         <div class="flex-grow-full text-center navigator ml">
             <?php if ($next):?>
-                <a class="color-purple no-decoration" href="/?index=<?=$next?>"><?=$this->lang('pagination_next')?></a>
+                <a class="no-decoration" href="/?index=<?=$next?>"><?=$this->lang('pagination_next')?></a>
             <?php else: ?>
-                <span class="color-gray"><?=$this->lang('pagination_next')?></span>
+                <span class=""><?=$this->lang('pagination_next')?></span>
             <?php endif;?>
         </div>
     </div>

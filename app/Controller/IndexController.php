@@ -49,7 +49,7 @@ class IndexController
             'summary',
         ], ['id' => 1]);
 
-        $pageSize = 10;
+        $pageSize = 2;
         $index = $this->getQueryParam($request, 'index', null);
 
         $defaultConditions = [

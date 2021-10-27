@@ -6,17 +6,15 @@
             <div class="flex-column blog <?=$v['object_id'] == $note_id ? '' : 'mt-1'?>">
                 <div class="flex-row">
                     <div class="flex-column flex-grow flex-shrink box">
-                        <div class="flex-grow flex-row">
+                        <div class="content-header flex-grow flex-row">
                             <?php if (!empty($v['avatar'])):?>
                                 <div class="flex-auto avatar-min mr"><img src="<?=$v['avatar']?>" referrerpolicy="no-referrer"></div>
                             <?php else:?>
                                 <div class="flex-auto avatar-min-none mr"></div>
                             <?php endif;?>
-                            <div class="flex-auto flex-shrink ellipse mr bold color-black">
-                                <a class="color-black no-decoration" href="/timeline?pid=<?=$v['profile_id']?>"><?=$v['name'] ?: $v['preferred_name']?></a>
-                            </div>
-                            <div class="flex-grow flex-shrink ellipse mr"><a class="color-black no-decoration" href="<?=$v['profile_url']?>"><?=$v['account']?></a></div>
-                            <div class="color-purple flex-grow ml text-right nowrap"><?=$v['date']?></div>
+                            <div class="content-header-name flex-auto flex-shrink ellipse mr bold"><?=$v['name'] ?: $v['preferred_name']?></div>
+                            <div class="content-header-account flex-grow flex-shrink ellipse mr"><a class="no-decoration" href="<?=$v['profile_url']?>"><?=$v['account']?></a></div>
+                            <div class="content-header-date flex-grow ml text-right nowrap"><?=$v['date']?></div>
                         </div>
                         <div class="flex-grow content mt-1">
                             <?php if (!$v['is_sensitive']): ?>
@@ -61,7 +59,7 @@
                             </div>
                         <?php endif;?>
 
-                        <div class="flex-grow flex-row others mt-1">
+                        <div class="content-others flex-grow flex-row mt-1">
                             <div class="flex-grow flex-row ml color-purple">
                                 <div class="flex-grow-full">
                                     <a href="<?=$v['url']?>" title="<?=$this->lang('icon_link')?>">

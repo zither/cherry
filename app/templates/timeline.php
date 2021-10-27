@@ -24,17 +24,15 @@
             <div class="flex-column blog">
                 <div class="flex-row">
                     <div class="flex-column flex-grow flex-shrink box">
-                        <div class="flex-grow flex-row">
+                        <div class="content-header flex-grow flex-row">
                             <?php if (!empty($v['avatar'])):?>
                                 <div class="flex-auto avatar-min mr"><img src="<?=$v['avatar']?>" referrerpolicy="no-referrer"></div>
                             <?php else:?>
                                 <div class="flex-auto avatar-min-none mr"></div>
                             <?php endif;?>
-                            <div class="flex-auto flex-shrink ellipse mr bold color-black">
-                                <a class="color-black no-decoration" href="/timeline?pid=<?=$v['profile_id']?>"><?=$v['name'] ?: $v['preferred_name']?></a>
-                            </div>
-                            <div class="flex-grow flex-shrink ellipse mr"><a class="color-black no-decoration" href="<?=$v['profile_url']?>"><?=$v['account']?></a></div>
-                            <div class="color-purple flex-grow ml text-right nowrap"><?=$v['date']?></div>
+                            <div class="content-header-name flex-auto flex-shrink ellipse mr bold"><?=$v['name'] ?: $v['preferred_name']?></div>
+                            <div class="content-header-account flex-grow flex-shrink ellipse mr"><a class="no-decoration" href="<?=$v['profile_url']?>"><?=$v['account']?></a></div>
+                            <div class="content-header-date flex-grow ml text-right nowrap"><?=$v['date']?></div>
                         </div>
                         <div class="flex-grow content mt-1">
                             <?php if (!$v['is_sensitive']): ?>
@@ -79,8 +77,8 @@
                             </div>
                         <?php endif;?>
 
-                        <div class="flex-grow flex-row others mt-1">
-                            <div class="flex-grow flex-row ml color-purple">
+                        <div class="content-others flex-grow flex-row  mt-1">
+                            <div class="flex-grow flex-row ml">
                                 <div class="flex-grow-full">
                                     <a href="<?=$v['url']?>" title="<?=$this->lang('icon_link')?>">
                                         <div class="inline-block">
@@ -100,7 +98,7 @@
                                 </div>
                                 <div class="flex-grow-full">
                                     <?php if (!$v['is_public']):?>
-                                        <div class="inline-block color-gray">
+                                        <div class="inline-block">
                                             <i class="gg-path-outline"></i>
                                         </div>
                                         <?php if ($v['is_local']):?>
@@ -149,20 +147,23 @@
             </div>
         <?php endforeach;?>
     </div>
+
+    <?php if ($prev || $next): ?>
     <div class="flex-row mt-1">
-        <div class="flex-grow-full text-center navigator mr">
+        <div class="navigator  flex-grow-full text-center mr">
             <?php if ($prev):?>
                 <a class="color-purple no-decoration" href="/timeline?<?=$prev?>"><?=$this->lang('pagination_prev')?></a>
             <?php else: ?>
-                <span class="color-gray"><?=$this->lang('pagination_prev')?></span>
+                <span class=""><?=$this->lang('pagination_prev')?></span>
             <?php endif;?>
         </div>
         <div class="flex-grow-full text-center navigator ml">
             <?php if ($next):?>
                 <a class="color-purple no-decoration" href="/timeline?<?=$next?>"><?=$this->lang('pagination_next')?></a>
             <?php else: ?>
-                <span class="color-gray"><?=$this->lang('pagination_next')?></span>
+                <span class=""><?=$this->lang('pagination_next')?></span>
             <?php endif;?>
         </div>
     </div>
+    <?php endif;?>
 </div>

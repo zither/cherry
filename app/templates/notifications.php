@@ -25,7 +25,7 @@
                         </div>
                     <?php else: ?>
                         <div><?=$this->lang('follow_success', $v['name'])?></div>
-                        <div><a class="color-black" href="<?=$v['url']?>"><?=$v['url']?></a></div>
+                        <div><a class="link" href="<?=$v['url']?>"><?=$v['url']?></a></div>
                     <?php endif;?>
                 <?php endif; ?>
             </div>
