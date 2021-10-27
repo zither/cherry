@@ -48,6 +48,9 @@ html, body{
 html {
     background-color: var(--bg-page);
 }
+a {
+    color: var(--fg-link);
+}
 h1 {
     font-size: 1.2rem;
     display: inline-block;

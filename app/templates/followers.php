@@ -27,10 +27,10 @@
                     <?php endif;?>
                     <div class="flex-grow flex-column">
                         <div>
-                            <a class="color-black no-decoration" href="/timeline?pid=<?=$v['profile_id']?>"><?=$v['name'] ?: $v['preferred_name']?></a>
+                            <a class="no-decoration" href="/timeline?pid=<?=$v['profile_id']?>"><?=$v['name'] ?: $v['preferred_name']?></a>
                         </div>
                         <div>
-                            <a class="color-purple no-decoration" href="<?=$v['url']?>" target="_blank">
+                            <a class="no-decoration" href="<?=$v['url']?>" target="_blank">
                                 @<?=$v['account']?>
                             </a>
                         </div>
