@@ -9,6 +9,5 @@ return [
         'password' => 'password',
     ],
     'default_time_zone' => 'UTC',
-    'language' => 'en',
     'debug' => true,
 ];

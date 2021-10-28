@@ -1420,10 +1420,19 @@ class IndexController
                 continue;
             }
             if ($file->isFile() && $file->getExtension() === 'css') {
-                $themes[] = str_replace('.css', '', $file->getFilename());
+                $themes[] = $file->getBasename('.css');
             }
         }
-
+        $languages = [];
+        $dir = new DirectoryIterator(ROOT . '/app/lang');
+        foreach ($dir as $file) {
+            if ($file->isDot()) {
+                continue;
+            }
+            if ($file->isDir()) {
+                $languages[] = $file->getFilename();
+            }
+        }
         $flash = $this->flash($request);
         $data = [
             'errors' => $flash->get('error', []),
@@ -1431,6 +1440,7 @@ class IndexController
             'profile' => $profile,
             'settings' => $settings,
             'themes' => $themes,
+            'languages' => $languages,
         ];
         return $this->render($response, 'settings/profile', $data);
     }
@@ -1476,11 +1486,43 @@ class IndexController
 
     public function updatePreferences(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $theme = $this->getPostParam($request, 'theme', 'default');
-        $db = $this->container->get(Medoo::class);
-        $db->update('settings', ['v' => $theme], ['cat' => 'system', 'k' => 'theme']);
+        $preferences = [];
+        $preferences['theme'] = $this->getPostParam($request, 'theme', 'default');
+        $preferences['language'] = $this->getPostParam($request, 'language', 'en');
+
+        $keys = ['theme', 'language'];
+        $settings = $this->container->make('settings', ['keys' => $keys]);
+        $updated = [];
+        $updatedKeys = [];
+        $cases = '';
+        foreach ($settings as $k => $v) {
+            if (isset($preferences[$k]) && $preferences[$k] !== $v) {
+                $updated[':' . $k] = $preferences[$k];
+                $updatedKeys[] = $k;
+                $cases .= sprintf("WHEN `k` = '%s' THEN :%s ", $k, $k);
+            }
+        }
         $flash = $this->flash($request);
-        $flash->success('Updated successfully');
+        if (!empty($updated)) {
+            $db = $this->container->get(Medoo::class);
+            $kStrings = '';
+            foreach ($updatedKeys as $key) {
+                $kStrings .= "'{$key}',";
+            }
+            $kStrings = rtrim($kStrings, ',');
+            $sql = <<<SQL
+UPDATE `settings` SET `v` = CASE
+    %s
+    END
+WHERE `cat` = 'system' AND `k` IN (%s);
+SQL;
+            $sql = sprintf($sql, $cases, $kStrings);
+            $statement = $db->pdo->prepare($sql);
+            $statement->execute($updated);
+            $flash->success('Updated successfully');
+        } else {
+            $flash->success('Nothing changed');
+        }
         return $this->redirectBack($request, $response);
     }
 
@@ -1537,6 +1579,7 @@ class IndexController
                 ['cat' => 'system', 'k' => 'login_retry', 'v' => 0],
                 ['cat' => 'system', 'k' => 'deny_login_until', 'v' => 0],
                 ['cat' => 'system', 'k' => 'theme', 'v' => 'default'],
+                ['cat' => 'system', 'k' => 'language', 'v' => 'en'],
             ]);
 
             $profile = [

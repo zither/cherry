@@ -12,4 +12,5 @@ return  [
     'form_button' => 'Save',
     'preference_title' => 'Preferences',
     'form_theme_label' => 'Theme',
+    'form_language_label' => 'Language',
 ];

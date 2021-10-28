@@ -41,6 +41,14 @@
         </div>
         <form class="mt" action="/web/preferences/update" method="POST">
             <div class="mt label">
+                <label for="language"><?=$this->lang('form_language_label')?></label>
+                <select id="language" name="language">
+                    <?php foreach ($languages as $language): ?>
+                        <option value="<?=$language?>" <?=$language === $settings['language'] ? 'selected' : ''?>><?=$language?></option>
+                    <?php endforeach;?>
+                </select>
+            </div>
+            <div class="mt label">
                 <label for="theme"><?=$this->lang('form_theme_label')?></label>
                 <select id="theme" name="theme">
                     <?php foreach ($themes as $theme): ?>

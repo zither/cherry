@@ -12,4 +12,5 @@ return  [
     'form_button' => '保存更改',
     'preference_title' => '首选项',
     'form_theme_label' => '主题',
+    'form_language_label' => '语言',
 ];

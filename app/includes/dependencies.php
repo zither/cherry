@@ -96,8 +96,8 @@ return function (App $app) {
 
     // Template
     $container->set(Engine::class, function(ContainerInterface $container) {
-        $configs = $container->get('configs');
-        $lang = $configs['language'] ?? 'en';
+        $settings = $container->make('settings', ['keys' => ['language']]);
+        $lang = $settings['language'] ?? 'en';
         $engine = new Engine(ROOT . '/app/templates');
         $langExtension = new LangExtension();
         $langExtension->setLang(ROOT . '/app/lang', $lang);
