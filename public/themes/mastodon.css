@@ -23,6 +23,7 @@
     --fg-content-header-link: #9BAEC7;
     --fg-content-header-date: #9BAEC7;
     --fg-toggled: #CA8F02;
+    --fg-disabled: var(--fg-navigator);
     --fg-button: #ffffff;
     --fg-navigator: #3b4459;
     --fg-navigator-link: var(--fg-content-header-date);

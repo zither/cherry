@@ -27,6 +27,7 @@
     --fg-content-header-link: var(--fg-content-header);
     --fg-content-header-date: #6b7394;
     --fg-toggled: green;
+    --fg-disabled: lightgray;
     --fg-button: var(--fg-cw-button);
     --fg-navigator: #cccccc;
     --fg-navigator-link: var(--fg-content-header-date);
@@ -218,6 +219,9 @@ textarea {
 }
 .content-others .toggled {
     color: var(--fg-toggled);
+}
+.content-others .disabled {
+    color: var(--fg-disabled);
 }
 .content-others, .content-others a, .content-others button {
     color: var(--fg-content-header-date);

@@ -99,7 +99,7 @@
                                 <div class="flex-grow-full">
                                     <?php if (!$v['is_public']):?>
                                         <div class="inline-block">
-                                            <i class="gg-path-outline"></i>
+                                            <i class="gg-path-outline disabled"></i>
                                         </div>
                                         <?php if ($v['is_local']):?>
                                             <span class="ml"><?=$v['shares']?></span>
