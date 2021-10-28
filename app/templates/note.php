@@ -92,7 +92,7 @@
                                 <?php if ($is_admin): ?>
                                     <div class="flex-grow-full">
                                         <?php if (!$v['is_public']):?>
-                                            <div class="inline-block <?=$v['is_boosted'] ? 'toggled' : '' ?>">
+                                            <div class="inline-block disabled">
                                                 <i class="gg-path-outline"></i>
                                             </div>
                                             <?php if ($v['is_local']):?>
