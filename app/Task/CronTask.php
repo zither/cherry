@@ -1,6 +1,7 @@
 <?php
 namespace Cherry\Task;
 
+use Exception;
 use adrianfalleiro\FailedTaskException;
 use adrianfalleiro\RetryException;
 use adrianfalleiro\TaskInterface;
@@ -74,6 +75,8 @@ class CronTask implements TaskInterface
                 } else {
                     throw new FailedTaskException($e->getMessage());
                 }
+            } catch (Exception $e) {
+                throw new FailedTaskException($e->getMessage());
             }
             echo "Run task {$task['task']} successfully!\n";
         } catch (FailedTaskException $e) {
