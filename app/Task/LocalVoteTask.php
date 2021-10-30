@@ -93,6 +93,10 @@ class LocalVoteTask implements TaskInterface
                 'params' => json_encode(['activity_id' => $activityId], JSON_UNESCAPED_SLASHES),
                 'priority' => 140,
             ]);
+            $db->update('poll_choices', [
+                'activity_id' => $activityId,
+                'object_id' => $objectId
+            ], ['id' => $choiceId]);
 
             $db->pdo->commit();
         } catch (\PDOException $e) {
