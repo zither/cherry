@@ -2,6 +2,7 @@
 
 namespace Cherry\Middleware;
 
+use Cherry\Session\SessionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -27,7 +28,11 @@ class LockSiteMiddleware implements MiddlewareInterface
         $keys = ['lock_site'];
         $settings = $this->container->make('settings', ['keys' => $keys]);
         if ($settings['lock_site'] ?? false) {
-            return new Response('302', ['location' => '/login']);
+            $session = $this->container->make(SessionInterface::class, ['request' => $request]);
+            $loggedIn = $session->isStarted() && $session['is_admin'];
+            if (!$loggedIn) {
+                return new Response('302', ['location' => '/login']);
+            }
         }
         return $requestHandler->handle($request);
     }

@@ -2,10 +2,10 @@
 
 namespace Cherry\Test\Middleware;
 
-use Cherry\Test\PSR7ObjectProvider;
-use Cherry\Test\Traits\SetupCherryEnv;
 use Medoo\Medoo;
-use PHPUnit\Framework\TestCase;
+use Cherry\Test\PSR7ObjectProvider;
+use Cherry\Test\TestCase;
+use Cherry\Test\Traits\SetupCherryEnv;
 
 class LockSiteMiddlewareTest extends TestCase
 {
@@ -33,6 +33,7 @@ class LockSiteMiddlewareTest extends TestCase
     {
         $db = $this->container->get(Medoo::class);
         $db->update('settings', ['v' => 1], ['k' => 'lock_site']);
+
         $provider = new PSR7ObjectProvider();
         $request = $provider->createServerRequest('/', 'GET');
         $response = $this->app->handle($request);
@@ -48,5 +49,10 @@ class LockSiteMiddlewareTest extends TestCase
         $response = $this->app->handle($request);
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertContains('/login', $response->getHeader('Location'));
+
+        $request = $provider->createServerRequest('/', 'GET');
+        $this->signIn($request);
+        $response = $this->app->handle($request);
+        $this->assertEquals(200, $response->getStatusCode());
     }
 }
