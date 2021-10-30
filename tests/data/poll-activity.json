@@ -1,0 +1,85 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/activitystreams",
+    {
+      "ostatus": "http://ostatus.org#",
+      "atomUri": "ostatus:atomUri",
+      "inReplyToAtomUri": "ostatus:inReplyToAtomUri",
+      "conversation": "ostatus:conversation",
+      "sensitive": "as:sensitive",
+      "toot": "http://joinmastodon.org/ns#",
+      "votersCount": "toot:votersCount"
+    }
+  ],
+  "id": "https://o3o.ca/users/yue/statuses/107188482259717296/activity",
+  "type": "Create",
+  "actor": "https://o3o.ca/users/yue",
+  "published": "2021-10-30T04:00:40Z",
+  "to": [
+    "https://o3o.ca/users/yue/followers"
+  ],
+  "cc": [
+    "https://www.w3.org/ns/activitystreams#Public"
+  ],
+  "object": {
+    "id": "https://o3o.ca/users/yue/statuses/107188482259717296",
+    "type": "Question",
+    "summary": null,
+    "inReplyTo": null,
+    "published": "2021-10-30T04:00:40Z",
+    "url": "https://o3o.ca/@yue/107188482259717296",
+    "attributedTo": "https://o3o.ca/users/yue",
+    "to": [
+      "https://o3o.ca/users/yue/followers"
+    ],
+    "cc": [
+      "https://www.w3.org/ns/activitystreams#Public"
+    ],
+    "sensitive": false,
+    "atomUri": "https://o3o.ca/users/yue/statuses/107188482259717296",
+    "inReplyToAtomUri": null,
+    "conversation": "tag:o3o.ca,2021-10-30:objectId=16174463:objectType=Conversation",
+    "content": "\u003cp\u003e投票结束测试，稍后自动删除。\u003c/p\u003e",
+    "contentMap": {
+      "zh": "\u003cp\u003e投票结束测试，稍后自动删除。\u003c/p\u003e"
+    },
+    "endTime": "2021-10-30T04:05:40Z",
+    "votersCount": 0,
+    "attachment": [],
+    "tag": [],
+    "replies": {
+      "id": "https://o3o.ca/users/yue/statuses/107188482259717296/replies",
+      "type": "Collection",
+      "first": {
+        "type": "CollectionPage",
+        "next": "https://o3o.ca/users/yue/statuses/107188482259717296/replies?only_other_accounts=true\u0026page=true",
+        "partOf": "https://o3o.ca/users/yue/statuses/107188482259717296/replies",
+        "items": []
+      }
+    },
+    "oneOf": [
+      {
+        "type": "Note",
+        "name": "选项1",
+        "replies": {
+          "type": "Collection",
+          "totalItems": 0
+        }
+      },
+      {
+        "type": "Note",
+        "name": "选项2",
+        "replies": {
+          "type": "Collection",
+          "totalItems": 0
+        }
+      }
+    ]
+  },
+  "signature": {
+    "type": "RsaSignature2017",
+    "creator": "https://o3o.ca/users/yue#main-key",
+    "created": "2021-10-30T04:00:40Z",
+    "signatureValue": "je2SHxaxcFwVMiC8qJ6WiMTQod/gF25FTuJ6U8tCe3hg64DwCRtZyQjzz4UaDsiD4xp5zTXLMoLL5IlhC94+/hlUYvcxAeFx+OrE1KGyi7+wusnoWYVlG5OYvy+0C7D3ux0BLXpG4xnb66tQvgA7DE4mwn5infdQLuWyrlD4PgNxiUgSVxGRn17RSI2zHGiGXR+N/BHPrQ+YLowlENNUz4YkGulTkq9UkhSrSBHRsvf9DeIiMP+k3Vp6SD+ZJ+zUt09jfaq53vhnKGOqjei4L48g/nocpPUAgfWlNYN18S6KZRords8EomlVHq9idU3sGhVhTAJTonInm8lPu96qcA=="
+  }
+}

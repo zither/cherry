@@ -4,6 +4,7 @@ namespace Cherry\Task;
 
 use adrianfalleiro\FailedTaskException;
 use adrianfalleiro\TaskInterface;
+use Cherry\ActivityPub\ActivityPub;
 use Cherry\ActivityPub\ObjectType;
 use Cherry\Helper\Time;
 use Psr\Container\ContainerInterface;
@@ -43,6 +44,26 @@ class CreateRequestTask implements TaskInterface
             }
         }
 
+        $poll = [];
+        if ($object->type === ActivityPub::OBJECT_TYPE_QUESTION) {
+            $multiple = isset($rawActivity['object']['anyOf']) ? true : false;
+            $choicesKey = $multiple ? 'anyOf' : 'oneOf';
+            $choices = [];
+            foreach ($rawActivity['object'][$choicesKey] as $v) {
+                $choices[] = [
+                    'type' => $v['type'],
+                    'name' => $v['name'],
+                    'count' => $v['replies']['totalItems'] ?? 0,
+                ];
+            }
+            $poll = [
+                'choices' => json_encode($choices, JSON_UNESCAPED_UNICODE),
+                'end_time' => Time::UTCToLocalTime($rawActivity['object']['endTime']),
+                'voters_count' => $rawActivity['object']['votersCount'] ?? 0,
+                'multiple' => $multiple,
+            ];
+        }
+
         try {
             $db->pdo->beginTransaction();
             $tags = [];
@@ -78,6 +99,11 @@ class CreateRequestTask implements TaskInterface
                 'is_sensitive' => isset($object->sensitive) && $object->sensitive,
             ]);
             $objectId = $db->id();
+
+            if (!empty($poll)) {
+                $poll['object_id'] = $objectId;
+                $db->insert('polls', $poll);
+            }
 
             if (!empty($tags)) {
                 $hashTags = [];
