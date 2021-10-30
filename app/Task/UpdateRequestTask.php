@@ -29,7 +29,7 @@ class UpdateRequestTask implements TaskInterface
 
         if ($object['type'] === ActivityPub::OBJECT_TYPE_QUESTION) {
             $db->insert('tasks', [
-                'RemoteUpdatePollTask',
+                'task' => 'RemoteUpdatePollTask',
                 'params' => json_encode($args, JSON_UNESCAPED_SLASHES),
                 'priority' => 140,
             ]);

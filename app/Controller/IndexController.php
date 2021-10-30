@@ -1194,7 +1194,7 @@ class IndexController
             $db->insert('poll_choices', $choice);
             $choiceId = $db->id();
             $db->insert('tasks', [
-                'LocalVoteTask',
+                'task' => 'LocalVoteTask',
                 'params' => json_encode(['choice_id' => $choiceId], JSON_UNESCAPED_SLASHES),
                 'priority' => 140,
             ]);
