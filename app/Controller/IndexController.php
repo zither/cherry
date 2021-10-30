@@ -367,22 +367,24 @@ class IndexController
             foreach ($polls as $p) {
                 $ids[] = $p['id'];
             }
-            $myChoices = $db->select('poll_choices', '*', ['poll_id' => $ids, 'profile_id' => 1]);
-            foreach ($polls as &$pd) {
-                $pd['choices'] = json_decode($pd['choices'], true);
-                foreach ($pd['choices'] as &$pc) {
-                    $pc['selected'] = false;
-                    $pc['percent'] = $pd['voters_count'] > 0 ? $pc['count']/$pd['voters_count'] : 0;
-                    foreach ($myChoices as $c) {
-                        if ($c['poll_id'] !== $pd['id']) {
-                            continue;
-                        }
-                        if ($pc['name'] === $c['choice']) {
-                            $pc['selected'] = true;
+            if (!empty($ids)) {
+                $myChoices = $db->select('poll_choices', '*', ['poll_id' => $ids, 'profile_id' => 1]);
+                foreach ($polls as &$pd) {
+                    $pd['choices'] = json_decode($pd['choices'], true);
+                    foreach ($pd['choices'] as &$pc) {
+                        $pc['selected'] = false;
+                        $pc['percent'] = $pd['voters_count'] > 0 ? $pc['count'] / $pd['voters_count'] : 0;
+                        foreach ($myChoices as $c) {
+                            if ($c['poll_id'] !== $pd['id']) {
+                                continue;
+                            }
+                            if ($pc['name'] === $c['choice']) {
+                                $pc['selected'] = true;
+                            }
                         }
                     }
+                    $pollMap[$pd['object_id']] = $pd;
                 }
-                $pollMap[$pd['object_id']] = $pd;
             }
         }
 
