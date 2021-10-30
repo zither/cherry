@@ -1486,12 +1486,16 @@ class IndexController
 
     public function updatePreferences(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
+        $keys = [
+            'lock_site' => 0,
+            'theme' => 'default',
+            'language' => 'en',
+        ];
         $preferences = [];
-        $preferences['theme'] = $this->getPostParam($request, 'theme', 'default');
-        $preferences['language'] = $this->getPostParam($request, 'language', 'en');
-
-        $keys = ['theme', 'language'];
-        $settings = $this->container->make('settings', ['keys' => $keys]);
+        foreach ($keys as $k => $v) {
+            $preferences[$k] = $this->getPostParam($request, $k, $v);
+        }
+        $settings = $this->container->make('settings', ['keys' => array_keys($keys)]);
         $updated = [];
         $updatedKeys = [];
         $cases = '';
@@ -1580,6 +1584,7 @@ SQL;
                 ['cat' => 'system', 'k' => 'deny_login_until', 'v' => 0],
                 ['cat' => 'system', 'k' => 'theme', 'v' => 'default'],
                 ['cat' => 'system', 'k' => 'language', 'v' => 'en'],
+                ['cat' => 'system', 'k' => 'lock_site', 'v' => 0],
             ]);
 
             $profile = [

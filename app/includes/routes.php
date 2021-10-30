@@ -6,20 +6,24 @@ use Cherry\Controller\ApiController;
 use Cherry\Middleware\AuthMiddleware;
 use Cherry\Middleware\AcceptHeaderMiddleware;
 use Cherry\Middleware\InitialMiddleware;
+use Cherry\Middleware\LockSiteMiddleware;
 
 return function (App $app) {
     // Web Routes
-    $app->get('/', IndexController::class . ':home');
     $app->get('/login', IndexController::class . ':login');
     $app->post('/login', IndexController::class . ':verifyPassword');
     $app->get('/logout', IndexController::class . ':logout');
+
     $app->group('', function(RouteCollectorProxy $group) {
         $group->get('/init', IndexController::class . ':showInitialForm');
         $group->post('/init', IndexController::class . ':init');
     })->add(InitialMiddleware::class);
 
-    $app->get('/notes/{snowflake_id}', IndexController::class . ':note');
-    $app->get('/tags/{tag}', IndexController::class . ':tags');
+    $app->group('', function (RouteCollectorProxy $group) {
+        $group->get('/', IndexController::class . ':home');
+        $group->get('/notes/{snowflake_id}', IndexController::class . ':note');
+        $group->get('/tags/{tag}', IndexController::class . ':tags');
+    })->add(LockSiteMiddleware::class);
 
     $app->group('', function(RouteCollectorProxy $group) {
         $group->get('/timeline', IndexController::class . ':timeline');

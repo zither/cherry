@@ -13,4 +13,5 @@ return  [
     'preference_title' => '首选项',
     'form_theme_label' => '主题',
     'form_language_label' => '语言',
+    'form_lock_site_label' => '锁站',
 ];

@@ -41,6 +41,10 @@
         </div>
         <form class="mt" action="/web/preferences/update" method="POST">
             <div class="mt label">
+                <label for="lock_site"><?=$this->lang('form_lock_site_label')?></label>
+                <input id="lock_site" type="checkbox" name="lock_site" <?=($settings['lock_site'] ?? false) ? 'checked' :''?> />
+            </div>
+            <div class="mt label">
                 <label for="language"><?=$this->lang('form_language_label')?></label>
                 <select id="language" name="language">
                     <?php foreach ($languages as $language): ?>
