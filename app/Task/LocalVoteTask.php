@@ -83,7 +83,7 @@ class LocalVoteTask implements TaskInterface
                 'raw' => json_encode($rawActivity, JSON_UNESCAPED_SLASHES),
                 'published' => Time::getLocalTime(),
                 'is_local' => 1,
-                'is_public' => $object['is_public']
+                'is_public' => $pollActivity->isPublic() ? 1 : 0,
             ];
             $db->insert('activities', $activity);
             $activityId = $db->id();
