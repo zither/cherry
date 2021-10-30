@@ -40,7 +40,7 @@ class LocalVoteTask implements TaskInterface
             'attributedTo' => $profile['actor'],
             'name' => $choice['choice'],
             'to' => [$pollActivity->actor],
-            'inReplyTo' => $pollActivity->id,
+            'inReplyTo' => $pollActivity->object['id'],
             'published' => $published,
             'content' => null,
             'cc' => [],
