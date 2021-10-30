@@ -213,6 +213,7 @@ CREATE TABLE `polls` (
   `choices` text DEFAULT NULL,
   `voters_count` int(10) unsigned NOT NULL DEFAULT 0,
   `end_time` timestamp NOT NULL,
+  `multiple` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `is_voted` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `is_closed` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
