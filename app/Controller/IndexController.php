@@ -57,6 +57,7 @@ class IndexController
         $defaultConditions = [
             'activities.object_id[!]' => 0,
             'activities.type' => ['Create', 'Announce'],
+            'activities.unlisted' => 0,
             'activities.is_local' => 1,
             'activities.is_deleted' => 0,
             'LIMIT' => $pageSize,
@@ -245,6 +246,7 @@ class IndexController
         $defaultConditions = [
             'activities.object_id[!]' => 0,
             'activities.type' => ['Create', 'Announce'],
+            'activities.unlisted' => 0,
             'activities.is_local' => 0,
             'activities.is_deleted' => 0,
             'LIMIT' => $pageSize,
@@ -812,6 +814,7 @@ class IndexController
                 'objects.parent_id' => $activity['object_id'],
                 'objects.origin_id' => $activity['object_id'],
             ],
+            'objects.unlisted' => 0,
             'objects.is_public' => 1,
             'ORDER' => ['published' => 'ASC']
         ]);
@@ -969,6 +972,7 @@ class IndexController
                 'objects.parent_id' => $rootObjectId,
                 'objects.origin_id' => $rootObjectId,
             ],
+            'objects.unlisted' => 0,
             'ORDER' => ['published' => 'ASC']
         ]);
 

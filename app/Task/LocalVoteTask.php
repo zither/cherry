@@ -68,6 +68,7 @@ class LocalVoteTask implements TaskInterface
                 'summary' => $object['summary'] ?? '',
                 'url' => $object['url'] ?? '',
                 'published' => Time::UTCToLocalTime($object['published']),
+                'unlisted' => 1,
                 'is_local' => 1,
                 'is_public' => 0,
                 'origin_id' => $poll['object_id'],
@@ -82,6 +83,7 @@ class LocalVoteTask implements TaskInterface
                 'type' => $rawActivity['type'],
                 'raw' => json_encode($rawActivity, JSON_UNESCAPED_SLASHES),
                 'published' => Time::getLocalTime(),
+                'unlisted' => 1,
                 'is_local' => 1,
                 'is_public' => $pollActivity->isPublic() ? 1 : 0,
             ];
