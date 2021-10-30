@@ -373,7 +373,7 @@ class IndexController
                     $pd['choices'] = json_decode($pd['choices'], true);
                     foreach ($pd['choices'] as &$pc) {
                         $pc['selected'] = false;
-                        $pc['percent'] = $pd['voters_count'] > 0 ? $pc['count'] / $pd['voters_count'] : 0;
+                        $pc['percent'] = ($pd['voters_count'] > 0 ? $pc['count'] / $pd['voters_count'] : 0) * 100;
                         foreach ($myChoices as $c) {
                             if ($c['poll_id'] !== $pd['id']) {
                                 continue;
