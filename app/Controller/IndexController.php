@@ -373,6 +373,24 @@ class IndexController
             if (!empty($ids)) {
                 $myChoices = $db->select('poll_choices', '*', ['poll_id' => $ids, 'profile_id' => 1]);
                 foreach ($polls as &$pd) {
+                    if (!$pd['is_closed']) {
+                        $endTime = strtotime($pd['end_time']);
+                        $now = time();
+                        $diff = $now - $endTime;
+                        if ($diff >= 3600 * 24) {
+                            $pd['time_left'] = $diff / 3600 * 24;
+                            $pd['time_left_type'] = 'verbose_day';
+                        } else if ($diff >= 3600) {
+                            $pd['time_left'] = $diff / 3600;
+                            $pd['time_left_type'] = 'verbose_hour';
+                        } else if ($diff >= 60 ){
+                            $pd['time_left'] = $diff / 60;
+                            $pd['time_left_type'] = 'verbose_minute';
+                        } else {
+                            $pd['time_left'] = $diff;
+                            $pd['time_left_type'] = 'verbose_second';
+                        }
+                    }
                     $pd['choices'] = json_decode($pd['choices'], true);
                     foreach ($pd['choices'] as &$pc) {
                         $pc['selected'] = false;

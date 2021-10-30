@@ -65,9 +65,18 @@
                                         </ul>
                                         <span class="details mt">
                                             <?=$this->lang('poll_voters_count', $v['poll']['voters_count']);?>
+                                            ·
                                             <?php if ($v['poll']['is_closed']):?>
-                                                ·
                                                 <?=$this->lang('poll_closed');?>
+                                            <?php else:?>
+                                                <?=$this->lang(
+                                                        'poll_end_time',
+                                                        $v['poll']['time_left'],
+                                                        $this->lang(
+                                                                $v['poll']['time_left_type'],
+                                                                $v['poll']['time_left'] > 1
+                                                        )
+                                                );?>
                                             <?php endif;?>
                                         </span>
                                     </div>

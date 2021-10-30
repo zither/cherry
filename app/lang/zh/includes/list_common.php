@@ -16,4 +16,13 @@ return [
     'pagination_next' => '下一页',
     'poll_voters_count' => '%d人',
     'poll_closed' => '已结束',
+    'poll_end_time' => '剩余%d%s',
+    'verbose_second' => '秒钟',
+    'verbose_minute' => '分钟',
+    'verbose_hour' => '小时',
+    'verbose_day' => '天',
+    'short_second' => '秒',
+    'short_minute' => '分',
+    'short_hour' => '时',
+    'short_day' => '天',
 ];

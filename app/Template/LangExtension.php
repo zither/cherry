@@ -63,7 +63,30 @@ class LangExtension implements ExtensionInterface
         if (!isset($langData[$key])) {
             return '';
         }
-        return sprintf($langData[$key], ...$args);
+        $plural = false;
+        if (count($args) === 2 && is_bool($args[1])) {
+            $plural = $args[1];
+            $args = is_array($args[0]) ? $args[0] : [$args[0]];
+        } else if (count($args) === 1 && is_bool($args[0])){
+            $plural = $args[0];
+            $args = [];
+        }
+        if (is_string($langData[$key])) {
+            $format = $langData[$key];
+        } else if (is_array($langData[$key])) {
+            if ($plural && isset($langData[$key][1])) {
+                $format = $langData[$key][1];
+            } else {
+                $format = $langData[$key][0];
+            }
+        } else {
+            throw new InvalidArgumentException(sprintf('Invalid lang string type: %s',  gettype($langData[$key])));
+        }
+        if (empty($args)) {
+            return sprintf($format);
+        } else {
+            return sprintf($format, ...$args);
+        }
     }
 
     protected function getLangData(): array
