@@ -2,6 +2,7 @@
 namespace Cherry\Controller;
 
 use Cherry\ActivityPub\Activity;
+use Cherry\ActivityPub\ActivityPub;
 use Cherry\FlashMessage;
 use Cherry\Helper\SignRequest;
 use Cherry\Helper\Time;
@@ -293,6 +294,7 @@ class IndexController
         $objectProfileIds = [];
         $objectIds = [];
         $parentIds = [];
+        $pollIds = [];
         foreach ($blogs as $v) {
             if ($v['profile_id']) {
                 $objectProfileIds[] = $v['profile_id'];
@@ -302,6 +304,9 @@ class IndexController
             }
             if ($v['parent_id']) {
                 $parentIds[] = $v['parent_id'];
+            }
+            if ($v['type'] === ActivityPub::OBJECT_TYPE_QUESTION) {
+                $pollIds[] = $v['object_id'];
             }
         }
 
@@ -355,6 +360,32 @@ class IndexController
             }
         }
 
+        $pollMap = [];
+        if (!empty($pollIds)) {
+            $polls = $db->select('polls', '*', ['object_id' => $pollIds]);
+            $ids = [];
+            foreach ($polls as $p) {
+                $ids[] = $p['id'];
+            }
+            $myChoices = $db->select('poll_choices', '*', ['poll_id' => $ids, 'profile_id' => 1]);
+            foreach ($polls as &$pd) {
+                $pd['choices'] = json_decode($pd['choices'], true);
+                foreach ($pd['choices'] as &$pc) {
+                    $pc['selected'] = false;
+                    $pc['percent'] = $pd['voters_count'] > 0 ? $pc['count']/$pd['voters_count'] : 0;
+                    foreach ($myChoices as $c) {
+                        if ($c['poll_id'] !== $pd['id']) {
+                            continue;
+                        }
+                        if ($pc['name'] === $c['choice']) {
+                            $pc['selected'] = true;
+                        }
+                    }
+                }
+                $pollMap[$pd['object_id']] = $pd;
+            }
+        }
+
         foreach ($blogs as &$v) {
             if (empty($v['profile_id'])) {
                 continue;
@@ -378,6 +409,9 @@ class IndexController
                 $v['parent_profile'] = $parentProfiles[$v['parent_id']] ?? [];
             }
             $v['attachments'] = $objectAttachments[$v['object_id']] ?? [];
+            if (isset($pollMap[$v['object_id']])) {
+                $v['poll'] = $pollMap[$v['object_id']];
+            }
             unset($v);
         }
 
@@ -1137,6 +1171,34 @@ class IndexController
         $referer = $request->getHeaderLine('Referer');
         $redirect = empty($referer) ? '/' : $referer;
         return $response->withStatus('302')->withHeader('location', $redirect);
+    }
+
+    public function vote(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    {
+        $pollId = $args['poll_id'];
+        $choices = $this->getPostParam($request, 'choice', []);
+        $db = $this->container->get(Medoo::class);
+        $poll = $db->get('polls', '*', ['id' => $pollId]);
+        if (!$poll['multiple']) {
+            $choices = [$choices];
+        }
+        foreach ($choices as $v) {
+            $choice = [
+                'poll_id' => $pollId,
+                'profile_id' => 1,
+                'choice' => $v,
+                'vote_time' => Time::getLocalTime(),
+            ];
+            $db->insert('poll_choices', $choice);
+            $choiceId = $db->id();
+            $db->insert('tasks', [
+                'LocalVoteTask',
+                'params' => json_encode(['choice_id' => $choiceId], JSON_UNESCAPED_SLASHES),
+                'priority' => 140,
+            ]);
+        }
+        $db->update('polls', ['is_voted' => 1], ['id' => $pollId]);
+        return $this->redirectBack($request, $response);
     }
 
     public function followers(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface

@@ -4,6 +4,7 @@ namespace Cherry\Task;
 
 use adrianfalleiro\FailedTaskException;
 use adrianfalleiro\TaskInterface;
+use Cherry\ActivityPub\ActivityPub;
 use Cherry\Helper\SignRequest;
 use Medoo\Medoo;
 use Psr\Container\ContainerInterface;
@@ -25,12 +26,21 @@ class UpdateRequestTask implements TaskInterface
         $rawActivity = json_decode($activity['raw'], true);
         $actor = $rawActivity['actor'];
         $object = $rawActivity['object'];
+
+        if ($object['type'] === ActivityPub::OBJECT_TYPE_QUESTION) {
+            $db->insert('tasks', [
+                'RemoteUpdatePollTask',
+                'params' => json_encode($args, JSON_UNESCAPED_SLASHES),
+                'priority' => 140,
+            ]);
+            return;
+        }
+
         if (!is_array($object) || $object['type'] !== 'Person' || !isset($rawActivity['signature'])) {
             return;
         }
         $person = $object;
         $profile = $db->get('profiles', '*', ['actor' => $actor]);
-
         if (isset($person['publicKey']['publicKeyPem'])) {
             $publicKey = $person['publicKey']['publicKeyPem'];
         } else {

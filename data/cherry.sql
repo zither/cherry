@@ -209,6 +209,7 @@ CREATE TABLE `tasks` (
 DROP TABLE IF EXISTS `polls`;
 CREATE TABLE `polls` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `activity_id` int(10) unsigned NOT NULL DEFAULT 0,
   `object_id` int(10) unsigned NOT NULL DEFAULT 0,
   `choices` text DEFAULT NULL,
   `voters_count` int(10) unsigned NOT NULL DEFAULT 0,
@@ -217,6 +218,7 @@ CREATE TABLE `polls` (
   `is_voted` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `is_closed` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
+  KEY `polls_activity_id_IDX` (`activity_id`) USING BTREE,
   KEY `polls_object_id_IDX` (`object_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -226,6 +228,7 @@ CREATE TABLE `poll_choices` (
   `poll_id` int(10) unsigned NOT NULL DEFAULT 0,
   `profile_id` int(10) unsigned NOT NULL DEFAULT 0,
   `choice` varchar(100) NOT NULL DEFAULT '',
+  `activity_id` int(10) unsigned NOT NULL DEFAULT 0,
   `object_id` int(10) unsigned NOT NULL DEFAULT 0,
   `vote_time` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),

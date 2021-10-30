@@ -57,6 +57,7 @@ class CreateRequestTask implements TaskInterface
                 ];
             }
             $poll = [
+                'activity_id' => $activityId,
                 'choices' => json_encode($choices, JSON_UNESCAPED_UNICODE),
                 'end_time' => Time::UTCToLocalTime($rawActivity['object']['endTime']),
                 'voters_count' => $rawActivity['object']['votersCount'] ?? 0,

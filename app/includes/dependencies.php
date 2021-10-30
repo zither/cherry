@@ -53,6 +53,8 @@ return function (App $app) {
             \Cherry\Task\RemoteDeleteTask::class,
             \Cherry\Task\LocalUpdateProfileTask::class,
             \Cherry\Task\FetchProfileByAccountTask::class,
+            \Cherry\Task\LocalVoteTask::class,
+            \Cherry\Task\RemoteUpdatePollTask::class,
             \Cherry\Task\Cron\DeleteExpiredSessionsTask::class,
         ];
         $commands = [];

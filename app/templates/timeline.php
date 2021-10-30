@@ -49,6 +49,46 @@
                                 <input type=radio class="hide-content"  id="hide-content-<?=$v['object_id']?>" name="group-<?=$v['object_id']?>">
                                 <div class="object-content"><?=$v['content']?></div>
                             <?php endif; ?>
+                            <?php if (!empty($v['poll'])): ?>
+                                <?php if ($v['poll']['is_voted']):?>
+                                    <div class="poll">
+                                        <ul>
+                                            <?php foreach ($v['poll']['choices'] as $choice) :?>
+                                                <li class="choice">
+                                                    <?=$choice['percent']?>% <?=$choice['name']?>
+                                                    <?php if ($choice['selected']):?>
+                                                        <span class="icon">✔</span>
+                                                    <?php endif;?>
+                                                </li>
+                                                <li class="progress <?=$choice['selected'] ? 'selected' : ''?>" style="width: <?=$choice['percent'] ?: 1?>%"></li>
+                                            <?php endforeach;?>
+                                        </ul>
+                                        <span class="details mt">
+                                            <?=$this->lang('poll_voters_count', $v['poll']['voters_count']);?>
+                                            <?php if ($v['poll']['is_closed']):?>
+                                                ·
+                                                <?=$this->lang('poll_closed');?>
+                                            <?php endif;?>
+                                        </span>
+                                    </div>
+                                <?php else:?>
+                                    <form method="POST" action="/web/polls/<?=$v['poll']['id']?>/vote">
+                                        <?php foreach ($v['poll']['choices'] as $i => $choice) :?>
+                                            <div class="choice">
+                                                <label>
+                                                    <input
+                                                            type="<?=$v['poll']['multiple'] ? 'checkbox' : 'radio'?>"
+                                                            name="choice<?=$v['poll']['multiple'] ? '[]':''?>"
+                                                            value="<?=$choice['name']?>"
+                                                    >
+                                                    <?=$choice['name']?>
+                                                </label>
+                                            </div>
+                                        <?php endforeach;?>
+                                        <button class="mt">投票</button>
+                                    </form>
+                                <?php endif; ?>
+                            <?php endif;?>
                         </div>
 
                         <?php if (!empty($v['attachments'])): ?>

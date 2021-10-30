@@ -14,4 +14,6 @@ return [
     'menu_update_profile' => 'Update profile',
     'pagination_prev' => 'Prev',
     'pagination_next' => 'Next',
+    'poll_voters_count' => '%d People',
+    'poll_closed' => 'Closed',
 ];

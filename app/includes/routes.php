@@ -45,6 +45,7 @@ return function (App $app) {
         $group->post('/profiles/{profile_id}/update', IndexController::class . ':updateProfile');
         $group->get('/settings/profile', IndexController::class . ':showProfileForm');
         $group->post('/web/preferences/update', IndexController::class . ':updatePreferences');
+        $group->post('/web/polls/{poll_id}/vote', IndexController::class . ':vote');
     })->add(AuthMiddleware::class);
 
     // Server API Routes

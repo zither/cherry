@@ -10,6 +10,8 @@
     --bg-button: #2b90d9;
     --bg-navigator: #282C36;
     --bg-avatar: #444b62;
+    --bg-progress: #8ba1bf;
+    --bg-progress-selected: var(--bg-button);
 
     --fg-page: #9BAEC7;
     --fg-link: #9BAEC7;
@@ -29,6 +31,8 @@
     --fg-navigator-link: var(--fg-content-header-date);
     --fg-error: red;
     --fg-message: green;
+    --fg-choice: var(--fg-content);
+    --fg-poll-details: var(--fg-disabled);
 
     --bd-avatar: #4f4f4f;
     --bd-button: var(--bg-button);

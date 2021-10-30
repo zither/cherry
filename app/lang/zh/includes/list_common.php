@@ -14,4 +14,6 @@ return [
     'menu_update_profile' => '更新资料',
     'pagination_prev' => '上一页',
     'pagination_next' => '下一页',
+    'poll_voters_count' => '%d人',
+    'poll_closed' => '已结束',
 ];
