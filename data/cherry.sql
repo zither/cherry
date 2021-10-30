@@ -205,3 +205,30 @@ CREATE TABLE `tasks` (
   PRIMARY KEY (`id`),
   KEY `tasks_timer_IDX` (`timer`,`priority`,`retried`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+DROP TABLE IF EXISTS `polls`;
+CREATE TABLE `polls` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `object_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `choices` text DEFAULT NULL,
+  `voters_count` int(10) unsigned NOT NULL DEFAULT 0,
+  `end_time` timestamp NOT NULL,
+  `is_voted` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `is_closed` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `polls_object_id_IDX` (`object_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+DROP TABLE IF EXISTS `poll_choices`;
+CREATE TABLE `poll_choices` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `poll_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `profile_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `choice` varchar(100) NOT NULL DEFAULT '',
+  `object_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `vote_time` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `poll_choices_poll_id_IDX` (`poll_id`) USING BTREE,
+  KEY `poll_choices_profile_id_IDX` (`profile_id`) USING BTREE,
+  KEY `poll_choices_object_id_IDX` (`object_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
