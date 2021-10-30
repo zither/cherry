@@ -213,6 +213,7 @@ class IndexController
         $nextIndex = $db->get('activities', 'id', $nextConditions);
 
         $blogsCount = $db->count('activities', [
+            'unlisted' => 0,
             'is_local' => 1,
             'is_deleted' => 0,
             'type' => ['Create', 'Announce']
