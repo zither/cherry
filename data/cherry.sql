@@ -217,8 +217,11 @@ CREATE TABLE `polls` (
   `multiple` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `is_voted` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `is_closed` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp,
   PRIMARY KEY (`id`),
   KEY `polls_activity_id_IDX` (`activity_id`) USING BTREE,
+  KEY `polls_is_closed_IDX` (`is_closed`) USING BTREE,
+  KEY `polls_is_updated_at_IDX` (`updated_at`) USING BTREE,
   KEY `polls_object_id_IDX` (`object_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
