@@ -89,6 +89,22 @@ trait SetupCherryEnv
             'public_key' => $publicKey,
         ];
         $db->insert('profiles', $profile);
+
+        $cronTasks = [
+            [
+                'task' => 'DeleteExpiredSessionsTask',
+                'priority' => 120,
+                'delay' => 60,
+                'is_loop' => 1,
+            ],
+            [
+                'task' => 'UpdateRemotePollsTask',
+                'priority' => 120,
+                'delay' => 60,
+                'is_loop' => 1,
+            ],
+        ];
+        $db->insert('tasks', $cronTasks);
     }
 
     public function tearDownCherryEnv(): void

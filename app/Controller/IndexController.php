@@ -1695,6 +1695,22 @@ SQL;
             ];
             $db->insert('profiles', $profile);
 
+            $cronTasks = [
+                [
+                    'task' => 'DeleteExpiredSessionsTask',
+                    'priority' => 120,
+                    'delay' => 60,
+                    'is_loop' => 1,
+                ],
+                [
+                    'task' => 'UpdateRemotePollsTask',
+                    'priority' => 120,
+                    'delay' => 60,
+                    'is_loop' => 1,
+                ],
+            ];
+            $db->insert('tasks', $cronTasks);
+
             return $response->withStatus('302')->withHeader('location', '/login');
         } catch (Exception $e) {
             $flash = $this->flash($request);
