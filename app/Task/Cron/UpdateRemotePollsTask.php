@@ -29,16 +29,16 @@ class UpdateRemotePollsTask implements TaskInterface
             return;
         }
 
-        $rawObjectId = $db->get('objects', ['raw_object_id'], ['id' => $poll['object_id']]);
+        $object = $db->get('objects', ['raw_object_id'], ['id' => $poll['object_id']]);
         // Skip invalid poll
-        if (empty($rawObjectId)) {
+        if (empty($object)) {
             $db->update('polls', ['is_closed' => 1], ['id' => $poll['id']]);
             return;
         }
 
         try {
             $helper = $this->container->get(SignRequest::class);
-            $request = new Request('GET', $rawObjectId, [
+            $request = new Request('GET', $object['raw_object_id'], [
                 'Accept' => 'application/activity+json',
                 'Content-Type' => 'text/html',
             ]);
