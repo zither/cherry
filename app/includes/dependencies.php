@@ -56,6 +56,7 @@ return function (App $app) {
             \Cherry\Task\LocalVoteTask::class,
             \Cherry\Task\RemoteUpdatePollTask::class,
             \Cherry\Task\Cron\DeleteExpiredSessionsTask::class,
+            \Cherry\Task\Cron\UpdateRemotePollsTask::class,
         ];
         $commands = [];
         foreach ($tasks as $v) {
