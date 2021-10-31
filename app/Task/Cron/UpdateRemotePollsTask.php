@@ -22,7 +22,7 @@ class UpdateRemotePollsTask implements TaskInterface
     public function command(array $args)
     {
         $db = $this->container->get(Medoo::class);
-        $poll = $db->get('polls', ['id', 'activity_id', 'object_id', 'multiple'], ['is_closed' => 0, 'ORDER' => [
+        $poll = $db->get('polls', ['id', 'activity_id', 'object_id', 'multiple', 'end_time'], ['is_closed' => 0, 'ORDER' => [
             'updated_at' => 'ASC'
         ]]);
         if (empty($poll)) {
