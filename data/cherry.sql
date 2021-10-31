@@ -193,7 +193,7 @@ DROP TABLE IF EXISTS `tasks`;
 CREATE TABLE `tasks` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `task` varchar(64) NOT NULL DEFAULT '',
-  `params` varchar(255) DEFAULT NULL,
+  `params` varchar(255) DEFAULT '',
   `retried` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `max_retries` tinyint(3) unsigned NOT NULL DEFAULT 3,
   `priority` tinyint(3) unsigned NOT NULL DEFAULT 99,
