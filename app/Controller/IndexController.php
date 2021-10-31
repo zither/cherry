@@ -373,6 +373,7 @@ class IndexController
             if (!empty($ids)) {
                 $myChoices = $db->select('poll_choices', '*', ['poll_id' => $ids, 'profile_id' => 1]);
                 foreach ($polls as &$pd) {
+                    $pd['is_closed'] = $pd['is_closed'] || strtotime($pd['end_time']) < time();
                     if (!$pd['is_closed']) {
                         $endTime = strtotime($pd['end_time']);
                         $now = time();
@@ -469,6 +470,7 @@ class IndexController
             'blogs' => $blogs,
             'prev' => empty($prevArgs['index']) ? null : http_build_query($prevArgs),
             'next' => empty($nextArgs['index']) ? null : http_build_query($nextArgs),
+            'is_admin' => $this->isLoggedIn($request),
         ]);
     }
 

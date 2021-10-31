@@ -50,36 +50,19 @@
                                 <div class="object-content"><?=$v['content']?></div>
                             <?php endif; ?>
                             <?php if (!empty($v['poll'])): ?>
-                                <?php if ($v['poll']['is_voted']):?>
-                                    <div class="poll">
-                                        <ul>
-                                            <?php foreach ($v['poll']['choices'] as $choice) :?>
-                                                <li class="choice">
-                                                    <?=$choice['percent']?>% <?=$choice['name']?>
-                                                    <?php if ($choice['selected']):?>
-                                                        <span class="icon">✔</span>
-                                                    <?php endif;?>
-                                                </li>
-                                                <li class="progress <?=$choice['selected'] ? 'selected' : ''?>" style="width: <?=$choice['percent'] ?: 1?>%"></li>
-                                            <?php endforeach;?>
-                                        </ul>
-                                        <span class="details mt">
-                                            <?=$this->lang('poll_voters_count', $v['poll']['voters_count']);?>
-                                            ·
-                                            <?php if ($v['poll']['is_closed']):?>
-                                                <?=$this->lang('poll_closed');?>
-                                            <?php else:?>
-                                                <?=$this->lang(
-                                                        'poll_end_time',
-                                                        $v['poll']['time_left'],
-                                                        $this->lang(
-                                                                $v['poll']['time_left_type'],
-                                                                $v['poll']['time_left'] > 1
-                                                        )
-                                                );?>
-                                            <?php endif;?>
-                                        </span>
-                                    </div>
+                                <div class="poll">
+                                <?php if ($v['poll']['is_voted'] || $v['poll']['is_closed']):?>
+                                    <ul>
+                                        <?php foreach ($v['poll']['choices'] as $choice) :?>
+                                            <li class="choice">
+                                                <?=$choice['percent']?>% <?=$choice['name']?>
+                                                <?php if ($choice['selected']):?>
+                                                    <span class="icon">✔</span>
+                                                <?php endif;?>
+                                            </li>
+                                            <li class="progress <?=$choice['selected'] ? 'selected' : ''?>" style="width: <?=$choice['percent'] ?: 1?>%"></li>
+                                        <?php endforeach;?>
+                                    </ul>
                                 <?php else:?>
                                     <form method="POST" action="/web/polls/<?=$v['poll']['id']?>/vote">
                                         <?php foreach ($v['poll']['choices'] as $i => $choice) :?>
@@ -94,9 +77,26 @@
                                                 </label>
                                             </div>
                                         <?php endforeach;?>
-                                        <button class="mt">投票</button>
+                                        <button class="mt mb"  <?=$is_admin ? '' : 'disabled'?>>投票</button>
                                     </form>
                                 <?php endif; ?>
+                                    <span class="details inline-block mb">
+                                        <?=$this->lang('poll_voters_count', $v['poll']['voters_count']);?>
+                                        ·
+                                        <?php if ($v['poll']['is_closed']):?>
+                                            <?=$this->lang('poll_closed');?>
+                                        <?php else:?>
+                                            <?=$this->lang(
+                                                'poll_end_time',
+                                                $v['poll']['time_left'],
+                                                $this->lang(
+                                                    $v['poll']['time_left_type'],
+                                                    $v['poll']['time_left'] > 1
+                                                )
+                                            );?>
+                                        <?php endif;?>
+                                    </span>
+                                </div>
                             <?php endif;?>
                         </div>
 
