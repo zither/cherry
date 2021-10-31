@@ -18,9 +18,9 @@
             <?=$profile['summary']?>
         </div>
         <div class="counts">
-            <a href="/" class="btn mr"><span><?=$this->lang('activity_count', $counts['objects'])?></span></a>
-            <a href="/" class="btn mr"><span><?=$this->lang('following_count', $counts['following'])?></span></a>
-            <a href="/" class="btn mr"><span><?=$this->lang('follower_count', $counts['followers'])?></span></a>
+            <span class="btn mr"><?=$this->lang('activity_count', $counts['objects'])?></span>
+            <span class="btn mr"><?=$this->lang('following_count', $counts['following'])?></span>
+            <span class="btn mr"><?=$this->lang('follower_count', $counts['followers'])?></span>
         </div>
     </div>
 

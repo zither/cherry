@@ -180,7 +180,7 @@ textarea {
     padding: 1em .5em;
     border-radius: .2em;
 }
-.counts a {
+.counts .btn {
     background-color: var(--bg-counter);
     color: var(--fg-counter);
 }
