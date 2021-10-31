@@ -376,15 +376,15 @@ class IndexController
                     if (!$pd['is_closed']) {
                         $endTime = strtotime($pd['end_time']);
                         $now = time();
-                        $diff = $now - $endTime;
+                        $diff = $endTime - $now;
                         if ($diff >= 3600 * 24) {
-                            $pd['time_left'] = $diff / 3600 * 24;
+                            $pd['time_left'] = floor($diff / 3600 * 24);
                             $pd['time_left_type'] = 'verbose_day';
                         } else if ($diff >= 3600) {
-                            $pd['time_left'] = $diff / 3600;
+                            $pd['time_left'] = floor($diff / 3600);
                             $pd['time_left_type'] = 'verbose_hour';
                         } else if ($diff >= 60 ){
-                            $pd['time_left'] = $diff / 60;
+                            $pd['time_left'] = floor($diff / 60);
                             $pd['time_left_type'] = 'verbose_minute';
                         } else {
                             $pd['time_left'] = $diff;
