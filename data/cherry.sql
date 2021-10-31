@@ -7,7 +7,7 @@ CREATE TABLE `activities` (
   `type` varchar(64) NOT NULL DEFAULT '',
   `raw` text DEFAULT NULL,
   `signature_data` text DEFAULT NULL,
-  `published` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `published` timestamp NOT NULL DEFAULT current_timestamp(),
   `unlisted` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `is_local` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `is_public` tinyint(3) unsigned NOT NULL DEFAULT 0,
@@ -38,7 +38,7 @@ CREATE TABLE `followers` (
   `status` tinyint(4) NOT NULL DEFAULT 0 COMMENT '0:received1:accepted2:rejected',
   `follow_activity_id` int(10) unsigned NOT NULL DEFAULT 0,
   `accept_activity_id` int(10) unsigned NOT NULL DEFAULT 0,
-  `created_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `followers_profile_id_IDX` (`profile_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -50,7 +50,7 @@ CREATE TABLE `following` (
   `status` tinyint(4) NOT NULL DEFAULT 0 COMMENT '0:received1:accepted2:rejected',
   `follow_activity_id` int(10) unsigned NOT NULL DEFAULT 0,
   `accept_activity_id` int(10) unsigned NOT NULL DEFAULT 0,
-  `created_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `following_profile_id_IDX` (`profile_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -62,7 +62,7 @@ CREATE TABLE `interactions` (
   `object_id` int(10) unsigned NOT NULL DEFAULT 0,
   `profile_id` int(10) unsigned NOT NULL DEFAULT 0,
   `type` tinyint(3) unsigned NOT NULL DEFAULT 0 COMMENT '1likes 2shares 3replies',
-  `published` timestamp NOT NULL DEFAULT '1970-01-01 16:00:01',
+  `published` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -93,7 +93,7 @@ CREATE TABLE `objects` (
   `likes` int(10) unsigned NOT NULL DEFAULT 0,
   `replies` int(10) unsigned NOT NULL DEFAULT 0,
   `shares` int(10) unsigned NOT NULL DEFAULT 0,
-  `published` timestamp NOT NULL DEFAULT '1970-01-01 16:00:01',
+  `published` timestamp NOT NULL DEFAULT current_timestamp(),
   `unlisted` tinyint(3) NOT NULL DEFAULT 0,
   `is_local` tinyint(4) NOT NULL DEFAULT 0,
   `is_public` tinyint(3) unsigned NOT NULL DEFAULT 0,
@@ -128,14 +128,12 @@ CREATE TABLE `profiles` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `replies`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `replies` (
   `id` int(10) unsigned NOT NULL DEFAULT 0,
   `activity_id` int(10) unsigned NOT NULL DEFAULT 0,
   `object_id` int(10) unsigned NOT NULL DEFAULT 0,
   `profile_id` int(10) unsigned NOT NULL DEFAULT 0,
-  `published` timestamp NOT NULL DEFAULT '1970-01-01 16:00:01',
+  `published` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -166,7 +164,7 @@ CREATE TABLE `shares` (
   `activity_id` int(10) unsigned NOT NULL DEFAULT 0,
   `object_id` int(10) unsigned NOT NULL DEFAULT 0,
   `profile_id` int(10) unsigned NOT NULL DEFAULT 0,
-  `published` timestamp NOT NULL DEFAULT '1970-01-01 16:00:01',
+  `published` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -215,7 +213,7 @@ CREATE TABLE `polls` (
   `object_id` int(10) unsigned NOT NULL DEFAULT 0,
   `choices` text DEFAULT NULL,
   `voters_count` int(10) unsigned NOT NULL DEFAULT 0,
-  `end_time` timestamp NOT NULL,
+  `end_time` timestamp NOT NULL DEFAULT current_timestamp(),
   `multiple` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `is_voted` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `is_closed` tinyint(3) unsigned NOT NULL DEFAULT 0,
