@@ -59,12 +59,12 @@ class UpdateRemotePollsTask implements TaskInterface
                     'count' => $v['replies']['totalItems'] ?? 0,
                 ];
             }
-            $poll = [
+            $updated = [
                 'choices' => json_encode($choices, JSON_UNESCAPED_UNICODE),
                 'voters_count' => $question['votersCount'] ?? 0,
                 'is_closed' => strtotime($poll['end_time']) < time() ? 1 : 0,
             ];
-            $db->update('polls', $poll, ['id' => $poll['id']]);
+            $db->update('polls', $updated, ['id' => $poll['id']]);
         } catch (Exception $e) {
             $db->update('polls', ['updated_at' => date('Y-m-d H:i:s')], ['id' => $poll['id']]);
         }
