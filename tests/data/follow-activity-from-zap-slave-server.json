@@ -1,0 +1,50 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/activitystreams",
+    "https://w3id.org/security/v1",
+    {
+      "zot": "https://zap.dog/apschema#",
+      "toot": "http://joinmastodon.org/ns#",
+      "ostatus": "http://ostatus.org#",
+      "schema": "http://schema.org#",
+      "litepub": "http://litepub.social/ns#",
+      "sm": "http://smithereen.software/ns#",
+      "conversation": "ostatus:conversation",
+      "manuallyApprovesFollowers": "as:manuallyApprovesFollowers",
+      "oauthRegistrationEndpoint": "litepub:oauthRegistrationEndpoint",
+      "sensitive": "as:sensitive",
+      "movedTo": "as:movedTo",
+      "copiedTo": "as:copiedTo",
+      "alsoKnownAs": "as:alsoKnownAs",
+      "EmojiReact": "as:EmojiReact",
+      "commentPolicy": "zot:commentPolicy",
+      "topicalCollection": "zot:topicalCollection",
+      "eventRepeat": "zot:eventRepeat",
+      "emojiReaction": "zot:emojiReaction",
+      "expires": "zot:expires",
+      "directMessage": "zot:directMessage",
+      "Category": "zot:Category",
+      "replyTo": "zot:replyTo",
+      "PropertyValue": "schema:PropertyValue",
+      "value": "schema:value",
+      "discoverable": "toot:discoverable",
+      "wall": "sm:wall",
+      "capabilities": "litepub:capabilities",
+      "acceptsJoins": "litepub:acceptsJoins"
+    }
+  ],
+  "id": "https://zap.dog/follow/2882/426b5a63d6249e92e2a81e8dd148157e",
+  "type": "Follow",
+  "actor": "https://z.fedipen.xyz/channel/asherpen",
+  "object": "https://chokecherry.cc",
+  "to": [
+    "https://chokecherry.cc"
+  ],
+  "signature": {
+    "type": "RsaSignature2017",
+    "nonce": "698ce5c7bed4774c0f27c7b72079146c494f16d53c15a73c2ca949cb2b7fe4ae",
+    "creator": "https://zap.dog/channel/asherpen1183",
+    "created": "2021-11-01T11:22:13Z",
+    "signatureValue": "FrQegaZu2rUu7MI7ZOfAjLITJovTkbO5MHeOYhjVfANx/T4dV6IXu3U0brCkIw9xvrnQrUoTTbuDTt8Osr7r8MKIQbPoetOvgUEdu7bpAiBM8gYo+gKSmBs2s2Gg7dGn1FqIy3SxUOvWn1shtrvAYQ2HqoMOQbL7XsuSiuh0zPXAorlgfGDFo6RMOyBwKPk7WYzEZWbuaw0aRQmqFOaFQbzJWkzXNmJiADEbijHBz4S6pCzsTeppgaXIkR3UBYbV8CzHxY1FThOCGYhtBXDAO1R9VT8kzCdwsZUJw7B5dP0zMk5rM9qkUnT1Genb8t+MQy45B9RMdnaN9JzWW2SQDyNmS1OGJpxXJLigXR0G5abEO32WUVabQ1AgDxRmwBOox+bU1/MIqotPQWwZFkYdNINVj/bLreNrlJgUazqoGeRig+z8nuJQ/BpuC0sX0JMYIkGgtN+60448kry5nLwpMGLuCTwOe4CQMMXkMrySxRtgYsnNJ8dc0wYvtpG1XD/TS1wmLnqvrvQX7lNVqOuyYlPXl+OmcpvTyfVWkR7TvX96aMhbSHL8C9hZe2K7jFMJUU/MHBl9FfouzVNym2BNXhDTNLaXmycW9jT3G1kmHhC+IAlh9SnqAujQ8svtKGXnrK3l5AkSzeO6SvaUMxrVdh+/wIwBfUZj9sEQyoWg9rk="
+  }
+}

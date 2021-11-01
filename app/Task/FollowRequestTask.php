@@ -2,6 +2,7 @@
 
 namespace Cherry\Task;
 
+use adrianfalleiro\FailedTaskException;
 use adrianfalleiro\RetryException;
 use adrianfalleiro\TaskInterface;
 use GuzzleHttp\Exception\GuzzleException;
@@ -24,8 +25,19 @@ class FollowRequestTask implements TaskInterface
         $db = $this->container->get(Medoo::class);
         $activity = $db->get('activities', '*', ['id' => $activityId]);
         $rawActivity = json_decode($activity['raw'], true);
-
         $actor = $rawActivity['actor'];
+
+        // Follow activity from Zap slave servers have invalid actors
+        $idHost = parse_url($rawActivity['id'], PHP_URL_HOST);
+        $actorHost = parse_url($actor, PHP_URL_HOST);
+        if ($idHost !== $actorHost) {
+            throw new FailedTaskException(sprintf(
+                'Hosts do not match: id host: %s, actor host: %s',
+                $idHost,
+                $actorHost,
+            ));
+        }
+
         $profile = $db->get('profiles', '*', ['actor' => $actor]);
 
         try {
