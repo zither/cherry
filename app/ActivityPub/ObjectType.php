@@ -61,8 +61,8 @@ class ObjectType extends AbstractType
                     return true;
                 }
             }
-            if (is_array($v)) {
-                return $this->isPublic($v);
+            if (is_array($v) && $this->isPublic($v)) {
+                return true;
             }
         }
         return false;
