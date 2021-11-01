@@ -165,8 +165,6 @@ class ApiController
                 JSON_UNESCAPED_SLASHES
             );
         } catch (\InvalidArgumentException $e) {
-            //$response->getBody()->write($e->getMessage());
-            //return $response->withStatus(401);
             $headers = $request->getHeaders();
             $headers['error'] = $e->getMessage();
             $signatureData = json_encode($headers, JSON_UNESCAPED_SLASHES);
