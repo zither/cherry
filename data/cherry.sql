@@ -244,8 +244,9 @@ DROP TABLE IF EXISTS `actor_aliases`;
 CREATE TABLE `actor_aliases` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `profile_id` int(10) unsigned NOT NULL DEFAULT 0,
-  `alias` varchar(100) NOT NULL DEFAULT '',
+  `alias` varchar(255) NOT NULL DEFAULT '',
+  `real_host` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `actor_aliases_profile_id_IDX` (`profile_id`) USING BTREE,
-  KEY `actor_aliases_alias_IDX` (`alias`) USING BTREE
+  KEY `actor_aliases_alias_IDX` (`alias`, `real_host`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

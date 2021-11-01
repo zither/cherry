@@ -76,7 +76,8 @@ class FetchProfileTask implements TaskInterface
                 }
                 $aliases[] = [
                     'profile_id' => $profile['id'],
-                    'alias' => $alias
+                    'alias' => $alias,
+                    'real_host' => parse_url($actor, PHP_URL_HOST),
                 ];
             }
             if (!empty($aliases)) {

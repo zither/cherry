@@ -33,7 +33,10 @@ class FollowRequestTask implements TaskInterface
 
         try {
             if ($isAlias) {
-                $realProfileId = $db->get('actor_aliases', 'profile_id', ['alias' => $actor]);
+                $realProfileId = $db->get('actor_aliases', 'profile_id', [
+                    'alias' => $actor,
+                    'real_host' => $idHost
+                ]);
                 if ($realProfileId) {
                     $profile = $db->get('profiles', '*', ['id' => $realProfileId]);
                     $actor = $profile['actor'];
