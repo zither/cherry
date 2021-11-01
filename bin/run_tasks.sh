@@ -4,13 +4,22 @@ PARENT_DIR="$( dirname ${DIR} )"
 SNOOZE=2
 COMMAND="php $PARENT_DIR/public/index.php CronTask"
 LOG="$PARENT_DIR/storage/tasks.log"
+MAX_LOG_FILESIZE=$((100 * 1024 * 1024))
 RUN_NEXT_TASK=true
 
 function log ()
 {
-  if [ ! -z "$1" ];
-  then
-   echo $(date '+%Y-%m-%d %H:%M:%S') $1 >> ${LOG} 2>&1
+  if [ ! -z "$1" ]; then
+    echo $(date '+%Y-%m-%d %H:%M:%S') $1 >> ${LOG} 2>&1
+  fi
+}
+
+function check_log_filesize ()
+{
+  size=$(stat --format=%s "$LOG")
+  if [ $size -gt $MAX_LOG_FILESIZE ]; then
+    log "Empty log file..."
+    echo "" > $LOG
   fi
 }
 
@@ -28,8 +37,9 @@ fi
 echo "Task runner is starting..."
 while $RUN_NEXT_TASK
 do
- output=$($COMMAND 2>&1)
- log "$output"
- sleep ${SNOOZE}
+  check_log_filesize
+  output=$($COMMAND 2>&1)
+  log "$output"
+  sleep ${SNOOZE}
 done
 echo "Task runner Stopped."
