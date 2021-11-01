@@ -69,8 +69,12 @@ class FetchProfileTask implements TaskInterface
         }
 
         if (!empty($person['alsoKnownAs'])) {
+            $alsoKnownAs = is_array($person['alsoKnownAs']) ? $person['alsoKnownAs'] : [];
+            if (is_string($person['alsoKnownAs'])) {
+                $alsoKnownAs[] = $person['alsoKnownAs'];
+            }
             $aliases = [];
-            foreach ($person['alsoKnownAs'] as $alias) {
+            foreach ($alsoKnownAs as $alias) {
                 if (!is_string($alias) || empty($alias)) {
                     continue;
                 }
