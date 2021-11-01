@@ -184,10 +184,10 @@ textarea {
     background-color: var(--bg-counter);
     color: var(--fg-counter);
 }
-.content-header-name {
+.content-header-name, .content-header-name a {
     color: var(--fg-content-header);
 }
-.content-header-account a{
+.content-header-account a {
     color: var(--fg-content-header-link);
 }
 .content-header-date {

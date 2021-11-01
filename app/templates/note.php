@@ -12,7 +12,15 @@
                             <?php else:?>
                                 <div class="flex-auto avatar-min-none mr"></div>
                             <?php endif;?>
-                            <div class="content-header-name flex-auto flex-shrink ellipse mr bold"><?=$v['name'] ?: $v['preferred_name']?></div>
+                            <div class="content-header-name flex-auto flex-shrink ellipse mr bold">
+                                <?php if ($is_admin):?>
+                                    <a class="no-decoration" href="/timeline?pid=<?=$v['profile_id']?>">
+                                        <?=$v['name'] ?: $v['preferred_name']?>
+                                    </a>
+                                <?php else: ?>
+                                    <?=$v['name'] ?: $v['preferred_name']?>
+                                <?php endif;?>
+                            </div>
                             <div class="content-header-account flex-grow flex-shrink ellipse mr"><a class="no-decoration" href="<?=$v['profile_url']?>"><?=$v['account']?></a></div>
                             <div class="content-header-date flex-grow ml text-right nowrap"><?=$v['date']?></div>
                         </div>
