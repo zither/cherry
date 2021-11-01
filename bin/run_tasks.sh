@@ -16,7 +16,7 @@ function log ()
 
 function check_log_filesize ()
 {
-  size=$(stat --format=%s "$LOG")
+  size="$(wc -c <"$LOG")"
   if [ $size -gt $MAX_LOG_FILESIZE ]; then
     log "Empty log file..."
     echo "" > $LOG
