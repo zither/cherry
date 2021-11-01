@@ -239,3 +239,13 @@ CREATE TABLE `poll_choices` (
   KEY `poll_choices_profile_id_IDX` (`profile_id`) USING BTREE,
   KEY `poll_choices_object_id_IDX` (`object_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+DROP TABLE IF EXISTS `actor_aliases`;
+CREATE TABLE `actor_aliases` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `profile_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `alias` varchar(100) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  KEY `actor_aliases_profile_id_IDX` (`profile_id`) USING BTREE,
+  KEY `actor_aliases_alias_IDX` (`alias`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

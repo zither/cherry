@@ -1,0 +1,105 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/activitystreams",
+    "https://w3id.org/security/v1",
+    {
+      "zot": "https://zap.dog/apschema#",
+      "toot": "http://joinmastodon.org/ns#",
+      "ostatus": "http://ostatus.org#",
+      "schema": "http://schema.org#",
+      "litepub": "http://litepub.social/ns#",
+      "sm": "http://smithereen.software/ns#",
+      "conversation": "ostatus:conversation",
+      "manuallyApprovesFollowers": "as:manuallyApprovesFollowers",
+      "oauthRegistrationEndpoint": "litepub:oauthRegistrationEndpoint",
+      "sensitive": "as:sensitive",
+      "movedTo": "as:movedTo",
+      "copiedTo": "as:copiedTo",
+      "alsoKnownAs": "as:alsoKnownAs",
+      "EmojiReact": "as:EmojiReact",
+      "commentPolicy": "zot:commentPolicy",
+      "topicalCollection": "zot:topicalCollection",
+      "eventRepeat": "zot:eventRepeat",
+      "emojiReaction": "zot:emojiReaction",
+      "expires": "zot:expires",
+      "directMessage": "zot:directMessage",
+      "Category": "zot:Category",
+      "replyTo": "zot:replyTo",
+      "PropertyValue": "schema:PropertyValue",
+      "value": "schema:value",
+      "discoverable": "toot:discoverable",
+      "wall": "sm:wall",
+      "capabilities": "litepub:capabilities",
+      "acceptsJoins": "litepub:acceptsJoins"
+    }
+  ],
+  "type": "Person",
+  "id": "https://zap.dog/channel/asherpen1183",
+  "preferredUsername": "asherpen",
+  "name": "Pen\u00b2\u5728Z\u7ad9",
+  "updated": "2021-11-01T08:54:32Z",
+  "icon": {
+    "type": "Image",
+    "mediaType": "image/png",
+    "updated": "2021-11-01T09:09:11Z",
+    "url": "https://zap.dog/photo/profile/l/144",
+    "height": 300,
+    "width": 300
+  },
+  "url": "https://z.fedipen.xyz/channel/asherpen",
+  "tag": [
+    {
+      "type": "PropertyValue",
+      "name": "Protocol",
+      "value": "zot6"
+    },
+    {
+      "type": "PropertyValue",
+      "name": "Protocol",
+      "value": "activitypub"
+    }
+  ],
+  "inbox": "https://zap.dog/inbox/asherpen1183",
+  "outbox": "https://zap.dog/outbox/asherpen1183",
+  "followers": "https://zap.dog/followers/asherpen1183",
+  "following": "https://zap.dog/following/asherpen1183",
+  "endpoints": {
+    "sharedInbox": "https://zap.dog/inbox",
+    "oauthRegistrationEndpoint": "https://zap.dog/api/client/register",
+    "oauthAuthorizationEndpoint": "https://zap.dog/authorize",
+    "oauthTokenEndpoint": "https://zap.dog/token"
+  },
+  "discoverable": true,
+  "publicKey": {
+    "id": "https://z.fedipen.xyz/channel/asherpen?operation=getkey",
+    "owner": "https://z.fedipen.xyz/channel/asherpen",
+    "signatureAlgorithm": "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256",
+    "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAx17CKFIh10nwpiML8jA0\nBWZnMMOvpAElpKphJ5Bvm1WK7K6eiI9Jn7K3aK8SvGl0fVHnvSHTl2mnTDTFsMr2\nbVPtFgBurI4LelHUpOpDtsEKn3lepjhM7BOtGFvy28CN2qq0KmeilBDni6vPQvqW\nxH4qJVztDfYBlQAulEpZrQA/SXl4RctJlRUm9tR/0ktDnWHWvIQyqDLWDKiXE8tM\ncmd9T400FZUBCizdHNbU7R9Pv28muZkRWEUp/qooVYGvePkrnN/az6mAfwz8KCGh\nhRpdds79KhbakFA2bk6a8dojxRPYbnt12sG+8fYyZvoiBcSAicy1ov1g2/gN0Cdh\nP45Lm5/VC/EgPNYk/OVaBKzK6/b9zLm5YmyiEYHaSnO3jjM4dhqvpNibn+dxrrz+\niykkotuUo/jYOnpzQpoB+ygQLSWbVq3AnH+BvhNCaXB2SJ3GghzdTn3LYQNE6aL/\ncB1GoydwSBqiDwKPPJ3MMG/M9gw2WuswAvRsdh9bK2iZV+XEZRw8uLmIk/HbYhpu\nZHa05tjEKA9Yz0sUgjPkf1QYghwTxBOQUKu0hNdsWgkXAO86K8SmuL8Q79/R7GJg\nBZRImbcLsl/GHoTfDslYNx0+ETC7yssZz6uuob428t6C807RjHSjY4LyCzLNmREp\nFtXYouUaGXkgNceKXq7XrcUCAwEAAQ==\n-----END PUBLIC KEY-----\n"
+  },
+  "manuallyApprovesFollowers": true,
+  "copiedTo": [
+    "https://freetobe.social/channel/asherpen",
+    "https://onlinelutherans.com/channel/asherpen",
+    "https://z.fedipen.xyz/channel/asherpen"
+  ],
+  "alsoKnownAs": [
+    "https://freetobe.social/channel/asherpen",
+    "https://onlinelutherans.com/channel/asherpen",
+    "https://z.fedipen.xyz/channel/asherpen"
+  ],
+  "summary": "G+\u96be\u6c11\u3002<br>\u65e5\u8bed\u7f13\u6162\u81ea\u5b66\u4e2d\u3002<br><br>\u770b\u63a8\u7279\u548c\u65b0\u95fb\u4e4b\u7c7b\u7684\u53f7\uff1aasherpen@letus.inspiredlife.fun<br>\u53d1\u561f\u548c\u56de\u590d\u7684\u53f7\uff1aasherpen1183@zap.dog<br>\u5237\u65f6\u95f4\u8f74\u3001\u70b9\u8d5e\u3001\u8f6c\u561f\u7684\u53f7\uff1aasherpen@social.isurf.ca<br><br>\u8d26\u53f7\u52a0\u9501\u53ea\u662f\u56e0\u4e3a\u8fd9\u8fb9\u4e0d\u52a0\u9501\u5c31\u6536\u4e0d\u5230\u5173\u6ce8\u901a\u77e5\uff0c\u4e00\u822c\u90fd\u4f1a\u5148\u901a\u8fc7\u7684<br><br>\u5f53\u524d\u8ffd\u66f4\u7684\u7f8e\u6f2b\uff1a\u53d8\u79cd\u4eba\u520a\uff08\u90e8\u5206\uff09\u3001\u6709 MJ \u7684\u8718\u86db\u4fa0\u520a\u3001\u8759\u8760\u4fa0\u4e3b\u520a\u3001DC \u5bb6\u7684\u5927\u4e8b\u4ef6\u3001\u6709\u82ad\u59d0\u7684\u520a\u3001\u6709\u7eff\u706f\uff08\u5212\u6389\uff0c\u73b0\u5728\u662f\u9ec4\u706f\u4e86\uff09\u59b9\u5b50\u6770\u897f\u5361\u7684\u520a\uff1b<br>\u5f53\u524d\u8ffd\u66f4\u7684\u65e5\u6f2b\uff1a\u5492\u672f\u56de\u6218\u3001\u6d77\u8d3c\u738b\u3001\u94f3\u68a6\u3001\u4e00\u62f3\u8d85\u4eba\u3001MIX\u3001\u5f3a\u6b96\u88c5\u7532\u7b49\u7b49\uff1b<br>\u5f53\u524d\u73a9\u7684\u6e38\u620f\uff1aAFK Arena\u3001\u516c\u4e3b\u7269\u8bed\u3001Tsuki Odyssey\u3002<br><br>\u5934\u50cf\u662fEVA\u91cc\u7684\u90a3\u53ea\u4f01\u9e45~",
+  "attachment": [
+    {
+      "type": "PropertyValue",
+      "name": "birthday",
+      "value": "0000-00-00"
+    }
+  ],
+  "signature": {
+    "type": "RsaSignature2017",
+    "nonce": "313c1249a8345cd7a13df02befc19fb343cb71cbcad1034ba8f3b1f5dcd2f814",
+    "creator": "https://zap.dog/channel/asherpen1183",
+    "created": "2021-11-01T13:13:31Z",
+    "signatureValue": "S8GBMQm/sRC7KvaTCZ/xxVz8vZzKoIma0+wuebyZ+TEyMcSjMytEpRS1RgIbQnaeNYsCLrSDSC4z2wGD+k1J9c7XEjF9QUl/vDaFNaipjQhrE1y52Mhxy/T+p27/r0NQtl0Y9TdgZ9xhk8SsJT6xYM+a9D/J9sYPa5yW/tkLBrpJUrCtZXcUy0PxIbRlnULrj0yKnrXD2mvI+Co4zwPCg/K5/mL9YfS6cPrcH3LJzFMrleUkpfIb5kKHNAS4MUwpLMPUKIC7TP+RHHyJpRGxvLYVPKJo+Hd2P86gCKUjLTNRtAp8LneoXc1QxExqGO9V63R5gi8uM6oKTikSwPIJl0tyN3dMEbYwVIZmaKL2vf1yg8mOgUr7RU5XP63WawE9fmL0MIqn+BHQZ1NDk05zUdV8gClQAKbuUvj7CiZXHKmpDdV8ma29bG75ERb6B3PP33xescl0mERtGULapWJEjLa4EvtvGna/OH3ed10krNjZ/y6Ac+HQ/O+R1/GZbqUhX2h8p8TAOI49S3F+s7kxQz2gYcx+y7O6eeissV2uVnN9tfauYZECDlbYVPhe5BwKLwEaxovWFO9QeHLx3KnyhS5letIiIcLE+KvN1tJqvTD3RPct0f1ecxONiyupsdPw8wNcnKuGv/GZwPPXk1U533SO9zsvJcgxOjyoiXB+X4U="
+  }
+}

@@ -90,4 +90,34 @@ class FetchProfileTaskTest extends TestCase
         $this->assertEquals($localProfile['id'], $profileInDB['actor']);
         $this->assertEquals('Group', $profileInDB['type']);
     }
+
+    public function testCommandWithAliases()
+    {
+        $person = file_get_contents(ROOT . '/tests/data/profile-from-zap-slave-server.json');
+        $path = '/actor';
+        $actor = self::$server->getServerRoot() . $path;
+        self::$server->setResponseOfPath($path, new Response(
+            $person,
+            ['Content-Type' => 'application/activity+json'],
+        ));
+        $task = new FetchProfileTask($this->container);
+        $profile = $task->command(['actor' => $actor]);
+        $this->assertIsArray($profile);
+        $this->assertArrayHasKey('id', $profile);
+
+        $db = $this->container->get(Medoo::class);
+        $actorAliases = $db->select('actor_aliases', '*', ['profile_id' => $profile['id']]);
+        $this->assertNotEmpty($actorAliases);
+
+        $aliases = [];
+        foreach ($actorAliases as $v) {
+            $aliases[] = $v['alias'];
+        }
+        $expectedAliases = [
+            "https://freetobe.social/channel/asherpen",
+            "https://onlinelutherans.com/channel/asherpen",
+            "https://z.fedipen.xyz/channel/asherpen"
+        ];
+        $this->assertEquals($expectedAliases, $aliases);
+    }
 }

@@ -67,6 +67,23 @@ class FetchProfileTask implements TaskInterface
             $db->insert('profiles', $profile);
             $profile['id'] = $db->id();
         }
+
+        if (!empty($person['alsoKnownAs'])) {
+            $aliases = [];
+            foreach ($person['alsoKnownAs'] as $alias) {
+                if (!is_string($alias) || empty($alias)) {
+                    continue;
+                }
+                $aliases[] = [
+                    'profile_id' => $profile['id'],
+                    'alias' => $alias
+                ];
+            }
+            if (!empty($aliases)) {
+                $db->insert('actor_aliases', $aliases);
+            }
+        }
+
         return $profile;
     }
 }
