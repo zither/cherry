@@ -2,11 +2,9 @@
 
 namespace Cherry\Task;
 
+use InvalidArgumentException;
 use adrianfalleiro\FailedTaskException;
-use adrianfalleiro\RetryException;
 use adrianfalleiro\TaskInterface;
-use Cherry\ActivityPub\ObjectType;
-use Cherry\Helper\Time;
 use Psr\Container\ContainerInterface;
 use Medoo\Medoo;
 
@@ -25,12 +23,18 @@ class RemoteLikeTask implements TaskInterface
         $activityId = $args['activity_id'];
         $activity = $db->get('activities', '*', ['id' => $activityId]);
         if (empty($activity) || strtolower($activity['type']) !== 'like') {
-            throw new \InvalidArgumentException('Invalid activity type');
+            throw new InvalidArgumentException('Invalid activity type');
         }
         $rawActivity = json_decode($activity['raw'], true);
 
         $actor = $rawActivity['actor'];
-        $rawObjectId = $rawActivity['object'];
+        if (is_string($rawActivity['object'])) {
+            $rawObjectId = $rawActivity['object'];
+        } else if (is_array($rawActivity['object'])) {
+            $rawObjectId = $rawActivity['object']['id'];
+        } else {
+            throw new InvalidArgumentException('Invalid object');
+        }
         $object = $db->get('objects', ['id', 'is_local'], ['raw_object_id' => $rawObjectId]);
         if (empty($object)) {
             // 嘟文不存在，直接结束
