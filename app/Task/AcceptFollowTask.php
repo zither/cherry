@@ -45,6 +45,8 @@ class AcceptFollowTask implements TaskInterface
             'type' => 'Accept',
             'object' => $rawActivity,
         ];
+        $helper = $this->container->get(SignRequest::class);
+        $message['signature'] = $helper->createLdSignature($message);
         $acceptActivity = [
             'activity_id' => $message['id'],
             'profile_id' => 1,
@@ -59,7 +61,6 @@ class AcceptFollowTask implements TaskInterface
             'Accept' => 'application/activity+json',
         ]);
         $request->getBody()->write(json_encode($message, JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE));
-        $helper = $this->container->get(SignRequest::class);
         $request = $helper->sign($request);
         $client = new Client();
         $response = $client->send($request);

@@ -87,6 +87,10 @@ class FollowTask implements TaskInterface
                 // keep the actor in raw activity
                 $followRequest['cc'] = [$profile['actor']];
             }
+
+            $helper = $this->container->get(SignRequest::class);
+            $followRequest['signature'] = $helper->createLdSignature($followRequest);
+
             $jsonRequest =json_encode($followRequest, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
             $activity = [
                 'activity_id' => $followRequest['id'],
