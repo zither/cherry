@@ -1,0 +1,142 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/activitystreams",
+    "https://w3id.org/security/v1",
+    {
+      "zot": "https://zap.dog/apschema#",
+      "toot": "http://joinmastodon.org/ns#",
+      "ostatus": "http://ostatus.org#",
+      "schema": "http://schema.org#",
+      "litepub": "http://litepub.social/ns#",
+      "sm": "http://smithereen.software/ns#",
+      "conversation": "ostatus:conversation",
+      "manuallyApprovesFollowers": "as:manuallyApprovesFollowers",
+      "oauthRegistrationEndpoint": "litepub:oauthRegistrationEndpoint",
+      "sensitive": "as:sensitive",
+      "movedTo": "as:movedTo",
+      "copiedTo": "as:copiedTo",
+      "alsoKnownAs": "as:alsoKnownAs",
+      "EmojiReact": "as:EmojiReact",
+      "commentPolicy": "zot:commentPolicy",
+      "topicalCollection": "zot:topicalCollection",
+      "eventRepeat": "zot:eventRepeat",
+      "emojiReaction": "zot:emojiReaction",
+      "expires": "zot:expires",
+      "directMessage": "zot:directMessage",
+      "Category": "zot:Category",
+      "replyTo": "zot:replyTo",
+      "PropertyValue": "schema:PropertyValue",
+      "value": "schema:value",
+      "discoverable": "toot:discoverable",
+      "wall": "sm:wall",
+      "capabilities": "litepub:capabilities",
+      "acceptsJoins": "litepub:acceptsJoins"
+    }
+  ],
+  "type": "Create",
+  "id": "https://z.fedipen.xyz/item/42388ce2-e185-46a5-a549-38528b7e4da0",
+  "published": "2021-11-02T13:39:12Z",
+  "context": "https://z.fedipen.xyz/item/42388ce2-e185-46a5-a549-38528b7e4da0",
+  "conversation": "https://z.fedipen.xyz/item/42388ce2-e185-46a5-a549-38528b7e4da0",
+  "actor": "https://z.fedipen.xyz/channel/asherpen",
+  "url": [
+    {
+      "type": "Link",
+      "href": "https://z.fedipen.xyz/item/42388ce2-e185-46a5-a549-38528b7e4da0",
+      "rel": "alternate",
+      "mediaType": "text/html"
+    },
+    {
+      "type": "Link",
+      "href": "https://z.fedipen.xyz/item/42388ce2-e185-46a5-a549-38528b7e4da0",
+      "rel": "alternate",
+      "mediaType": "text/html"
+    },
+    {
+      "type": "Link",
+      "href": "https://z.fedipen.xyz/item/42388ce2-e185-46a5-a549-38528b7e4da0",
+      "rel": "alternate",
+      "mediaType": "application/activity+json"
+    },
+    {
+      "type": "Link",
+      "href": "https://z.fedipen.xyz/item/42388ce2-e185-46a5-a549-38528b7e4da0",
+      "rel": "alternate",
+      "mediaType": "application/x-zot+json"
+    }
+  ],
+  "object": {
+    "type": "Note",
+    "id": "https://z.fedipen.xyz/item/42388ce2-e185-46a5-a549-38528b7e4da0",
+    "published": "2021-11-02T13:39:12Z",
+    "commentPolicy": "authenticated",
+    "attributedTo": "https://z.fedipen.xyz/channel/asherpen",
+    "context": "https://z.fedipen.xyz/conversation/42388ce2-e185-46a5-a549-38528b7e4da0",
+    "conversation": "https://z.fedipen.xyz/conversation/42388ce2-e185-46a5-a549-38528b7e4da0",
+    "content": "",
+    "replyTo": "https://z.fedipen.xyz/channel/asherpen",
+    "url": [
+      {
+        "type": "Link",
+        "href": "https://z.fedipen.xyz/item/42388ce2-e185-46a5-a549-38528b7e4da0",
+        "rel": "alternate",
+        "mediaType": "text/html"
+      },
+      {
+        "type": "Link",
+        "href": "https://zap.dog/item/42388ce2-e185-46a5-a549-38528b7e4da0",
+        "rel": "alternate",
+        "mediaType": "text/html"
+      },
+      {
+        "type": "Link",
+        "href": "https://zap.dog/item/42388ce2-e185-46a5-a549-38528b7e4da0",
+        "rel": "alternate",
+        "mediaType": "application/activity+json"
+      },
+      {
+        "type": "Link",
+        "href": "https://zap.dog/item/42388ce2-e185-46a5-a549-38528b7e4da0",
+        "rel": "alternate",
+        "mediaType": "application/x-zot+json"
+      }
+    ],
+    "tag": [
+      {
+        "id": "https://z.fedipen.xyz/search?tag=Friendica",
+        "name": "#Friendica"
+      }
+    ],
+    "attachment": [
+      {
+        "type": "Image",
+        "url": "https://opengraph.githubassets.com/3cb12b689f7dcd4cfdcfa697a0202d1b5790bc3653af3d8ab2770dc27c7ff0ff/friendica/friendica/issues/10947"
+      }
+    ],
+    "to": [
+      "https://www.w3.org/ns/activitystreams#Public"
+    ],
+    "cc": [
+      "https://z.fedipen.xyz/followers/asherpen"
+    ]
+  },
+  "tag": [
+    {
+      "id": "https://zap.dog/search?tag=Friendica",
+      "name": "#Friendica"
+    }
+  ],
+  "to": [
+    "https://www.w3.org/ns/activitystreams#Public"
+  ],
+  "cc": [
+    "https://zap.dog/followers/asherpen"
+  ],
+  "signature": {
+    "type": "RsaSignature2017",
+    "nonce": "9895af4667bb732c4eb4bdd0ba93a6afad78d52ee0cfb302a00a771a482e7c69",
+    "creator": "https://zap.dog/channel/asherpen1183",
+    "created": "2021-11-02T13:39:16Z",
+    "signatureValue": "p+il9UKmsuvAPnKmE9EgDEveXpTZr3FFHboTVbzU7m0Yn/mbT1ZiX5Of/4TfbTBHg/tiRg9jYNpORfLPRLnLZEH1GzZUK1wCaGcechNqTvMPCMwQUCEpGFtweKsEtbk9Ok+ZIlB86bZf+4toJ40qRhfjjrX92gIAeDkj+IR6AS5Mx1F/t+eoZEPD4k6HqjeQ9NtFHhCX7tLmayJH53sh2whg+tn0OEYlYhQbLU+aO+eatV1TpUo5wm7+pT8T4OU7eyeBaM1xPahTXpziGnI6G9AHgwY5ljJRqJ3yta8SF7pRfPh5EftuMgY7hYA8/2mPP2uj070eH4JPn2xOk7qp211KtFLg7z9+COEkjmNxEAONOewC5DMtJsPVKnY/REI9gAiRMAJGswawr/EIN82jnPsocAxB000jocpDLmK37cXhiI07PAktXY0xpK09OigkmQApqfTH7q3lRt0yTqmaQ1gXHSRq6bXFNr6NGtdSLxb0/lRMDN2GFjxsXe4hp/22jISPWFINQa3apwmGFxae538udtvhfYkjL/Bg2mbWlMY859rZ2MWpAnxbdwCZw8TZd7Wsb1aqRP0LgXvvqTGkLs9u364EFv3onPoGdkHnc6vCB7fyaEriWAtiRQ2SbmJOqu/IL7gigvcWciRywuETUhu9v/j6cSBDcw7Cyc8yYyU="
+  }
+}

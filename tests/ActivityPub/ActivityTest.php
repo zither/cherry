@@ -16,5 +16,10 @@ class ActivityTest extends TestCase
         $rawActivity = file_get_contents(ROOT . '/tests/data/follow-activity-from-zap-slave-server.json');
         $activity = Activity::createFromArray(json_decode($rawActivity, true));
         $this->assertTrue($activity->isActorAlias());
+
+        $rawActivity = file_get_contents(ROOT . '/tests/data/create-activity-from-zap-slave-server.json');
+        $activity = Activity::createFromArray(json_decode($rawActivity, true));
+        $this->assertNotEmpty($activity->signature);
+        $this->assertTrue($activity->isActorAlias());
     }
 }
