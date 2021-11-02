@@ -1,6 +1,7 @@
 <?php
 namespace Cherry\Controller;
 
+use InvalidArgumentException;
 use Cherry\ActivityPub\Activity;
 use Cherry\ActivityPub\ObjectType;
 use Cherry\ActivityPub\OrderedCollection;
@@ -164,7 +165,7 @@ class ApiController
                 $helper->getHttpSignatureDataFromRequest($request),
                 JSON_UNESCAPED_SLASHES
             );
-        } catch (\InvalidArgumentException $e) {
+        } catch (InvalidArgumentException $e) {
             $headers = $request->getHeaders();
             $headers['error'] = $e->getMessage();
             $signatureData = json_encode($headers, JSON_UNESCAPED_SLASHES);
@@ -181,23 +182,26 @@ class ApiController
         $db->insert('activities', $data);
         $lastId = $db->id();
 
-        $typesMap = [
-            'follow' => 'FollowRequestTask',
-            'accept' => 'FollowBeAcceptedTask',
-            'reject' => 'FollowBeRejectedTask',
-            'create' => 'CreateRequestTask',
-            'announce' => 'AnnounceRequestTask',
-            'update' => 'UpdateRequestTask',
-            'like' => 'RemoteLikeTask',
-            'undo' => 'RemoteUndoTask',
-            'delete' => 'RemoteDeleteTask',
-        ];
-        $task = $typesMap[$activityType->lowerType()] ?? null;
-        if ($task) {
-            $db->insert('tasks', [
-                'task' => $task,
-                'params' => json_encode(['activity_id' => $lastId]),
-            ]);
+
+        if (!$activityType->isActorAlias()) {
+            $typesMap = [
+                'follow' => 'FollowRequestTask',
+                'accept' => 'FollowBeAcceptedTask',
+                'reject' => 'FollowBeRejectedTask',
+                'create' => 'CreateRequestTask',
+                'announce' => 'AnnounceRequestTask',
+                'update' => 'UpdateRequestTask',
+                'like' => 'RemoteLikeTask',
+                'undo' => 'RemoteUndoTask',
+                'delete' => 'RemoteDeleteTask',
+            ];
+            $task = $typesMap[$activityType->lowerType()] ?? null;
+            if ($task) {
+                $db->insert('tasks', [
+                    'task' => $task,
+                    'params' => json_encode(['activity_id' => $lastId]),
+                ]);
+            }
         }
 
         $statusCode = $activityType->lowerType() == 'create' ? 201 : 202;
