@@ -84,6 +84,12 @@ class CreateRequestTask implements TaskInterface
             if (!empty($emojis)) {
                 $content = str_replace(array_keys($emojis), array_values($emojis), $content);
             }
+
+            $unlisted = 0;
+            if ($object->isReply() && empty($object->content) && !empty($object->name)) {
+                $unlisted = 1;
+            }
+
             $db->insert('objects', [
                 'profile_id' => $profile['id'],
                 'origin_id' => $originId,
@@ -98,8 +104,13 @@ class CreateRequestTask implements TaskInterface
                 'is_public' => $object->isPublic(),
                 'is_boosted' => 0,
                 'is_sensitive' => isset($object->sensitive) && $object->sensitive,
+                'unlisted' => $unlisted
             ]);
             $objectId = $db->id();
+
+            if ($unlisted) {
+                $db->update('activities', ['unlisted' => $unlisted], ['id' => $activityId]);
+            }
 
             if (!empty($poll)) {
                 $poll['object_id'] = $objectId;
