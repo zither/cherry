@@ -81,6 +81,9 @@ class CreateRequestTask implements TaskInterface
                 }
             }
             $content = $object->getStringAttribute('content');
+            if (empty($content)) {
+                $content = $object->getStringAttribute('name');
+            }
             if (!empty($emojis)) {
                 $content = str_replace(array_keys($emojis), array_values($emojis), $content);
             }
