@@ -82,7 +82,7 @@ class FetchObjectTask implements TaskInterface
 
         $poll = [];
         if ($object->type === ActivityPub::OBJECT_TYPE_QUESTION) {
-            $multiple = isset($args['object']['anyOf']) ? true : false;
+            $multiple = isset($args['anyOf']) ? true : false;
             $choicesKey = $multiple ? 'anyOf' : 'oneOf';
             $choices = [];
             foreach ($args[$choicesKey] as $v) {
