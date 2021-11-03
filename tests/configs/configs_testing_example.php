@@ -7,6 +7,7 @@ return [
         'name' => 'cherry_testing',
         'user' => 'user',
         'password' => 'password',
+        'port' => 3306,
     ],
     'default_time_zone' => 'UTC',
     'debug' => true,
