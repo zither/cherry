@@ -42,7 +42,7 @@ trait SetupCherryEnv
     protected function prepareDatabase(array $configs)
     {
         $database = $configs['database'];
-        $pdo = new \PDO("mysql:host={$database['host']}",$database['user'], $database['password']);
+        $pdo = new \PDO("mysql:host={$database['host']};port={$database['port']}",$database['user'], $database['password']);
         $pdo->exec("DROP DATABASE {$database['name']}");
         $pdo->exec("CREATE DATABASE {$database['name']}");
         $pdo->exec("USE {$database['name']}");
