@@ -24,7 +24,7 @@ class TaskFactory
         $this->container = $container;
     }
 
-    public function queue(string $taskName, array $params = [], int $priority = 140): int
+    public function queue(string $taskName, array $params = [], int $priority = 140, int $delay =  60, int $loop = 0): int
     {
         if (class_exists($taskName)) {
             $interfaces = class_implements($taskName);
@@ -42,7 +42,9 @@ class TaskFactory
         $db->insert($this->table, [
             'task' => $taskName,
             'params' => json_encode($params, JSON_UNESCAPED_UNICODE),
-            'priority' => $priority
+            'priority' => $priority,
+            'delay' => $delay,
+            'is_loop' => $loop,
         ]);
         return $db->id();
     }

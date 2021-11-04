@@ -1,6 +1,7 @@
 <?php
 namespace Cherry\Controller;
 
+use Cherry\Task\TaskFactory;
 use InvalidArgumentException;
 use Cherry\ActivityPub\Activity;
 use Cherry\ActivityPub\ObjectType;
@@ -197,10 +198,7 @@ class ApiController
             ];
             $task = $typesMap[$activityType->lowerType()] ?? null;
             if ($task) {
-                $db->insert('tasks', [
-                    'task' => $task,
-                    'params' => json_encode(['activity_id' => $lastId]),
-                ]);
+                $this->container->get(TaskFactory::class)->queue($task, ['activity_id' => $lastId]);
             }
         }
 

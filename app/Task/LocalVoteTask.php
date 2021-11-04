@@ -90,11 +90,10 @@ class LocalVoteTask implements TaskInterface
             $db->insert('activities', $activity);
             $activityId = $db->id();
 
-            $db->insert('tasks', [
-                'task' => 'DeliverActivityTask',
-                'params' => json_encode(['activity_id' => $activityId], JSON_UNESCAPED_SLASHES),
-                'priority' => 140,
-            ]);
+            $this->container->get(TaskFactory::class)->queue(
+                DeliverActivityTask::class,
+                ['activity_id' => $activityId]
+            );
             $db->update('poll_choices', [
                 'activity_id' => $activityId,
                 'object_id' => $objectId

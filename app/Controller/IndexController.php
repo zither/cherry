@@ -4,10 +4,24 @@ namespace Cherry\Controller;
 use Cherry\ActivityPub\Activity;
 use Cherry\ActivityPub\ActivityPub;
 use Cherry\FlashMessage;
-use Cherry\Helper\SignRequest;
 use Cherry\Helper\Time;
 use Cherry\Markdown;
 use Cherry\Session\SessionInterface;
+use Cherry\Task\{
+    AcceptFollowTask,
+    Cron\DeleteExpiredSessionsTask,
+    Cron\UpdateRemotePollsTask,
+    DeleteActivityTask,
+    DeliverActivityTask,
+    FetchProfileTask,
+    FollowTask,
+    LocalInteractiveTask,
+    LocalUndoTask,
+    LocalUpdateProfileTask,
+    LocalVoteTask,
+    RejectFollowTask,
+    TaskFactory
+};
 use Godruoyi\Snowflake\Snowflake;
 use League\Plates\Engine;
 use Medoo\Medoo;
@@ -746,12 +760,10 @@ class IndexController
 
             // 添加推送任务
             if (!empty($audiences['to']) || !empty($audiences['cc'])) {
-                $task = [
-                    'task' => 'DeliverActivityTask',
-                    'params' => json_encode(['activity_id' => $activityId], JSON_UNESCAPED_SLASHES),
-                    'priority' => 140,
-                ];
-                $db->insert('tasks', $task);
+                $this->container->get(TaskFactory::class)->queue(
+                    DeliverActivityTask::class,
+                    ['activity_id' => $activityId]
+                );
             }
 
             $db->pdo->commit();
@@ -780,11 +792,10 @@ class IndexController
         // 删除标签
         $db->delete('tags', ['object_id' => $activity['object_id']]);
 
-        $db->insert('tasks', [
-            'task' => 'DeleteActivityTask',
-            'params' => json_encode(['activity_id' => $activity['id']], JSON_UNESCAPED_SLASHES),
-            'priority' => 140,
-        ]);
+        $this->container->get(TaskFactory::class)->queue(
+            DeleteActivityTask::class,
+            ['activity_id' => $activity['id']]
+        );
 
         return $response->withStatus('302')->withHeader('location', '/');
     }
@@ -1050,17 +1061,10 @@ class IndexController
                 }
                 $isUrl = false;
             }
-            $db = $this->container->get(Medoo::class);
-            $task = [
-                'task' => 'FollowTask',
-                'params' => json_encode([
-                    'account' => $account,
-                    'is_url' => $isUrl,
-                ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
-                'priority' => 140,
-            ];
-            $db->insert('tasks', $task);
-
+            $this->container->get(TaskFactory::class)->queue(
+                FollowTask::class,
+                ['account' => $account, 'is_url' => $isUrl]
+            );
             $this->flash($request)->success('Follow Request Sent!');
         } catch (Exception $e) {
             $this->flash($request)->error($e->getMessage());
@@ -1115,25 +1119,18 @@ class IndexController
             $db = $this->container->get(Medoo::class);
             $notification = $db->get('notifications', '*', ['id' => $notificationId]);
 
-            $params = json_encode([
+            $params = [
                 'activity_id' => $notification['activity_id'],
                 'profile_id' => $notification['profile_id'],
-            ], JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
+            ];
 
+            $taskFactory = $this->container->get(TaskFactory::class);
             if ($action === 'accept') {
-                $db->insert('tasks', [
-                    'task' => 'AcceptFollowTask',
-                    'params' => $params,
-                    'priority' => 140,
-                ]);
+                $taskFactory->queue(AcceptFollowTask::class, $params);
                 $db->update('notifications', ['status' => 1, 'viewed' => 1], ['id' => $notificationId]);
             } else {
                 if ($action === 'reject') {
-                    $db->insert('tasks', [
-                        'task' => 'RejectFollowTask',
-                        'params' => $params,
-                        'priority' => 140,
-                    ]);
+                    $taskFactory->queue(RejectFollowTask::class, $params);
                 }
                 $db->delete('notifications', ['id' => $notificationId]);
             }
@@ -1150,18 +1147,16 @@ class IndexController
         $object = $db->get('objects', ['id', 'is_liked'], ['id' => $objectId]);
         $liked = $object['is_liked'] ? 0 : 1;
         $db->update('objects', ['is_liked' => $liked], ['id' => $objectId]);
+        $taskFactory = $this->container->get(TaskFactory::class);
         if ($liked) {
-            $db->insert('tasks', [
-                'task' => 'LocalInteractiveTask',
-                'params' => json_encode(['object_id' => $objectId, 'type' => 'Like'], JSON_UNESCAPED_SLASHES),
-                'priority' => 140,
+            $taskFactory->queue(LocalInteractiveTask::class, [
+                'object_id' => $objectId,
+                'type' => 'Like'
             ]);
         } else if ($object['is_liked']) {
             $interaction = $db->get('interactions', ['activity_id'], ['profile_id' => 1, 'object_id' => $objectId]);
-            $db->insert('tasks', [
-                'task' => 'LocalUndoTask',
-                'params' => json_encode(['activity_id' => $interaction['activity_id']], JSON_UNESCAPED_SLASHES),
-                'priority' => 140,
+            $taskFactory->queue(LocalUndoTask::class, [
+                'activity_id' => $interaction['activity_id']
             ]);
         }
         $referer = $request->getHeaderLine('Referer');
@@ -1181,18 +1176,16 @@ class IndexController
 
         $toBoost = $object['is_boosted'] ? 0 : 1;
         $db->update('objects', ['is_boosted' => $toBoost], ['id' => $objectId]);
+        $taskFactory = $this->container->get(TaskFactory::class);
         if ($toBoost) {
-            $db->insert('tasks', [
-                'task' => 'LocalInteractiveTask',
-                'params' => json_encode(['object_id' => $objectId, 'type' => 'Announce'], JSON_UNESCAPED_SLASHES),
-                'priority' => 140,
+            $taskFactory->queue(LocalInteractiveTask::class, [
+                'object_id' => $objectId,
+                'type' => 'Announce'
             ]);
         } else if ($object['is_boosted']) {
             $interaction = $db->get('interactions', ['activity_id'], ['profile_id' => 1, 'object_id' => $objectId]);
-            $db->insert('tasks', [
-                'task' => 'LocalUndoTask',
-                'params' => json_encode(['activity_id' => $interaction['activity_id']], JSON_UNESCAPED_SLASHES),
-                'priority' => 140,
+            $taskFactory->queue(LocalUndoTask::class, [
+                'activity_id' => $interaction['activity_id']
             ]);
         }
 
@@ -1220,11 +1213,10 @@ class IndexController
             ];
             $db->insert('poll_choices', $choice);
             $choiceId = $db->id();
-            $db->insert('tasks', [
-                'task' => 'LocalVoteTask',
-                'params' => json_encode(['choice_id' => $choiceId], JSON_UNESCAPED_SLASHES),
-                'priority' => 140,
-            ]);
+            $this->container->get(TaskFactory::class)->queue(
+                LocalVoteTask::class,
+                ['choice_id' => $choiceId]
+            );
         }
         $db->update('polls', ['is_voted' => 1], ['id' => $pollId]);
         return $this->redirectBack($request, $response);
@@ -1256,11 +1248,10 @@ class IndexController
             $db = $this->container->get(Medoo::class);
             $follower = $db->get('followers', '*', ['id' => $followerId]);
             $db->delete('followers', ['id' => $followerId]);
-            $db->insert('tasks', [
-                'task' => 'LocalUndoTask',
-                'params' => json_encode(['activity_id' => $follower['accept_activity_id']], JSON_UNESCAPED_SLASHES),
-                'priority' => 140,
-            ]);
+            $this->container->get(TaskFactory::class)->queue(
+                LocalUndoTask::class,
+                ['activity_id' => $follower['accept_activity_id']]
+            );
         }
 
         return $this->redirectBack($request, $response);
@@ -1274,11 +1265,10 @@ class IndexController
             $db = $this->container->get(Medoo::class);
             $following = $db->get('following', '*', ['id' => $followingId]);
             $db->delete('following', ['id' => $followingId]);
-            $db->insert('tasks', [
-                'task' => 'LocalUndoTask',
-                'params' => json_encode(['activity_id' => $following['follow_activity_id']], JSON_UNESCAPED_SLASHES),
-                'priority' => 140,
-            ]);
+            $this->container->get(TaskFactory::class)->queue(
+                LocalUndoTask::class,
+                ['activity_id' => $following['follow_activity_id']]
+            );
         }
 
         return $this->redirectBack($request, $response);
@@ -1485,12 +1475,10 @@ class IndexController
         if (empty($actor)) {
             throw new HttpException($request, 'Invalid profile id', 400);
         }
-        $task = [
-            'task' => 'FetchProfileTask',
-            'params' => json_encode(['actor' => $actor], JSON_UNESCAPED_SLASHES),
-            'priority' => 140,
-        ];
-        $db->insert('tasks', $task);
+        $this->container->get(TaskFactory::class)->queue(
+            FetchProfileTask::class,
+            ['actor' => $actor]
+        );
         return $this->redirectBack($request, $response);
     }
 
@@ -1561,12 +1549,10 @@ class IndexController
                 'summary' => $summary
             ];
             $db->update('profiles', $data, ['id' => $profileId]);
-            $task = [
-                'task' => 'LocalUpdateProfileTask',
-                'params' => json_encode(['id' => $profileId], JSON_UNESCAPED_SLASHES),
-                'priority' => 140,
-            ];
-            $db->insert('tasks', $task);
+            $this->container->get(TaskFactory::class)->queue(
+                LocalUpdateProfileTask::class,
+                ['id' => $profileId]
+            );
             $flash->success('更新成功');
         } catch (Exception $e) {
             $flash->error($e->getMessage());
@@ -1697,22 +1683,9 @@ SQL;
             ];
             $db->insert('profiles', $profile);
 
-            $cronTasks = [
-                [
-                    'task' => 'DeleteExpiredSessionsTask',
-                    'priority' => 120,
-                    'delay' => 60,
-                    'is_loop' => 1,
-                ],
-                [
-                    'task' => 'UpdateRemotePollsTask',
-                    'priority' => 120,
-                    'delay' => 60,
-                    'is_loop' => 1,
-                ],
-            ];
-            $db->insert('tasks', $cronTasks);
-
+            $taskFactory = $this->container->get(TaskFactory::class);
+            $taskFactory->queue(DeleteExpiredSessionsTask::class, [], 120, 60, 1);
+            $taskFactory->queue(UpdateRemotePollsTask::class, [], 120, 60, 1);
             return $response->withStatus('302')->withHeader('location', '/login');
         } catch (Exception $e) {
             $flash = $this->flash($request);

@@ -31,7 +31,9 @@ class CronTaskTest extends TestCase
         $db = $this->container->get(Medoo::class);
         $db->insert('tasks', $invalidLocalUndoTask);
         $cronTask = new CronTask($this->container);
+        ob_start();
         $cronTask->command([]);
+        ob_end_clean();
         $log = $db->get('task_logs', '*', ['task' => 'LocalUndoTask']);
         $this->assertEquals('Invalid activity id: ', $log['reason']);
     }

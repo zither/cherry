@@ -98,11 +98,10 @@ class LocalUndoTask implements TaskInterface
                 $db->update('activities', ['is_deleted' => 1], ['id' => $activityId]);
             }
 
-            $db->insert('tasks', [
-                'task' => 'DeliverActivityTask',
-                'params' => json_encode(['activity_id' => $newActivityId], JSON_UNESCAPED_SLASHES),
-                'priority' => 140,
-            ]);
+            $this->container->get(TaskFactory::class)->queue(
+                DeliverActivityTask::class,
+                ['activity_id' => $newActivityId]
+            );
             $db->pdo->commit();
         } catch (\PDOException $e) {
             $db->pdo->rollBack();
