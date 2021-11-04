@@ -7,7 +7,7 @@ use Cherry\Test\PSR7ObjectProvider;
 use Cherry\Test\TestCase;
 use Cherry\Test\Traits\SetupCherryEnv;
 
-class LockSiteMiddlewareTest extends TestCase
+class SiteLockingMiddlewareTest extends TestCase
 {
     use SetupCherryEnv;
 
@@ -40,7 +40,18 @@ class LockSiteMiddlewareTest extends TestCase
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertContains('/login', $response->getHeader('Location'));
 
+        $request = $provider->createServerRequest('/', 'GET');
+        $request = $request->withHeader('Accept', 'application/activity+json');
+        $response = $this->app->handle($request);
+        $this->assertEquals(200, $response->getStatusCode());
+
         $request = $provider->createServerRequest('/notes/fake-note-id', 'GET');
+        $response = $this->app->handle($request);
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertContains('/login', $response->getHeader('Location'));
+
+        $request = $provider->createServerRequest('/notes/fake-note-id', 'GET');
+        $request = $request->withHeader('Accept', 'application/activity+json');
         $response = $this->app->handle($request);
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertContains('/login', $response->getHeader('Location'));
@@ -54,5 +65,7 @@ class LockSiteMiddlewareTest extends TestCase
         $this->signIn($request);
         $response = $this->app->handle($request);
         $this->assertEquals(200, $response->getStatusCode());
+
+
     }
 }

@@ -1,7 +1,7 @@
 <?php
 use Slim\App;
 use adrianfalleiro\SlimCLIRunner;
-use Cherry\Middleware\SetSessionCookieMiddleware;
+use Cherry\Middleware\SessionCookieMiddleware;
 
 return function (App $app) {
 
@@ -9,7 +9,7 @@ return function (App $app) {
 
     $app->add(SlimCLIRunner::class);
     $app->addRoutingMiddleware();
-    $app->add(SetSessionCookieMiddleware::class);
+    $app->add(SessionCookieMiddleware::class);
     $configs = $container->get('configs');
     $debug = $configs['debug'] ?? false;
     if (!$debug) {

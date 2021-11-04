@@ -11,7 +11,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Psr\Http\Server\MiddlewareInterface;
 
-class SetSessionCookieMiddleware implements MiddlewareInterface
+class SessionCookieMiddleware implements MiddlewareInterface
 {
     protected $container;
 

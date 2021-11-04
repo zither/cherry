@@ -2,6 +2,7 @@
 
 namespace Cherry\Middleware;
 
+use Cherry\Helper\Helper;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -9,7 +10,7 @@ use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Psr\Http\Server\MiddlewareInterface;
 use GuzzleHttp\Psr7\Response;
 
-class AcceptHeaderMiddleware implements MiddlewareInterface
+class ApiCheckingMiddleware implements MiddlewareInterface
 {
     protected $container;
 
@@ -24,19 +25,9 @@ class AcceptHeaderMiddleware implements MiddlewareInterface
 
     public function process(Request $request, RequestHandler $requestHandler): ResponseInterface
     {
-        $headers = $request->getHeader('accept');
-        $isApi = false;
-        foreach ($headers as $header) {
-            if (preg_match('#application/(.+\+)?json#', $header)) {
-                $isApi = true;
-                break;
-            }
-        }
-
-        if ($isApi) {
+        if (Helper::isApi($request)) {
             return $requestHandler->handle($request);
         }
-
         return new Response('302', ['location' => '/']);
     }
 }

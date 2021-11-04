@@ -2,7 +2,7 @@
 
 namespace Cherry\Middleware;
 
-use Medoo\Medoo;
+use Cherry\Session\SessionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -10,7 +10,7 @@ use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Psr\Http\Server\MiddlewareInterface;
 use GuzzleHttp\Psr7\Response;
 
-class InitialMiddleware implements MiddlewareInterface
+class AuthenticationMiddleware implements MiddlewareInterface
 {
     protected $container;
 
@@ -25,14 +25,10 @@ class InitialMiddleware implements MiddlewareInterface
 
     public function process(Request $request, RequestHandler $requestHandler): ResponseInterface
     {
-        $db = $this->container->get(Medoo::class);
-        $settings = $this->container->make('settings');
-        $profileExists = $db->count('profiles', ['id' => 1]);
-
-        if (empty($settings) && !$profileExists) {
-            return $requestHandler->handle($request);
+        $session = $this->container->make(SessionInterface::class, ['request' => $request]);
+        if (!$session->isStarted() || !$session['is_admin']) {
+            return new Response('401');
         }
-
-        return new Response('302', ['location' => '/']);
+        return $requestHandler->handle($request);
     }
 }

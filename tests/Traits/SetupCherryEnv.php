@@ -2,6 +2,7 @@
 
 namespace Cherry\Test\Traits;
 
+use Cherry\CallableResolver;
 use Medoo\Medoo;
 use Slim\App;
 use DI\Container;
@@ -24,7 +25,7 @@ trait SetupCherryEnv
     {
         $container = new Container();
         AppFactory::setContainer($container);
-        $app = AppFactory::create();
+        $app = AppFactory::create(null, null, new CallableResolver($container));
 
         $configs = require ROOT . '/tests/configs/configs_testing.php';
         $container->set('configs', $configs);
