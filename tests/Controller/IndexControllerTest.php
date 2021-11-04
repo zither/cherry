@@ -41,6 +41,17 @@ class IndexControllerTest extends TestCase
         $this->assertEquals('401', $response->getStatusCode());
     }
 
+    public function testHomeWithApiRequest()
+    {
+        $provider = new PSR7ObjectProvider();
+        $request = $provider->createServerRequest('/', 'GET');
+        $request = $request->withHeader('Accept', 'application/activity+json');
+        $response = $this->app->handle($request);
+        $json = json_decode((string)$response->getBody(), true);
+        $this->assertNotEmpty($json);
+        $this->assertNotEmpty($json['@context']);
+    }
+
     public function testSendFollowWithoutPostParams()
     {
         $provider = new PSR7ObjectProvider();

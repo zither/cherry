@@ -4,6 +4,7 @@ namespace Cherry\Controller;
 use Cherry\ActivityPub\Activity;
 use Cherry\ActivityPub\ActivityPub;
 use Cherry\FlashMessage;
+use Cherry\Helper\Helper;
 use Cherry\Helper\Time;
 use Cherry\Markdown;
 use Cherry\Session\SessionInterface;
@@ -47,8 +48,7 @@ class IndexController
 
     public function home(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $header = $request->getHeaderLine('Accept');
-        if (strpos($header, '+json') !== false) {
+        if (Helper::isApi($request)) {
             /** @var RouteCollectorInterface $router */
             $router = $this->container->get('router');
             return $router->getNamedRoute('api_profile')->run($request);
