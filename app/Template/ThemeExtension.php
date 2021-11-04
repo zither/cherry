@@ -29,6 +29,11 @@ class ThemeExtension implements ExtensionInterface
      */
     protected $themeName;
 
+    /**
+     * @var string
+     */
+    protected $defaultThemeName = 'default';
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -55,8 +60,11 @@ class ThemeExtension implements ExtensionInterface
             return $this->themeName;
         }
         $settings = $this->container->make('settings', ['keys' => ['theme']]);
+        if (empty($settings)) {
+            return $this->defaultThemeName;
+        }
         $file = sprintf('%s%s.css', $this->themePath, $settings['theme']);
-        $this->themeName = file_exists($file) ? $settings['theme'] : 'default';
+        $this->themeName = file_exists($file) ? $settings['theme'] : $this->defaultThemeName;
         return $this->themeName;
     }
 }
