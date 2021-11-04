@@ -674,6 +674,8 @@ class IndexController
         try {
             $db->pdo->beginTransaction();
 
+            $parentId = !empty($replyObject['id']) ? $replyObject['id'] : 0;
+            $originId = !empty($replyObject['origin_id']) ? $replyObject['origin_id'] : $parentId;
             // 保存新 Object
             $db->insert('objects', [
                 'type' => $object['type'],
@@ -685,8 +687,8 @@ class IndexController
                 'published' => Time::UTCToLocalTime($object['published']),
                 'is_local' => 1,
                 'is_public' => $scope < 3 ? 1 : 0,
-                'origin_id' => $replyObject['origin_id'] ?? 0,
-                'parent_id' => $replyObject['id'] ?? 0,
+                'origin_id' => $originId,
+                'parent_id' => $parentId,
             ]);
             $objectId = $db->id();
 
