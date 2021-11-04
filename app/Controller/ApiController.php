@@ -1,6 +1,7 @@
 <?php
 namespace Cherry\Controller;
 
+use Cherry\ActivityPub\Context;
 use Cherry\Task\TaskQueue;
 use InvalidArgumentException;
 use Cherry\ActivityPub\Activity;
@@ -114,10 +115,6 @@ class ApiController
         $db = $this->container->get(Medoo::class);
         $profile = $db->get('profiles', '*', ['id' => 1]);
         $user = [
-            '@context' => [
-                'https://www.w3.org/ns/activitystreams',
-                "https://w3id.org/security/v1",
-            ],
             'type' => 'Person',
             'id' => $profile['actor'],
             'url' => $profile['url'],
@@ -141,6 +138,7 @@ class ApiController
                 'type' => 'Key'
             ]
         ];
+        $user = Context::set($user, Context::OPTION_ACTIVITY_STREAMS | Context::OPTION_SECURITY_V1);
         return $this->ldJson($response, $user);
     }
 
@@ -223,15 +221,12 @@ class ApiController
             'is_deleted' => 0,
         ]);
         $page = $this->getQueryParam($request, 'page');
-        $collection = [
-            'context' => [
-                "https://www.w3.org/ns/activitystreams",
-            ],
+        $collection = Context::set([
             'id' => "{$profile['outbox']}?page={$page}",
             'type' => 'OrderedCollectionPage',
             'totalItems' => $total,
             'orderedItems' => [],
-        ];
+        ]);
 
         if (empty($page)) {
             $collection = array_merge($collection, [
