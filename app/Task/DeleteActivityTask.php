@@ -48,7 +48,10 @@ class DeleteActivityTask implements TaskInterface
         ];
         $db->insert('activities', $activity);
         $id = $db->id();
-        $this->container->get(TaskFactory::class)->queue(DeliverActivityTask::class, ['activity_id' => $id]);
+        $this->container->get(TaskQueue::class)->queue([
+            'task' => DeliverActivityTask::class,
+            'params' => ['activity_id' => $id]
+        ]);
         $db->update('activities', ['is_deleted' => 1], ['id' => $activityId]);
         $db->delete('notifications', ['activity_id' => $rawActivity['id']]);
     }

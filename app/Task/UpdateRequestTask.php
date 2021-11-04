@@ -28,7 +28,10 @@ class UpdateRequestTask implements TaskInterface
         $object = $rawActivity['object'];
 
         if ($object['type'] === ActivityPub::OBJECT_TYPE_QUESTION) {
-            $this->container->get(TaskFactory::class)->queue(RemoteUpdatePollTask::class, $args);
+            $this->container->get(TaskQueue::class)->queue([
+                'task' => RemoteUpdatePollTask::class,
+                'params' => $args
+            ]);
             return;
         }
 

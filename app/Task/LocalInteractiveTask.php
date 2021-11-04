@@ -79,10 +79,10 @@ class LocalInteractiveTask implements TaskInterface
             if (!empty($column)) {
                 $db->update('objects', ["{$column}[+]" => 1], ['id' => $objectId]);
             }
-            $this->container->get(TaskFactory::class)->queue(
-                DeliverActivityTask::class,
-                ['activity_id' => $activityId]
-            );
+            $this->container->get(TaskQueue::class)->queue([
+                'task' => DeliverActivityTask::class,
+                'params' => ['activity_id' => $activityId]
+            ]);
 
             $types = ['likes' => 1, 'shares' => 2];
             $db->insert('interactions', [

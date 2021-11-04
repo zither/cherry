@@ -1,7 +1,7 @@
 <?php
 namespace Cherry\Controller;
 
-use Cherry\Task\TaskFactory;
+use Cherry\Task\TaskQueue;
 use InvalidArgumentException;
 use Cherry\ActivityPub\Activity;
 use Cherry\ActivityPub\ObjectType;
@@ -198,7 +198,11 @@ class ApiController
             ];
             $task = $typesMap[$activityType->lowerType()] ?? null;
             if ($task) {
-                $this->container->get(TaskFactory::class)->queue($task, ['activity_id' => $lastId]);
+                $taskData = [
+                    'task' => $task,
+                    'params' => ['activity_id' => $lastId],
+                ];
+                $this->container->get(TaskQueue::class)->queue($taskData);
             }
         }
 

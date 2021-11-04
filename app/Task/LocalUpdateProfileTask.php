@@ -2,6 +2,7 @@
 
 namespace Cherry\Task;
 
+use PDOException;
 use adrianfalleiro\FailedTaskException;
 use adrianfalleiro\TaskInterface;
 use Cherry\Helper\SignRequest;
@@ -82,12 +83,12 @@ class LocalUpdateProfileTask implements TaskInterface
             $db->pdo->beginTransaction();
             $db->insert('activities', $activity);
             $activityId = $db->id();
-            $this->container->get(TaskFactory::class)->queue(
-                DeliverActivityTask::class,
-                ['activity_id' => $activityId]
-            );
+            $this->container->get(TaskQueue::class)->queue([
+                'task' => DeliverActivityTask::class,
+                'params' => ['activity_id' => $activityId]
+            ]);
             $db->pdo->commit();
-        } catch (\PDOException $e) {
+        } catch (PDOException $e) {
             $db->pdo->rollBack();
             throw new FailedTaskException($e->getMessage());
         }
