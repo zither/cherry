@@ -7,7 +7,7 @@ use Psr\Container\ContainerInterface;
 use adrianfalleiro\TaskInterface;
 use InvalidArgumentException;
 
-class Factory
+class TaskFactory
 {
     /**
      * @var ContainerInterface
