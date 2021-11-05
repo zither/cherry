@@ -5,22 +5,9 @@ namespace Cherry\Test\Middleware;
 use Medoo\Medoo;
 use Cherry\Test\PSR7ObjectProvider;
 use Cherry\Test\TestCase;
-use Cherry\Test\Traits\SetupCherryEnv;
 
 class SiteLockingMiddlewareTest extends TestCase
 {
-    use SetupCherryEnv;
-
-    public function setUp(): void
-    {
-        $this->setUpCherryEnv();
-    }
-
-    public function tearDown(): void
-    {
-        $this->tearDownCherryEnv();
-    }
-
     public function testHandleWithLockSitePreference0()
     {
         $provider = new PSR7ObjectProvider();
@@ -65,7 +52,5 @@ class SiteLockingMiddlewareTest extends TestCase
         $this->signIn($request);
         $response = $this->app->handle($request);
         $this->assertEquals(200, $response->getStatusCode());
-
-
     }
 }

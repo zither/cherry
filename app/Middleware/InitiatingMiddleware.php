@@ -2,12 +2,14 @@
 
 namespace Cherry\Middleware;
 
+use GuzzleHttp\RedirectMiddleware;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Psr\Http\Server\MiddlewareInterface;
 use GuzzleHttp\Psr7\Response;
+use Slim\Interfaces\RouteCollectorInterface;
 
 class InitiatingMiddleware implements MiddlewareInterface
 {
@@ -24,10 +26,18 @@ class InitiatingMiddleware implements MiddlewareInterface
 
     public function process(Request $request, RequestHandler $requestHandler): ResponseInterface
     {
+        $target = $request->getRequestTarget();
         $settings = $this->container->make('settings', ['keys' => ['domain']]);
-        if (empty($settings)) {
-            return $requestHandler->handle($request);
+        $initiated = !empty($settings);
+        if ($initiated) {
+            if ($target === '/init') {
+                return new Response('302', ['location' => '/']);
+            }
+        } else {
+            if ($target !== '/init') {
+                return new Response('302', ['location' => '/init']);
+            }
         }
-        return new Response('302', ['location' => '/']);
+        return $requestHandler->handle($request);
     }
 }
