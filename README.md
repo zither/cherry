@@ -36,7 +36,29 @@ Create configuration file:
 
     $ cp configs/configs_example.php configs/configs.php
     
-Change configs in `configs.php` and set the root path of web server to `cherry/public`.
+Change configs in `configs.php` and set the root path of web server to `cherry/public`. Then create the database and import tables from `data/cherry.sql`.
+
+Set Nginx rewrite rules:
+
+    Server {
+    
+        # ......
+        # ......
+        
+        location / {
+            try_files $uri $uri/ /index.php/$uri$is_args$query_string;
+        }
+
+        location ~ \.php {
+            fastcgi_pass  127.0.01:9000;
+            fastcgi_index index.php;
+            include fastcgi_params;
+            fastcgi_split_path_info ^(.+?\.php)(/.*)$;
+            set $path_info $fastcgi_path_info;
+            fastcgi_param PATH_INFO $path_info;
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        }
+    }
 
 Visit setup URL in web browser:
 
