@@ -10,7 +10,10 @@ use Cherry\Middleware\SiteLockingMiddleware;
 
 return function (App $app) {
     $app->group('', function(RouteCollectorProxy $group) {
-        // Web Routes
+
+        /**
+         * Web routes
+         */
         $group->get('/init', [IndexController::class, 'showInitialForm']);
         $group->post('/init', [IndexController::class, 'init']);
         $group->get('/login', [IndexController::class, 'login']);
@@ -46,7 +49,9 @@ return function (App $app) {
             $group->post('/web/polls/{poll_id}/vote', [IndexController::class, 'vote']);
         })->add(AuthenticationMiddleware::class);
 
-        // API Routes
+        /**
+         * API Routes
+         */
         $group->post('/inbox', [ApiController::class, 'inbox']);
         $group->group('', function (RouteCollectorProxy $group) {
             $group->get('/.well-known/webfinger', [ApiController::class, 'webFinger']);
@@ -59,5 +64,6 @@ return function (App $app) {
             $group->get('/followers', [ApiController::class, 'followers']);
             $group->get('/following', [ApiController::class, 'following']);
         })->add(ApiCheckingMiddleware::class);
+
     })->add(InitiatingMiddleware::class);
 };
