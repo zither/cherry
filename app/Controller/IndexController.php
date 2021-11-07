@@ -1157,7 +1157,7 @@ class IndexController
         if ($liked) {
             $taskQueue->queue([
                 'task' => LocalInteractiveTask::class,
-                ['object_id' => $objectId, 'type' => 'Like']
+                'params' => ['object_id' => $objectId, 'type' => 'Like']
             ]);
         } else if ($object['is_liked']) {
             $interaction = $db->get('interactions', ['activity_id'], ['profile_id' => 1, 'object_id' => $objectId]);
