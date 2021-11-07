@@ -6,6 +6,7 @@ use adrianfalleiro\FailedTaskException;
 use adrianfalleiro\RetryException;
 use adrianfalleiro\TaskInterface;
 use Cherry\ActivityPub\Activity;
+use Cherry\ActivityPub\Context;
 use Cherry\Helper\SignRequest;
 use Cherry\Helper\Time;
 use Godruoyi\Snowflake\Snowflake;
@@ -54,12 +55,12 @@ class LocalUndoTask implements TaskInterface
         unset($rawOriginActivity['@context']);
 
         $undo = [
-            '@context' => 'https://www.w3.org/ns/activitystreams',
             'id' => "{$profile['outbox']}/$snowflakeId",
             'type' => 'Undo',
             'actor' => $profile['actor'],
             'object' => $rawOriginActivity,
         ];
+        $undo = Context::set($undo, Context::OPTION_ACTIVITY_STREAMS);
 
         $helper = $this->container->get(SignRequest::class);
         $undo['signature'] = $helper->createLdSignature($undo);

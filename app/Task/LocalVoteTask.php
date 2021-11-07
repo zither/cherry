@@ -5,6 +5,7 @@ namespace Cherry\Task;
 use adrianfalleiro\FailedTaskException;
 use adrianfalleiro\TaskInterface;
 use Cherry\ActivityPub\Activity;
+use Cherry\ActivityPub\Context;
 use Cherry\Helper\Time;
 use Godruoyi\Snowflake\Snowflake;
 use Psr\Container\ContainerInterface;
@@ -47,7 +48,6 @@ class LocalVoteTask implements TaskInterface
         ];
 
         $rawActivity = [
-            '@context' => 'https://www.w3.org/ns/activitystreams',
             'id' => $newActivityId,
             'type' => 'Create',
             'actor' => $profile['actor'],
@@ -55,6 +55,7 @@ class LocalVoteTask implements TaskInterface
             'to' => [$pollActivity->actor],
             'cc' => [],
         ];
+        $rawActivity = Context::set($rawActivity, Context::OPTION_ACTIVITY_STREAMS);
 
         try {
             $db->pdo->beginTransaction();

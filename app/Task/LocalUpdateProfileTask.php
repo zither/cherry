@@ -2,6 +2,7 @@
 
 namespace Cherry\Task;
 
+use Cherry\ActivityPub\Context;
 use PDOException;
 use adrianfalleiro\FailedTaskException;
 use adrianfalleiro\TaskInterface;
@@ -58,16 +59,13 @@ class LocalUpdateProfileTask implements TaskInterface
         ];
 
         $rawActivity = [
-            '@context' => [
-                'https://www.w3.org/ns/activitystreams',
-                "https://w3id.org/security/v1",
-            ],
             'id' => "{$profile['outbox']}/$snowflakeId",
             'type' => 'Update',
             'actor' => $profile['actor'],
             'object' => $object,
             'to' => ["https://www.w3.org/ns/activitystreams#Public"],
         ];
+        $rawActivity = Context::set($rawActivity, Context::OPTION_ACTIVITY_STREAMS | Context::OPTION_SECURITY_V1);
         $rawActivity['signature'] = $helper->createLdSignature($rawActivity);
 
         $activity = [

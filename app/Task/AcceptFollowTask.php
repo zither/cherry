@@ -5,6 +5,7 @@ namespace Cherry\Task;
 use adrianfalleiro\FailedTaskException;
 use adrianfalleiro\RetryException;
 use adrianfalleiro\TaskInterface;
+use Cherry\ActivityPub\Context;
 use Cherry\Helper\SignRequest;
 use Cherry\Helper\Time;
 use Godruoyi\Snowflake\Snowflake;
@@ -39,12 +40,12 @@ class AcceptFollowTask implements TaskInterface
         $settings = $this->container->make('settings');
         $acceptActivityId = $snowflake->id();
         $message = [
-            '@context' => 'https://www.w3.org/ns/activitystreams',
             'id' => sprintf('https://%s/outbox/%s', $settings['domain'], $acceptActivityId),
             'actor' => sprintf('https://%s', $settings['domain']),
             'type' => 'Accept',
             'object' => $rawActivity,
         ];
+        $message = Context::set($message, Context::OPTION_ACTIVITY_STREAMS);
         $helper = $this->container->get(SignRequest::class);
         $message['signature'] = $helper->createLdSignature($message);
         $acceptActivity = [

@@ -4,6 +4,7 @@ namespace Cherry\Task;
 
 use adrianfalleiro\FailedTaskException;
 use adrianfalleiro\TaskInterface;
+use Cherry\ActivityPub\Context;
 use Cherry\Helper\Time;
 use Godruoyi\Snowflake\Snowflake;
 use Psr\Container\ContainerInterface;
@@ -37,13 +38,13 @@ class LocalInteractiveTask implements TaskInterface
         $targetProfile = $db->get('profiles', ['id', 'actor', 'inbox'], ['id' => $object['profile_id']]);
 
         $rawActivity = [
-            '@context' => 'https://www.w3.org/ns/activitystreams',
             'id' => "{$profile['outbox']}/$snowflakeId",
             'type' => $interaction,
             'actor' => $profile['actor'],
             'object' => $object['raw_object_id'],
             'to' => [$targetProfile['actor']],
         ];
+        $rawActivity = Context::set($rawActivity, Context::OPTION_ACTIVITY_STREAMS);
         if ($interaction !== 'Like') {
             $rawActivity = array_merge($rawActivity, [
                 'cc' => [

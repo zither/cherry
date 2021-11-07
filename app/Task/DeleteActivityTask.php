@@ -3,6 +3,7 @@
 namespace Cherry\Task;
 
 use adrianfalleiro\TaskInterface;
+use Cherry\ActivityPub\Context;
 use Cherry\Helper\SignRequest;
 use Cherry\Helper\Time;
 use Godruoyi\Snowflake\Snowflake;
@@ -28,16 +29,13 @@ class DeleteActivityTask implements TaskInterface
         $newActivityId = $snowflake->id();
         $adminProfile = $db->get('profiles', ['id', 'outbox', 'actor'], ['id' =>  1]);
         $rawActivity = [
-            "@context" => [
-                "https://www.w3.org/ns/activitystreams",
-                "https://w3id.org/security/v1",
-            ],
             'id' => "{$adminProfile['outbox']}/{$newActivityId}",
             'type' => 'Delete',
             'actor' => $adminProfile['actor'],
             'object' => "$activityIdentity/object",
             'to' => ['https://www.w3.org/ns/activitystreams#Public'],
         ];
+        $rawActivity = Context::set($rawActivity, Context::OPTION_ACTIVITY_STREAMS | Context::OPTION_SECURITY_V1);
         $rawActivity['signature'] = $helper->createLdSignature($rawActivity);
         $activity = [
             'activity_id' => $rawActivity['id'],

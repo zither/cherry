@@ -5,6 +5,7 @@ namespace Cherry\Task;
 use adrianfalleiro\FailedTaskException;
 use adrianfalleiro\RetryException;
 use adrianfalleiro\TaskInterface;
+use Cherry\ActivityPub\Context;
 use Cherry\Helper\SignRequest;
 use Godruoyi\Snowflake\Snowflake;
 use GuzzleHttp\Client;
@@ -39,12 +40,12 @@ class RejectFollowTask implements TaskInterface
         $snowflake = $this->container->get(Snowflake::class);
         $settings = $this->container->make('settings');
         $message = [
-            '@context' => 'https://www.w3.org/ns/activitystreams',
             'id' => sprintf('https://%s/outbox/%s', $settings['domain'], $snowflake->id()),
             'actor' => sprintf('https://%s', $settings['domain']),
             'type' => 'Reject',
             'object' => $rawActivity,
         ];
+        $message = Context::set($message, Context::OPTION_ACTIVITY_STREAMS);
 
         $helper = $this->container->get(SignRequest::class);
         $message['signature'] = $helper->createLdSignature($message);
