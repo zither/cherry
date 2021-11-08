@@ -2,14 +2,12 @@
 
 namespace Cherry\Middleware;
 
-use GuzzleHttp\RedirectMiddleware;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Psr\Http\Server\MiddlewareInterface;
 use GuzzleHttp\Psr7\Response;
-use Slim\Interfaces\RouteCollectorInterface;
 
 class InitiatingMiddleware implements MiddlewareInterface
 {
