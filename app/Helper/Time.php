@@ -40,11 +40,7 @@ class Time
     public static function getTimeZoneOffset(string $timezone = null): string
     {
         $timezone = $timezone ?: self::$defaultTimeZone;
-        if (empty($timezone)) {
-            $timezone = 'UTC';
-        }
-        $dateTimeZone = new DateTimeZone($timezone);
-        $time = new DateTime('now', $dateTimeZone);
+        $time = new DateTime('now', new DateTimeZone($timezone));
         return $time->format('P');
     }
 }
