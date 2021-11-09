@@ -14,7 +14,7 @@ CREATE TABLE `activities` (
   `is_deleted` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `activities_activity_id_IDX` (`activity_id`) USING BTREE,
-  KEY `activities_published_IDX` (`published`) USING BTREE
+  KEY `activities_object_id_IDX` (`object_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `attachments`;
