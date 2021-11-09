@@ -42,7 +42,7 @@
         <form class="mt" action="/web/preferences/update" method="POST">
             <div class="mt label">
                 <label for="lock_site"><?=$this->lang('form_lock_site_label')?></label>
-                <input id="lock_site" type="checkbox" name="lock_site" <?=($settings['lock_site'] ?? false) ? 'checked' :''?> />
+                <input id="lock_site" type="checkbox" name="lock_site"  value="1" <?=($settings['lock_site'] ?? false) ? 'checked' :''?> />
             </div>
             <div class="mt label">
                 <label for="language"><?=$this->lang('form_language_label')?></label>
@@ -62,7 +62,7 @@
             </div>
             <div class="mt label">
                 <label for="group_activities"><?=$this->lang('form_group_activities_label')?></label>
-                <input id="group_activities" type="checkbox" name="group_activities" <?=($settings['group_activities'] ?? false) ? 'checked' :''?> />
+                <input id="group_activities" type="checkbox" name="group_activities" value="1" <?=($settings['group_activities'] ?? false) ? 'checked' :''?> />
             </div>
             <button class="mt"><?=$this->lang('form_button')?></button>
         </form>

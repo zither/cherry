@@ -254,43 +254,15 @@ class IndexController
 
     public function timeline(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $pageSize = 10;
         $index = $this->getQueryParam($request, 'index');
         $pid = $this->getQueryParam($request, 'pid');
 
         $keys = ['group_activities'];
         $settings = $this->container->make('settings', ['keys' => $keys]);
-        $groupActivities = $settings['group_activities'] ?? 0;
+        $groupActivities = isset($settings['group_activities']) ? (int)$settings['group_activities'] : 0;
 
         $db = $this->container->get(Medoo::class);
-        $defaultConditions = [
-            'object_id[!]' => 0,
-            'type' => ['Create', 'Announce'],
-            'unlisted' => 0,
-            'is_local' => 0,
-            'is_deleted' => 0,
-            'LIMIT' => $pageSize,
-            'ORDER' => ['id' => 'DESC'],
-        ];
-
-        if ($groupActivities) {
-            $defaultConditions = array_merge($defaultConditions, ['GROUP' => 'object_id']);
-        }
-        if ($pid) {
-            $defaultConditions['profile_id'] = $pid;
-        }
-        if ($index) {
-            $conditions = array_merge($defaultConditions, ['id[<=]' => $index]);
-        } else  {
-            $conditions = $defaultConditions;
-        }
-
-        $selectedColumns = $groupActivities ? ['id' => Medoo::raw('max(id)')] :  ['id'];
-        $activityIds = $db->select('activities', $selectedColumns, $conditions);
-        $activityIds = array_map(function ($v){
-            return $v['id'];
-        }, $activityIds);
-
+        $activityIds = $this->getActivityIdsForTimeline('current', $groupActivities, $index, $pid);
         $blogs = [];
         if (!empty($activityIds)) {
             $blogs = $db->select('activities', [
@@ -478,19 +450,12 @@ class IndexController
             $count = count($blogs);
             $last = $blogs[$count - 1]['id'];
 
-            $prevConditions = array_merge($defaultConditions, [
-                'id[>]' => $first,
-                'LIMIT' => $pageSize,
-                'ORDER' => [
-                    'id' => 'ASC',
-                ]
-            ]);
+            $prevActivityIds = $this->getActivityIdsForTimeline('prev', $groupActivities, $first, $pid);
+            $prevActivityIds = array_reverse($prevActivityIds);
+            $prevIndex = empty($prevActivityIds) ? 0 : $prevActivityIds[0];
 
-            $prevIndexes = $db->select('activities', ['id' => Medoo::raw('max(id)')], $prevConditions);
-            $prevIndexes = array_reverse($prevIndexes);
-            $prevIndex = empty($prevIndexes) ? 0 : $prevIndexes[0]['id'];
-            $nextConditions = array_merge($defaultConditions, ['id[<]' => $last, 'LIMIT' => 1]);
-            $nextIndex = $db->get('activities', 'id', $nextConditions);
+            $nextActivityIds = $this->getActivityIdsForTimeline('next', $groupActivities, $last, $pid);
+            $nextIndex = empty($nextActivityIds) ? 0 : $nextActivityIds[0];
 
             $prevArgs = $prevIndex ? ['index' => $prevIndex] : [];
             $nextArgs = $nextIndex ? ['index' => $nextIndex] : [];
@@ -1798,5 +1763,64 @@ SQL;
             }
         }
         return false;
+    }
+
+    protected function getActivityIdsForTimeline(string $type, int $groupActivities, int $index = null, int $pid = null, int $size = 10): array
+    {
+        $commonConditions = [
+            'type' => ['Create', 'Announce'],
+            'unlisted' => 0,
+            'is_local' => 0,
+            'is_deleted' => 0,
+            'LIMIT' => $size,
+            'ORDER' => ['id' => 'DESC'],
+        ];
+
+        $pidCondition = $pid ? ['profile_id' => $pid] : [];
+        $commonConditions = array_merge($commonConditions, $pidCondition);
+
+        $objectCondition = ['object_id[!]' => 0];
+        $db = $this->container->get(Medoo::class);
+        if ($type === 'current') {
+            $indexCondition = $index ? ['id[<=]' =>  $index] : [];
+            $conditions = array_merge($commonConditions, $indexCondition);
+            if (is_null($pid) && $groupActivities) {
+                $distinctObjectIds = $db->select('activities', '@object_id', $conditions);
+                if (empty($distinctObjectIds)) {
+                    return  [];
+                }
+                $conditions = array_merge($conditions, ['object_id' => $distinctObjectIds]);
+            } else {
+                $conditions = array_merge($conditions, $objectCondition);
+            }
+            $activityIds = $db->select('activities', 'id', $conditions);
+            return $activityIds;
+        }
+
+        if ($type === 'prev') {
+            $conditions = array_merge($commonConditions, [
+                'id[>]' => $index,
+                'ORDER' => ['id' => 'ASC']
+            ]);
+            if (is_null($pid) && $groupActivities) {
+                $distinctObjectConditions = array_merge($conditions, $objectCondition);
+                $distinctObjectIds = $db->select('activities', '@object_id', $distinctObjectConditions);
+                if (empty($distinctObjectIds)) {
+                    return [];
+                }
+                $conditions = array_merge($conditions, ['object_id' => $distinctObjectIds]);
+            } else {
+                $conditions = array_merge($conditions, $objectCondition);
+            }
+            $activityIds = $db->select('activities', 'id', $conditions);
+            return $activityIds;
+        }
+
+        $conditions = array_merge($commonConditions, $objectCondition, [
+            'id[<]' => $index,
+            'LIMIT' => 1,
+        ]);
+        $activityIds = $db->select('activities', 'id', $conditions);
+        return $activityIds;
     }
 }
