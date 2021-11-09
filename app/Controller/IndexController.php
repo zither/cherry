@@ -1785,7 +1785,8 @@ SQL;
             $indexCondition = $index ? ['id[<=]' =>  $index] : [];
             $conditions = array_merge($commonConditions, $indexCondition);
             if (is_null($pid) && $groupActivities) {
-                $distinctObjectIds = $db->select('activities', '@object_id', $conditions);
+                $distinctObjectConditions = array_merge($conditions, $objectCondition);
+                $distinctObjectIds = $db->select('activities', '@object_id', $distinctObjectConditions);
                 if (empty($distinctObjectIds)) {
                     return  [];
                 }
