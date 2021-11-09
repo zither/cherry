@@ -22,7 +22,7 @@
     "ext-openssl": "*",
     "slim/slim": "4.*",
     "php-di/php-di": "^6.3",
-    "catfan/medoo": "^1.7",
+    "catfan/medoo": "^2.1",
     "godruoyi/php-snowflake": "^1.0",
     "guzzlehttp/guzzle": "^7.2",
     "http-interop/http-factory-guzzle": "^1.0",
