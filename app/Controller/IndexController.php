@@ -1789,11 +1789,16 @@ SQL;
                 if (empty($distinctObjectIds)) {
                     return  [];
                 }
-                $conditions = array_merge($conditions, ['object_id' => $distinctObjectIds]);
+                $conditions = array_merge($conditions, ['object_id' => $distinctObjectIds], ['GROUP' => 'object_id']);
+                $selectedColumns = ['id' => Medoo::raw('max(id)')];
             } else {
                 $conditions = array_merge($conditions, $objectCondition);
+                $selectedColumns = ['id'];
             }
-            $activityIds = $db->select('activities', 'id', $conditions);
+            $activityIds = $db->select('activities', $selectedColumns, $conditions);
+            $activityIds = array_map(function ($v) {
+                return $v['id'];
+            }, $activityIds);
             return $activityIds;
         }
 
@@ -1808,11 +1813,16 @@ SQL;
                 if (empty($distinctObjectIds)) {
                     return [];
                 }
-                $conditions = array_merge($conditions, ['object_id' => $distinctObjectIds]);
+                $conditions = array_merge($conditions, ['object_id' => $distinctObjectIds], ['GROUP' => 'object_id']);
+                $selectedColumns = ['id' => Medoo::raw('max(id)')];
             } else {
                 $conditions = array_merge($conditions, $objectCondition);
+                $selectedColumns = ['id'];
             }
-            $activityIds = $db->select('activities', 'id', $conditions);
+            $activityIds = $db->select('activities', $selectedColumns, $conditions);
+            $activityIds = array_map(function ($v) {
+                return $v['id'];
+            }, $activityIds);
             return $activityIds;
         }
 
