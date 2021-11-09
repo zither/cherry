@@ -1796,11 +1796,13 @@ SQL;
         if ($type === 'current') {
             $indexCondition = $index ? ['id[<=]' =>  $index] : [];
             $conditions = array_merge($commonConditions, $indexCondition);
+            $selectedColumns = is_null($pid) && $groupActivities ? ['id' => Medoo::raw('min(id)')] : ['id'];
         } else {
             $conditions = array_merge($commonConditions, [
                 'id[>]' => $index,
                 'ORDER' => ['id' => 'ASC']
             ]);
+            $selectedColumns = is_null($pid) && $groupActivities ? ['id' => Medoo::raw('max(id)')] : ['id'];
         }
         if (is_null($pid) && $groupActivities) {
             $distinctObjectConditions = array_merge($conditions, $objectCondition);
@@ -1809,10 +1811,8 @@ SQL;
                 return  [];
             }
             $conditions = array_merge($conditions, ['object_id' => $distinctObjectIds], ['GROUP' => 'object_id']);
-            $selectedColumns = ['id' => Medoo::raw('max(id)')];
         } else {
             $conditions = array_merge($conditions, $objectCondition);
-            $selectedColumns = ['id'];
         }
         $activityIds = $db->select('activities', $selectedColumns, $conditions);
         $activityIds = array_map(function ($v) {
