@@ -264,23 +264,23 @@ class IndexController
 
         $db = $this->container->get(Medoo::class);
         $defaultConditions = [
-            'activities.object_id[!]' => 0,
-            'activities.type' => ['Create', 'Announce'],
-            'activities.unlisted' => 0,
-            'activities.is_local' => 0,
-            'activities.is_deleted' => 0,
+            'object_id[!]' => 0,
+            'type' => ['Create', 'Announce'],
+            'unlisted' => 0,
+            'is_local' => 0,
+            'is_deleted' => 0,
             'LIMIT' => $pageSize,
-            'ORDER' => ['activities.id' => 'DESC'],
+            'ORDER' => ['id' => 'DESC'],
         ];
 
         if ($groupActivities) {
-            $defaultConditions = array_merge($defaultConditions, ['GROUP' => 'activities.object_id']);
+            $defaultConditions = array_merge($defaultConditions, ['GROUP' => 'object_id']);
         }
         if ($pid) {
-            $defaultConditions['activities.profile_id'] = $pid;
+            $defaultConditions['profile_id'] = $pid;
         }
         if ($index) {
-            $conditions = array_merge($defaultConditions, ['activities.id[<=]' => $index]);
+            $conditions = array_merge($defaultConditions, ['id[<=]' => $index]);
         } else  {
             $conditions = $defaultConditions;
         }
@@ -479,17 +479,17 @@ class IndexController
             $last = $blogs[$count - 1]['id'];
 
             $prevConditions = array_merge($defaultConditions, [
-                'activities.id[>]' => $first,
+                'id[>]' => $first,
                 'LIMIT' => $pageSize,
                 'ORDER' => [
-                    'activities.id' => 'ASC',
+                    'id' => 'ASC',
                 ]
             ]);
 
             $prevIndexes = $db->select('activities', ['id' => Medoo::raw('max(id)')], $prevConditions);
             $prevIndexes = array_reverse($prevIndexes);
             $prevIndex = empty($prevIndexes) ? 0 : $prevIndexes[0]['id'];
-            $nextConditions = array_merge($defaultConditions, ['activities.id[<]' => $last, 'LIMIT' => 1]);
+            $nextConditions = array_merge($defaultConditions, ['id[<]' => $last, 'LIMIT' => 1]);
             $nextIndex = $db->get('activities', 'id', $nextConditions);
 
             $prevArgs = $prevIndex ? ['index' => $prevIndex] : [];
