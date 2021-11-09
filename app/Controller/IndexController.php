@@ -262,7 +262,7 @@ class IndexController
             'activities.object_id[!]' => 0,
             'activities.type' => ['Create', 'Announce'],
             'activities.unlisted' => 0,
-//            'activities.is_local' => 0,
+            'activities.is_local' => 0,
             'activities.is_deleted' => 0,
             'LIMIT' => $pageSize,
             'ORDER' => ['activities.id' => 'DESC'],
