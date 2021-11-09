@@ -314,7 +314,10 @@ class IndexController
                 'objects.is_sensitive',
                 'objects.is_liked',
                 'objects.is_boosted',
-            ], ['activities.id' => $activityIds]);
+            ], [
+                'activities.id' => $activityIds,
+                'ORDER' => ['activities.id' => 'DESC']
+            ]);
         }
 
         $objectProfileIds = [];
@@ -475,7 +478,7 @@ class IndexController
                 ]
             ]);
 
-            $prevIndexes = $db->select('activities', ['id' => Medoo::raw('min(id)'), 'published'], $prevConditions);
+            $prevIndexes = $db->select('activities', ['id' => Medoo::raw('max(id)')], $prevConditions);
             $prevIndexes = array_reverse($prevIndexes);
             $prevIndex = empty($prevIndexes) ? 0 : $prevIndexes[0]['id'];
             $nextConditions = array_merge($defaultConditions, ['activities.id[<]' => $last, 'LIMIT' => 1]);
