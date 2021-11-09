@@ -71,6 +71,7 @@ trait SetupCherryEnv
             ['cat' => 'system', 'k' => 'theme', 'v' => 'default'],
             ['cat' => 'system', 'k' => 'language', 'v' => 'en'],
             ['cat' => 'system', 'k' => 'lock_site', 'v' => 0],
+            ['cat' => 'system', 'k' => 'group_activities', 'v' => 0],
         ]);
         $profile = [
             'id' => 1,

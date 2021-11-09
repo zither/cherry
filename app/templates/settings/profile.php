@@ -60,6 +60,10 @@
                     <?php endforeach;?>
                 </select>
             </div>
+            <div class="mt label">
+                <label for="group_activities"><?=$this->lang('form_group_activities_label')?></label>
+                <input id="group_activities" type="checkbox" name="group_activities" <?=($settings['group_activities'] ?? false) ? 'checked' :''?> />
+            </div>
             <button class="mt"><?=$this->lang('form_button')?></button>
         </form>
     </div>

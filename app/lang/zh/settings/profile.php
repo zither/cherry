@@ -14,4 +14,5 @@ return  [
     'form_theme_label' => '主题',
     'form_language_label' => '语言',
     'form_lock_site_label' => '锁站',
+    'form_group_activities_label' => '合并嘟文',
 ];

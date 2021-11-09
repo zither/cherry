@@ -257,6 +257,11 @@ class IndexController
         $pageSize = 10;
         $index = $this->getQueryParam($request, 'index');
         $pid = $this->getQueryParam($request, 'pid');
+
+        $keys = ['group_activities'];
+        $settings = $this->container->make('settings', ['keys' => $keys]);
+        $groupActivities = $settings['group_activities'] ?? 0;
+
         $db = $this->container->get(Medoo::class);
         $defaultConditions = [
             'activities.object_id[!]' => 0,
@@ -266,19 +271,22 @@ class IndexController
             'activities.is_deleted' => 0,
             'LIMIT' => $pageSize,
             'ORDER' => ['activities.id' => 'DESC'],
-            'GROUP' => 'activities.object_id',
         ];
+
+        if ($groupActivities) {
+            $defaultConditions = array_merge($defaultConditions, ['GROUP' => 'activities.object_id']);
+        }
         if ($pid) {
             $defaultConditions['activities.profile_id'] = $pid;
         }
-
         if ($index) {
             $conditions = array_merge($defaultConditions, ['activities.id[<=]' => $index]);
         } else  {
             $conditions = $defaultConditions;
         }
 
-        $activityIds = $db->select('activities', ['id' => Medoo::raw('max(id)')], $conditions);
+        $selectedColumns = $groupActivities ? ['id' => Medoo::raw('max(id)')] :  ['id'];
+        $activityIds = $db->select('activities', $selectedColumns, $conditions);
         $activityIds = array_map(function ($v){
             return $v['id'];
         }, $activityIds);
@@ -1587,6 +1595,7 @@ class IndexController
             'lock_site' => 0,
             'theme' => 'default',
             'language' => 'en',
+            'group_activities' => 0,
         ];
         $preferences = [];
         foreach ($keys as $k => $v) {
@@ -1682,6 +1691,7 @@ SQL;
                 ['cat' => 'system', 'k' => 'theme', 'v' => 'default'],
                 ['cat' => 'system', 'k' => 'language', 'v' => 'en'],
                 ['cat' => 'system', 'k' => 'lock_site', 'v' => 0],
+                ['cat' => 'system', 'k' => 'group_activities', 'v' => 0],
             ]);
 
             $profile = [

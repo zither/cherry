@@ -14,4 +14,5 @@ return  [
     'form_theme_label' => 'Theme',
     'form_language_label' => 'Language',
     'form_lock_site_label' => 'Lock site',
+    'form_group_activities_label' => 'Group activities',
 ];
