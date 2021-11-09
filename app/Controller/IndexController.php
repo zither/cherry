@@ -262,51 +262,60 @@ class IndexController
             'activities.object_id[!]' => 0,
             'activities.type' => ['Create', 'Announce'],
             'activities.unlisted' => 0,
-            'activities.is_local' => 0,
+//            'activities.is_local' => 0,
             'activities.is_deleted' => 0,
             'LIMIT' => $pageSize,
-            'ORDER' => ['activities.published' => 'DESC'],
+            'ORDER' => ['activities.id' => 'DESC'],
+            'GROUP' => 'activities.object_id',
         ];
         if ($pid) {
             $defaultConditions['activities.profile_id'] = $pid;
         }
 
         if ($index) {
-            $conditions = array_merge($defaultConditions, ['activities.published[<=]' => base64_decode($index)]);
+            $conditions = array_merge($defaultConditions, ['activities.id[<=]' => $index]);
         } else  {
             $conditions = $defaultConditions;
         }
-        $blogs = $db->select('activities',  [
-            '[>]profiles' => ['profile_id' => 'id'],
-            '[>]objects' => ['object_id' => 'id'],
-        ], [
-            'activities.id',
-            'activities.object_id',
-            'activities.activity_id',
-            'activities.profile_id(activity_profile_id)',
-            'activities.published',
-            'activities.type(activity_type)',
-            'profiles.actor(activity_actor)',
-            'profiles.name(activity_name)',
-            'profiles.preferred_name(activity_preferred_name)',
-            'profiles.url(activity_profile_url)',
-            'profiles.avatar(activity_avatar)',
-            'objects.profile_id',
-            'objects.type',
-            'objects.content',
-            'objects.summary',
-            'objects.url',
-            'objects.parent_id',
-            'objects.likes',
-            'objects.replies',
-            'objects.shares',
-            'objects.is_local',
-            'objects.is_public',
-            'objects.is_sensitive',
-            'objects.is_liked',
-            'objects.is_boosted',
-        ], $conditions);
 
+        $activityIds = $db->select('activities', ['id' => Medoo::raw('max(id)')], $conditions);
+        $activityIds = array_map(function ($v){
+            return $v['id'];
+        }, $activityIds);
+
+        $blogs = [];
+        if (!empty($activityIds)) {
+            $blogs = $db->select('activities', [
+                '[>]profiles' => ['profile_id' => 'id'],
+                '[>]objects' => ['object_id' => 'id'],
+            ], [
+                'activities.id',
+                'activities.object_id',
+                'activities.activity_id',
+                'activities.profile_id(activity_profile_id)',
+                'activities.published',
+                'activities.type(activity_type)',
+                'profiles.actor(activity_actor)',
+                'profiles.name(activity_name)',
+                'profiles.preferred_name(activity_preferred_name)',
+                'profiles.url(activity_profile_url)',
+                'profiles.avatar(activity_avatar)',
+                'objects.profile_id',
+                'objects.type',
+                'objects.content',
+                'objects.summary',
+                'objects.url',
+                'objects.parent_id',
+                'objects.likes',
+                'objects.replies',
+                'objects.shares',
+                'objects.is_local',
+                'objects.is_public',
+                'objects.is_sensitive',
+                'objects.is_liked',
+                'objects.is_boosted',
+            ], ['activities.id' => $activityIds]);
+        }
 
         $objectProfileIds = [];
         $objectIds = [];
@@ -454,26 +463,26 @@ class IndexController
         }
 
         if (!empty($blogs)) {
-            $first = $blogs[0]['published'];
+            $first = $blogs[0]['id'];
             $count = count($blogs);
-            $last = $blogs[$count - 1]['published'];
+            $last = $blogs[$count - 1]['id'];
 
             $prevConditions = array_merge($defaultConditions, [
-                'activities.published[>]' => $first,
+                'activities.id[>]' => $first,
                 'LIMIT' => $pageSize,
                 'ORDER' => [
-                    'activities.published' => 'ASC',
+                    'activities.id' => 'ASC',
                 ]
             ]);
 
-            $prevIndexes = $db->select('activities', ['id', 'published'], $prevConditions);
+            $prevIndexes = $db->select('activities', ['id' => Medoo::raw('min(id)'), 'published'], $prevConditions);
             $prevIndexes = array_reverse($prevIndexes);
-            $prevIndex = empty($prevIndexes) ? 0 : $prevIndexes[0]['published'];
-            $nextConditions = array_merge($defaultConditions, ['activities.published[<]' => $last, 'LIMIT' => 1]);
-            $nextIndex = $db->get('activities', 'published', $nextConditions);
+            $prevIndex = empty($prevIndexes) ? 0 : $prevIndexes[0]['id'];
+            $nextConditions = array_merge($defaultConditions, ['activities.id[<]' => $last, 'LIMIT' => 1]);
+            $nextIndex = $db->get('activities', 'id', $nextConditions);
 
-            $prevArgs = $prevIndex ? ['index' => base64_encode($prevIndex)] : [];
-            $nextArgs = $nextIndex ? ['index' => base64_encode($nextIndex)] : [];
+            $prevArgs = $prevIndex ? ['index' => $prevIndex] : [];
+            $nextArgs = $nextIndex ? ['index' => $nextIndex] : [];
             if ($pid) {
                 $prevArgs['pid'] = $pid;
                 $nextArgs['pid'] = $pid;
