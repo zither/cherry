@@ -1775,63 +1775,49 @@ SQL;
             'LIMIT' => $size,
             'ORDER' => ['id' => 'DESC'],
         ];
-
         $pidCondition = $pid ? ['profile_id' => $pid] : [];
         $commonConditions = array_merge($commonConditions, $pidCondition);
-
         $objectCondition = ['object_id[!]' => 0];
         $db = $this->container->get(Medoo::class);
-        if ($type === 'current') {
-            $indexCondition = $index ? ['id[<=]' =>  $index] : [];
-            $conditions = array_merge($commonConditions, $indexCondition);
-            if (is_null($pid) && $groupActivities) {
-                $distinctObjectConditions = array_merge($conditions, $objectCondition);
-                $distinctObjectIds = $db->select('activities', '@object_id', $distinctObjectConditions);
-                if (empty($distinctObjectIds)) {
-                    return  [];
-                }
-                $conditions = array_merge($conditions, ['object_id' => $distinctObjectIds], ['GROUP' => 'object_id']);
-                $selectedColumns = ['id' => Medoo::raw('max(id)')];
-            } else {
-                $conditions = array_merge($conditions, $objectCondition);
-                $selectedColumns = ['id'];
-            }
-            $activityIds = $db->select('activities', $selectedColumns, $conditions);
-            $activityIds = array_map(function ($v) {
-                return $v['id'];
-            }, $activityIds);
+
+        if (($type === 'next' || $type === 'prev') && is_null($index)) {
+            return [];
+        }
+
+        if ($type === 'next') {
+            $conditions = array_merge($commonConditions, $objectCondition, [
+                'id[<]' => $index,
+                'LIMIT' => 1,
+            ]);
+            $activityIds = $db->select('activities', 'id', $conditions);
             return $activityIds;
         }
 
-        if ($type === 'prev') {
+        if ($type === 'current') {
+            $indexCondition = $index ? ['id[<=]' =>  $index] : [];
+            $conditions = array_merge($commonConditions, $indexCondition);
+        } else {
             $conditions = array_merge($commonConditions, [
                 'id[>]' => $index,
                 'ORDER' => ['id' => 'ASC']
             ]);
-            if (is_null($pid) && $groupActivities) {
-                $distinctObjectConditions = array_merge($conditions, $objectCondition);
-                $distinctObjectIds = $db->select('activities', '@object_id', $distinctObjectConditions);
-                if (empty($distinctObjectIds)) {
-                    return [];
-                }
-                $conditions = array_merge($conditions, ['object_id' => $distinctObjectIds], ['GROUP' => 'object_id']);
-                $selectedColumns = ['id' => Medoo::raw('max(id)')];
-            } else {
-                $conditions = array_merge($conditions, $objectCondition);
-                $selectedColumns = ['id'];
-            }
-            $activityIds = $db->select('activities', $selectedColumns, $conditions);
-            $activityIds = array_map(function ($v) {
-                return $v['id'];
-            }, $activityIds);
-            return $activityIds;
         }
-
-        $conditions = array_merge($commonConditions, $objectCondition, [
-            'id[<]' => $index,
-            'LIMIT' => 1,
-        ]);
-        $activityIds = $db->select('activities', 'id', $conditions);
+        if (is_null($pid) && $groupActivities) {
+            $distinctObjectConditions = array_merge($conditions, $objectCondition);
+            $distinctObjectIds = $db->select('activities', '@object_id', $distinctObjectConditions);
+            if (empty($distinctObjectIds)) {
+                return  [];
+            }
+            $conditions = array_merge($conditions, ['object_id' => $distinctObjectIds], ['GROUP' => 'object_id']);
+            $selectedColumns = ['id' => Medoo::raw('max(id)')];
+        } else {
+            $conditions = array_merge($conditions, $objectCondition);
+            $selectedColumns = ['id'];
+        }
+        $activityIds = $db->select('activities', $selectedColumns, $conditions);
+        $activityIds = array_map(function ($v) {
+            return $v['id'];
+        }, $activityIds);
         return $activityIds;
     }
 }
