@@ -1877,7 +1877,7 @@ SQL;
         $lastId = empty($currentIds) ? 0 : $currentIds[count($currentIds) - 1];
 
         // Get index cache
-        $cache = $session[$cacheKey];
+        $cache = array_values($session[$cacheKey]);
 
         // Get prev index
         if ($index) {
