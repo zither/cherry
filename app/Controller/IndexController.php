@@ -39,6 +39,9 @@ use DirectoryIterator;
 
 class IndexController
 {
+    /**
+     * @var ContainerInterface
+     */
     private $container;
 
     public function __construct(ContainerInterface $container)
@@ -262,9 +265,10 @@ class IndexController
         $groupActivities = isset($settings['group_activities']) ? (int)$settings['group_activities'] : 0;
 
         $db = $this->container->get(Medoo::class);
-        $activityIds = $this->getActivityIdsForTimeline('current', $groupActivities, $index, $pid);
+
+        $activityIds = $this->getActivityIdsForTimelineV2($request, $groupActivities, $index, $pid);
         $blogs = [];
-        if (!empty($activityIds)) {
+        if (!empty($activityIds['current'])) {
             $blogs = $db->select('activities', [
                 '[>]profiles' => ['profile_id' => 'id'],
                 '[>]objects' => ['object_id' => 'id'],
@@ -295,7 +299,7 @@ class IndexController
                 'objects.is_liked',
                 'objects.is_boosted',
             ], [
-                'activities.id' => $activityIds,
+                'activities.id' => $activityIds['current'],
                 'ORDER' => ['activities.id' => 'DESC']
             ]);
         }
@@ -446,17 +450,8 @@ class IndexController
         }
 
         if (!empty($blogs)) {
-            $first = $blogs[0]['id'];
-            $count = count($blogs);
-            $last = $blogs[$count - 1]['id'];
-
-            $prevActivityIds = $this->getActivityIdsForTimeline('prev', $groupActivities, $first, $pid);
-            $prevActivityIds = array_reverse($prevActivityIds);
-            $prevIndex = empty($prevActivityIds) ? 0 : $prevActivityIds[0];
-
-            $nextActivityIds = $this->getActivityIdsForTimeline('next', $groupActivities, $last, $pid);
-            $nextIndex = empty($nextActivityIds) ? 0 : $nextActivityIds[0];
-
+            $prevIndex = empty($activityIds['prev']) ? 0 : $activityIds['prev'][0];
+            $nextIndex = empty($activityIds['next']) ? 0 : $activityIds['next'][0];
             $prevArgs = $prevIndex ? ['index' => $prevIndex] : [];
             $nextArgs = $nextIndex ? ['index' => $nextIndex] : [];
             if ($pid) {
@@ -1818,6 +1813,101 @@ SQL;
         $activityIds = array_map(function ($v) {
             return $v['id'];
         }, $activityIds);
+        return $activityIds;
+    }
+
+    protected function getActivityIdsForTimelineV2(
+        ServerRequestInterface $request,
+        int $groupActivities,
+        int $index = null,
+        int $pid = null,
+        int $size = 10
+    ): array {
+        $commonConditions = [
+            'type' => ['Create', 'Announce'],
+            'unlisted' => 0,
+            'is_local' => 0,
+            'is_deleted' => 0,
+            'LIMIT' => $size,
+            'ORDER' => ['id' => 'DESC'],
+        ];
+        $pidCondition = $pid ? ['profile_id' => $pid] : [];
+        $commonConditions = array_merge($commonConditions, $pidCondition);
+        $objectCondition = ['object_id[!]' => 0];
+        $db = $this->container->get(Medoo::class);
+
+        $activityIds = [
+            'prev' => [],
+            'current' => [],
+            'next' => []
+        ];
+
+        // Get activity ids for current page
+        $indexCondition = $index ? ['id[<=]' => $index] : [];
+        $conditions = array_merge($commonConditions, $indexCondition);
+        $selectedColumns = is_null($pid) && $groupActivities ? ['id' => Medoo::raw('max(id)')] : ['id'];
+        if (is_null($pid) && $groupActivities) {
+            $distinctObjectConditions = array_merge($conditions, $objectCondition);
+            $distinctObjectIds = $db->select('activities', '@object_id', $distinctObjectConditions);
+            if (empty($distinctObjectIds)) {
+                return $activityIds;
+            }
+            $conditions = array_merge($conditions, ['object_id' => $distinctObjectIds], ['GROUP' => 'object_id']);
+        } else {
+            $conditions = array_merge($conditions, $objectCondition);
+        }
+        $currentIds = $db->select('activities', $selectedColumns, $conditions);
+        $currentIds = array_map(function ($v) {
+            return $v['id'];
+        }, $currentIds);
+        $activityIds['current'] = $currentIds;
+
+        // Reset timeline pages cache
+        $cacheKey = 'timeline_pages';
+        $session = $this->session($request);
+        if (!isset($session[$cacheKey]) || is_null($index)) {
+            $session[$cacheKey] = [];
+        }
+
+        // Set current index
+        if (!empty($currentIds) && is_null($index)) {
+            $index = $currentIds[0];
+        }
+        // Set last index
+        $lastId = empty($currentIds) ? 0 : $currentIds[count($currentIds) - 1];
+
+        // Get index cache
+        $cache = $session[$cacheKey];
+
+        // Get prev index
+        if ($index) {
+            $i = count($cache) - 1;
+            while (isset($cache[$i])) {
+                $l = $cache[$i];
+                if ($l > $index) {
+                    $activityIds['prev'] = [$l];
+                    break;
+                }
+                unset($cache[$i]);
+                $i--;
+            }
+            // Cache current index
+            $cache[] = $index;
+        }
+        // Store page indexes
+        $session[$cacheKey] = $cache;
+
+        if ($lastId) {
+            // Get next index
+            $conditions = array_merge($commonConditions, $objectCondition, [
+                'id[<]' => $lastId,
+                'LIMIT' => 1,
+            ]);
+            $nextIds = $db->select('activities', 'id', $conditions);
+            $activityIds['next'] = $nextIds;
+        }
+
+
         return $activityIds;
     }
 }
