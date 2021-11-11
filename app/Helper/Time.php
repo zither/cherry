@@ -43,4 +43,32 @@ class Time
         $time = new DateTime('now', new DateTimeZone($timezone));
         return $time->format('P');
     }
+
+    public static function relativeUnit(string $time, string $prefix = '')
+    {
+        $targetTime = new DateTime($time);
+        $now = new DateTime('now');
+        $diff = $now->diff($targetTime);
+        if ($diff->m || $diff->y) {
+            return [];
+        }
+        $formats = [
+            '%a' => 'day',
+            '%h' => 'hour',
+            '%i' => 'minute',
+            '%s' => 'second'
+        ];
+        $time = [];
+        foreach ($formats as $format => $unit) {
+            $num = $diff->format($format);
+            if ($num) {
+                $time = [
+                    'time' => (int)$num,
+                    'unit' => $prefix . $unit
+                ];
+                break;
+            }
+        }
+        return $time;
+    }
 }

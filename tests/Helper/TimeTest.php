@@ -9,7 +9,6 @@ class TimeTest extends TestCase
 {
     public function testGetTimeZoneOffsetWithoutParam()
     {
-        Time::$defaultTimeZone = null;
         $offset = Time::getTimeZoneOffset();
         $this->assertEquals('+00:00', $offset);
         Time::$defaultTimeZone = 'Asia/ShangHai';
@@ -29,5 +28,38 @@ class TimeTest extends TestCase
         $UTCTime = '2021-01-01T00:00:00Z';
         $localTime = Time::UTCToLocalTime($UTCTime);
         $this->assertEquals('2021-01-01 08:00:00', $localTime);
+    }
+
+    public function testRelativeUnit()
+    {
+        $targetTime = new \DateTime('-1 month');
+        $this->assertEquals([], Time::relativeUnit($targetTime->format('Y-m-d H:i:s')));
+        $targetTime = new \DateTime('-1 day');
+        $this->assertEquals(
+            ['time' => '1', 'unit' => 'day'],
+            Time::relativeUnit($targetTime->format('Y-m-d H:i:s'))
+        );
+        $targetTime = new \DateTime('-2 hours');
+        $this->assertEquals(
+            ['time' => 2, 'unit' => 'hour'],
+            Time::relativeUnit($targetTime->format('Y-m-d H:i:s'))
+        );
+
+        $targetTime = new \DateTime('-20 minutes');
+        $this->assertEquals(
+            ['time' => 20, 'unit' => 'short_minute'],
+            Time::relativeUnit($targetTime->format('Y-m-d H:i:s'), 'short_')
+        );
+
+        $targetTime = new \DateTime('-30 seconds');
+        $this->assertEquals(
+            ['time' => 30, 'unit' => 'second'],
+            Time::relativeUnit($targetTime->format('Y-m-d H:i:s'))
+        );
+        $targetTime = new \DateTime('-2 years');
+        $this->assertEquals(
+            [],
+            Time::relativeUnit($targetTime->format('Y-m-d H:i:s'))
+        );
     }
 }
