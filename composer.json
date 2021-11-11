@@ -20,6 +20,8 @@
     "ext-json": "*",
     "ext-pdo": "*",
     "ext-openssl": "*",
+    "ext-dom": "*",
+    "ext-libxml": "*",
     "slim/slim": "4.*",
     "php-di/php-di": "^6.3",
     "catfan/medoo": "^2.1",

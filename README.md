@@ -12,6 +12,9 @@ An ActivityPub-based microblog.
     - ext-pdo
     - ext-pdo_mysql
     - ext-mbstring
+    - ext-dom
+    - ext-libxml
+    
 - MySQL 5.6+
 
 ## Installation

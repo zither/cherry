@@ -36,6 +36,8 @@ use GuzzleHttp\Cookie\SetCookie;
 use Exception;
 use InvalidArgumentException;
 use DirectoryIterator;
+use DOMDocument;
+use DOMNode;
 
 class IndexController
 {
@@ -1738,7 +1740,20 @@ SQL;
     protected function stripTags(string $html)
     {
         //@Todo remove invalid links in html
-        return strip_tags($html, ['a', 'p', 'br', 'img', 'blockquote']);
+        $html = strip_tags($html, ['a', 'p', 'br', 'img', 'blockquote']);
+        $doc = new DOMDocument();
+        $doc->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        $images = $doc->getElementsByTagName('img');
+        $attributeWhitelist = ['src', 'rel', 'alt', 'title', 'class'];
+        /** @var DOMNode $image */
+        foreach ($images as $image) {
+            foreach ($image->attributes as $attribute) {
+                if (!in_array($attribute->name, $attributeWhitelist)) {
+                    $image->removeAttribute($attribute->name);
+                }
+            }
+        }
+        return $doc->saveHTML();
     }
 
     protected function hasSessionId(ServerRequestInterface $request, SessionInterface $session)

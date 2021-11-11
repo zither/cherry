@@ -196,6 +196,9 @@ textarea {
 .content {
     color: var(--fg-content);
 }
+.content blockquote {
+    margin: 0;
+}
 .content a, .nav a{
     color: var(--fg-link);
 }
