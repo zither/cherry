@@ -44,22 +44,28 @@ class Time
         return $time->format('P');
     }
 
-    public static function relativeUnit(string $time, string $prefix = '')
+    public static function relativeUnit(string $time, string $prefix = '', string $startUnit = 'hour')
     {
         $targetTime = new DateTime($time);
         $now = new DateTime('now');
         $diff = $now->diff($targetTime);
-        if ($diff->m || $diff->y) {
-            return [];
-        }
         $formats = [
+            '%y' => 'year',
+            '%m' => 'month',
             '%a' => 'day',
             '%h' => 'hour',
             '%i' => 'minute',
             '%s' => 'second'
         ];
+        $started = false;
         $time = [];
         foreach ($formats as $format => $unit) {
+            if ($started === false) {
+                if ($unit !== $startUnit) {
+                    continue;
+                }
+                $started = true;
+            }
             $num = $diff->format($format);
             if ($num) {
                 $time = [

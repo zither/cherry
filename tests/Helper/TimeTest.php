@@ -37,7 +37,7 @@ class TimeTest extends TestCase
         $targetTime = new \DateTime('-1 day');
         $this->assertEquals(
             ['time' => '1', 'unit' => 'day'],
-            Time::relativeUnit($targetTime->format('Y-m-d H:i:s'))
+            Time::relativeUnit($targetTime->format('Y-m-d H:i:s'), '', 'day')
         );
         $targetTime = new \DateTime('-2 hours');
         $this->assertEquals(
