@@ -551,6 +551,8 @@ class IndexController
         if (empty($content)) {
             return $response->withStatus('302')->withHeader('location', '/editor');
         }
+        $summary = $this->getPostParam($request, 'summary');
+        $summary = empty($summary) ? null : $summary;
         $scope = $this->getPostParam($request, 'scope');
 
         // 回复嘟文的编号
@@ -590,8 +592,9 @@ class IndexController
             'url' => "https://$domain/notes/$objectId",
             'type' => 'Note',
             'attributedTo' => $profile['actor'],
-            'summary' => '',
+            'summary' => $summary,
             'content' => $parsedContent,
+            'sensitive' => is_null($summary) ? false : true,
             'published' => $published,
         ];
 
@@ -683,6 +686,7 @@ class IndexController
                 'is_public' => $scope < 3 ? 1 : 0,
                 'origin_id' => $originId,
                 'parent_id' => $parentId,
+                'is_sensitive' => is_null($summary) ? 0 : 1,
             ]);
             $objectId = $db->id();
 

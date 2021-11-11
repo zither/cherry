@@ -5,7 +5,10 @@
     <div  class="flex-grow mt">
         <form  action="/notes" method="POST">
             <div class="mb">
-                <textarea name="content" rows="10"></textarea>
+                <textarea name="summary" rows="1" placeholder="<?=$this->lang('warning_placeholder');?>"></textarea>
+            </div>
+            <div class="mb">
+                <textarea name="content" rows="10" placeholder="<?=$this->lang('content_placeholder');?>"></textarea>
             </div>
             <div class="flex-row">
                 <div class="flex-grow-full">
