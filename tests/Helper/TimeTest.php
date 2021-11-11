@@ -61,5 +61,11 @@ class TimeTest extends TestCase
             [],
             Time::relativeUnit($targetTime->format('Y-m-d H:i:s'))
         );
+        $targetTime = new \DateTime('-2 years -7 hours');
+        $this->assertEquals(
+            [],
+            Time::relativeUnit($targetTime->format('Y-m-d H:i:s'))
+        );
+
     }
 }

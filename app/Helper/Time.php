@@ -60,13 +60,16 @@ class Time
         $started = false;
         $time = [];
         foreach ($formats as $format => $unit) {
+            $num = $diff->format($format);
             if ($started === false) {
                 if ($unit !== $startUnit) {
+                    if ($num) {
+                        break;
+                    }
                     continue;
                 }
                 $started = true;
             }
-            $num = $diff->format($format);
             if ($num) {
                 $time = [
                     'time' => (int)$num,
