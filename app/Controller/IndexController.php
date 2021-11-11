@@ -385,22 +385,9 @@ class IndexController
                 foreach ($polls as &$pd) {
                     $pd['is_closed'] = $pd['is_closed'] || strtotime($pd['end_time']) < time();
                     if (!$pd['is_closed']) {
-                        $endTime = strtotime($pd['end_time']);
-                        $now = time();
-                        $diff = $endTime - $now;
-                        if ($diff >= 3600 * 24) {
-                            $pd['time_left'] = floor($diff / 3600 * 24);
-                            $pd['time_left_type'] = 'verbose_day';
-                        } else if ($diff >= 3600) {
-                            $pd['time_left'] = floor($diff / 3600);
-                            $pd['time_left_type'] = 'verbose_hour';
-                        } else if ($diff >= 60 ){
-                            $pd['time_left'] = floor($diff / 60);
-                            $pd['time_left_type'] = 'verbose_minute';
-                        } else {
-                            $pd['time_left'] = $diff;
-                            $pd['time_left_type'] = 'verbose_second';
-                        }
+                        $relativeTime = Time::relativeUnit($pd['end_time'], 'verbose_', 'day');
+                        $pd['time_left'] = $relativeTime['time'];
+                        $pd['time_left_type'] = $relativeTime['unit'];
                     }
                     $pd['choices'] = json_decode($pd['choices'], true);
                     foreach ($pd['choices'] as &$pc) {
@@ -419,11 +406,11 @@ class IndexController
                 }
             }
         }
-
         foreach ($blogs as &$v) {
             if (empty($v['profile_id'])) {
                 continue;
             }
+            $v['relative_time'] = Time::relativeUnit($v['published'], 'short_', 'hour');
             $v['date'] = Time::getLocalTime($v['published'], 'Y-m-d');
             $objectInfo = $objectProfiles[$v['profile_id']];
             $v['profile_id'] = $objectInfo['id'];
