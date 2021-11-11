@@ -1742,7 +1742,9 @@ SQL;
         //@Todo remove invalid links in html
         $html = strip_tags($html, ['a', 'p', 'br', 'img', 'blockquote']);
         $doc = new DOMDocument();
-        $doc->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+
+        $hack =  '<?xml encoding="utf-8" ?>';
+        $doc->loadHTML($hack . $html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
         $images = $doc->getElementsByTagName('img');
         $attributeWhitelist = ['src', 'rel', 'alt', 'title', 'class'];
         /** @var DOMNode $image */
@@ -1753,7 +1755,7 @@ SQL;
                 }
             }
         }
-        return $doc->saveHTML();
+        return str_replace( $hack, '', $doc->saveHTML());
     }
 
     protected function hasSessionId(ServerRequestInterface $request, SessionInterface $session)
