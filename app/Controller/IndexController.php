@@ -188,6 +188,7 @@ class IndexController
             if (empty($v['profile_id'])) {
                 continue;
             }
+            $v['relative_time'] = Time::relativeUnit($v['published'], 'short_', 'hour');
             $v['date'] = Time::getLocalTime($v['published'], 'Y-m-d');
             $objectInfo = $objectProfiles[$v['profile_id']];
             $v['profile_id'] = $objectInfo['id'];

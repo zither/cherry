@@ -54,7 +54,13 @@
                             <?php endif;?>
                             <div class="content-header-name flex-auto flex-shrink ellipse mr bold"><?=$v['name'] ?: $v['preferred_name']?></div>
                             <div class="content-header-account flex-grow flex-shrink ellipse mr"><a class="no-decoration" href="<?=$v['profile_url']?>"><?=$v['account']?></a></div>
-                            <div class="content-header-date flex-grow ml text-right nowrap"><?=$v['date']?></div>
+                            <div class="content-header-date flex-grow ml text-right nowrap">
+                                <?php if (!empty($v['relative_time'])):?>
+                                    <?=$v['relative_time']['time'] . $this->lang($v['relative_time']['unit'])?>
+                                <?php else :?>
+                                    <?=$v['date']?>
+                                <?php endif;?>
+                            </div>
                         </div>
                         <div class="flex-grow content mt-1">
                             <?php if (!$v['is_sensitive']): ?>
