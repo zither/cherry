@@ -30,7 +30,7 @@ function sigint_handler ()
 }
 trap sigint_handler 2
 
-if [ -f $LOG ]; then
+if [ ! -f $LOG ]; then
   touch $LOG
 fi
 
