@@ -98,7 +98,6 @@ class IndexController
             'activities.object_id',
             'activities.activity_id',
             'activities.profile_id(activity_profile_id)',
-            'activities.published',
             'activities.type(activity_type)',
             'profiles.actor(activity_actor)',
             'profiles.name(activity_name)',
@@ -119,6 +118,7 @@ class IndexController
             'objects.is_sensitive',
             'objects.is_liked',
             'objects.is_boosted',
+            'objects.published',
         ], $conditions);
 
         $objectProfileIds = [];
@@ -280,7 +280,6 @@ class IndexController
                 'activities.object_id',
                 'activities.activity_id',
                 'activities.profile_id(activity_profile_id)',
-                'activities.published',
                 'activities.type(activity_type)',
                 'profiles.actor(activity_actor)',
                 'profiles.name(activity_name)',
@@ -301,6 +300,7 @@ class IndexController
                 'objects.is_sensitive',
                 'objects.is_liked',
                 'objects.is_boosted',
+                'objects.published',
             ], [
                 'activities.id' => $activityIds['current'],
                 'ORDER' => ['activities.id' => 'DESC']
