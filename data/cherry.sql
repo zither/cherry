@@ -178,32 +178,40 @@ CREATE TABLE `tags` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-DROP TABLE IF EXISTS `task_logs`;
-CREATE TABLE `task_logs` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `task` varchar(64) NOT NULL DEFAULT '',
-  `params` varchar(255) DEFAULT NULL,
-  `status` tinyint(3) unsigned NOT NULL DEFAULT 0,
-  `reason` varchar(192) NOT NULL DEFAULT '',
-  `created_at` timestamp NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
 DROP TABLE IF EXISTS `tasks`;
 CREATE TABLE `tasks` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `task` varchar(64) NOT NULL DEFAULT '',
-  `params` varchar(255) DEFAULT '',
+  `params` text NOT NULL,
   `retried` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `max_retries` tinyint(3) unsigned NOT NULL DEFAULT 3,
   `priority` tinyint(3) unsigned NOT NULL DEFAULT 99,
   `delay` int(10) unsigned NOT NULL DEFAULT 60,
   `timer` timestamp NOT NULL DEFAULT current_timestamp(),
   `is_loop` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `status` int(11) unsigned NOT NULL DEFAULT 0,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `tasks_timer_IDX` (`timer`,`priority`,`retried`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+DROP TABLE IF EXISTS `task_logs`;
+CREATE TABLE `task_logs` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `task` varchar(64) NOT NULL DEFAULT '',
+  `params` text NOT NULL,
+  `retried` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `max_retries` tinyint(3) unsigned NOT NULL DEFAULT 3,
+  `priority` tinyint(3) unsigned NOT NULL DEFAULT 99,
+  `delay` int(10) unsigned NOT NULL DEFAULT 60,
+  `timer` timestamp NOT NULL DEFAULT current_timestamp(),
+  `is_loop` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `status` int(11) unsigned NOT NULL DEFAULT 0,
+  `reason` TEXT NOT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `polls`;

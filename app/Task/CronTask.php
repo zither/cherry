@@ -81,12 +81,12 @@ class CronTask implements TaskInterface
             echo "{$task['task']} ran successfully\n";
         } catch (FailedTaskException $e) {
             $db->delete('tasks', ['id' => $task['id']]);
-            $db->insert('task_logs', [
-                'task' => $task['task'],
-                'params' => $task['params'],
+            unset($task['id']);
+            $log = array_merge($task, [
                 'status' => 2,
                 'reason' => $e->getMessage(),
             ]);
+            $db->insert('task_logs', $log);
             $logId = $db->id();
             echo "{$task['task']} failed, log id: {$logId}\n";
         }
