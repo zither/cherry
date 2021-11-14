@@ -921,7 +921,7 @@ class IndexController
         ], [
             'objects.id' => $objectId,
         ]);
-
+        $object['object_id'] = $object['id'];
         $object['date'] = Time::getLocalTime($object['published'], 'Y-m-d');
         if ($object['is_local']) {
             preg_match('#\d{18}#', $object['raw_object_id'], $matches);
@@ -931,7 +931,7 @@ class IndexController
 
         $at = "@{$object['account']} ";
 
-        return $this->render($response, 'reply', [
+        return $this->render($response, 'editor', [
             'note' => $object,
             'profile' => $profile,
             'at' => $at,
