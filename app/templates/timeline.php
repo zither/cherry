@@ -124,7 +124,7 @@
                                                 <img class="attachment" src="<?=$image['url']?>" alt="<?=$image['name']?>"  referrerpolicy="no-referrer"/>
                                             </a>
                                         <?php elseif (strpos($image['media_type'], 'video') !== false):?>
-                                            <video style="width:100%" controls>
+                                            <video class="attachment" controls>
                                                 <source src="<?=$image['url']?>" type="<?=$image['media_type']?>">
                                             </video>
                                         <?php endif;?>
