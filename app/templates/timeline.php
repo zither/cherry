@@ -120,8 +120,8 @@
                                                     <img src="<?=$image['url']?>" alt="<?=$image['name']?>" referrerpolicy="no-referrer"/>
                                                 </div>
                                             </a>
-                                            <a href="#object-<?=$v['object_id']?>-<?=$i?>">
-                                                <img class="attachment" src="<?=$image['url']?>" alt="<?=$image['name']?>"  referrerpolicy="no-referrer"/>
+                                            <a class="wrapper" href="#object-<?=$v['object_id']?>-<?=$i?>">
+                                                <img class="attachment <?=$v['is_sensitive'] ? 'blur' : ''?>" src="<?=$image['url']?>" alt="<?=$image['name']?>"  referrerpolicy="no-referrer"/>
                                             </a>
                                         <?php elseif (strpos($image['media_type'], 'video') !== false):?>
                                             <video class="attachment" controls>

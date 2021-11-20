@@ -146,6 +146,10 @@ textarea {
     height: 10em;
     border-radius: .3em
 }
+.attachment-box.wrapper {
+    overflow: hidden;
+    display: inherit;
+}
 .navigator {
     color: var(--fg-navigator);
     background: var(--bg-navigator);
@@ -224,7 +228,10 @@ textarea {
 .content h2 {
     font-size: 1rem;
 }
-
+.blur {
+    filter: blur(1.5rem);
+    object-fit: cover;
+}
 .poll ul {
     padding: 0;
 }
