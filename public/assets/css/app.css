@@ -146,7 +146,7 @@ textarea {
     height: 10em;
     border-radius: .3em
 }
-.attachment-box.wrapper {
+.attachment-box .wrapper {
     overflow: hidden;
     display: inherit;
 }
