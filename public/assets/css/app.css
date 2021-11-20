@@ -144,11 +144,12 @@ textarea {
     width: 100%;
     object-fit: cover;
     height: 10em;
-    border-radius: .3em
+    border-radius: .3rem
 }
 .attachment-box .wrapper {
     overflow: hidden;
     display: inherit;
+    border-radius: .3rem;
 }
 .navigator {
     color: var(--fg-navigator);
@@ -224,6 +225,7 @@ textarea {
     max-height: 20em;
     object-fit: contain;
     background-color: var(--bg-content-image);
+    border-radius: .3rem;
 }
 .content h2 {
     font-size: 1rem;
