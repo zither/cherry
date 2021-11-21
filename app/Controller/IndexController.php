@@ -1224,7 +1224,7 @@ class IndexController
             'status' => 1,
             'LIMIT' => [$offset, $size]
         ]);
-        $total = $db->count('following', ['status' => 1]);
+        $total = $db->count('followers', ['status' => 1]);
         $prev = $page > 1 ? $page - 1 : 0;
         $next = $page * $size < $total ? $page + 1 : 0;
 
