@@ -192,11 +192,13 @@
                                         <div class="item">
                                             <a href="/web/threads/<?=$v['object_id']?>"><?=$this->lang('menu_expand_thread')?></a>
                                         </div>
+                                        <?php if (!$v['is_local']):?>
                                         <div class="item">
                                             <form action="/profiles/<?=$v['profile_id']?>/fetch" METHOD="POST">
                                                 <input class="btn" type="submit" value="<?=$this->lang('menu_update_profile')?>" />
                                             </form>
                                         </div>
+                                        <?php endif;?>
                                     </div>
                                 </div>
                             </div>
