@@ -1206,6 +1206,9 @@ class IndexController
 
     public function followers(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
+        $page = $this->getQueryParam($request, 'page', 1);
+        $size = 10;
+        $offset = ($page - 1) * $size;
         $db = $this->container->get(Medoo::class);
         $followers = $db->select('followers', [
             '[>]profiles' => ['profile_id' => 'id'],
@@ -1217,9 +1220,19 @@ class IndexController
             'profiles.account',
             'profiles.name',
             'profiles.preferred_name',
-        ],['status' => 1]);
+        ],[
+            'status' => 1,
+            'LIMIT' => [$offset, $size]
+        ]);
+        $total = $db->count('following', ['status' => 1]);
+        $prev = $page > 1 ? $page - 1 : 0;
+        $next = $page * $size < $total ? $page + 1 : 0;
 
-        return $this->render($response, 'followers', ['followers' => $followers]);
+        return $this->render($response, 'followers', [
+            'followers' => $followers,
+            'prev' => $prev,
+            'next' => $next,
+        ]);
     }
 
     public function deleteFollower(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
@@ -1258,6 +1271,9 @@ class IndexController
 
     public function following(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
+        $page = $this->getQueryParam($request, 'page', 1);
+        $size = 10;
+        $offset = ($page - 1) * $size;
         $db = $this->container->get(Medoo::class);
         $following = $db->select('following', [
             '[>]profiles' => ['profile_id' => 'id'],
@@ -1269,13 +1285,20 @@ class IndexController
             'profiles.account',
             'profiles.name',
             'profiles.preferred_name',
+        ], [
+            'LIMIT' => [$offset, $size]
         ]);
+        $total = $db->count('following');
+        $prev = $page > 1 ? $page - 1 : 0;
+        $next = $page * $size < $total ? $page + 1 : 0;
 
         $flash = $this->flash($request);
         $data = [
             'following' => $following,
             'errors' => $flash->get('error', []),
-            'messages' => $flash->get('success', [])
+            'messages' => $flash->get('success', []),
+            'prev' => $prev,
+            'next' => $next,
         ];
 
         return $this->render($response, 'following', $data);

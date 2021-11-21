@@ -1,6 +1,8 @@
 <?php
 
-return [
+$common = require "includes/list_common.php";
+
+return array_merge([
     'nav_admin' => 'Admin',
     'nav_following' => 'Following',
     'nav_followers' => 'Followers',
@@ -10,5 +12,5 @@ return [
     'form_label' => 'Follow account:',
     'form_button' => 'Send',
     'undo_button' => 'Unfollow',
-];
+], $common);
 
