@@ -1066,6 +1066,7 @@ class IndexController
             'p.preferred_name',
             'p.url',
             'a.raw',
+            'a.object_id',
             'a.published',
         ], [
             'LIMIT' => 10,

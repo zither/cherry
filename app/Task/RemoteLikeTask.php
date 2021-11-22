@@ -35,7 +35,7 @@ class RemoteLikeTask implements TaskInterface
         } else {
             throw new InvalidArgumentException('Invalid object');
         }
-        $object = $db->get('objects', ['id', 'is_local'], ['raw_object_id' => $rawObjectId]);
+        $object = $db->get('objects', ['id', 'profile_id', 'is_local'], ['raw_object_id' => $rawObjectId]);
         if (empty($object)) {
             // 嘟文不存在，直接结束
             return;
@@ -63,6 +63,15 @@ class RemoteLikeTask implements TaskInterface
                     'type' => $types[$rawActivity['type']],
                     'published' => $activity['published'],
                 ]);
+                if ($object['profile_id'] !== $profile['id']) {
+                    $db->insert('notifications', [
+                        'actor' => $actor,
+                        'profile_id' => $profile['id'],
+                        'activity_id' => $activityId,
+                        'type' => 'Like',
+                        'status' => 1,
+                    ]);
+                }
             }
             $db->update('activities', [
                 'object_id' => $object['id'],

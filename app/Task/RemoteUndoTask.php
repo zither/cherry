@@ -34,6 +34,13 @@ class RemoteUndoTask implements TaskInterface
                 }
                 $followerProfile = $db->get('profiles', ['id'], ['actor' => $undoActivity->actor]);
                 $db->delete('followers', ['profile_id' => $followerProfile['id']]);
+                $db->insert('notifications', [
+                    'actor' => $rawActivity['actor'],
+                    'profile_id' => $followerProfile['id'],
+                    'activity_id' => $activityId,
+                    'type' => 'Unfollow',
+                    'status' => 1,
+                ]);
                 break;
             case 'like':
                 $object = $db->get('objects', ['id'], ['raw_object_id' => $undoActivity->object]);

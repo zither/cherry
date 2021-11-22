@@ -47,6 +47,46 @@ class CreateRequestTask implements TaskInterface
                 $db->update('polls', ['activity_id' => $activityId], ['object_id' => $objectId]);
             }
 
+            if ($objectData['parent_id']) {
+                $profileIdOfParentObject = $db->get('objects', 'profile_id', [
+                    'id' => $objectData['parent_id'],
+                    'profile_id' => 1,
+                ]);
+                if ($profileIdOfParentObject) {
+                    $db->insert('notifications', [
+                        'actor' => $rawActivity['actor'],
+                        'profile_id' => $objectData['profile_id'],
+                        'activity_id' => $activityId,
+                        'type' => 'Reply',
+                        'status' => 1,
+                    ]);
+                }
+            }
+
+            if (!empty($rawActivity['object']['tag'])) {
+                $mentioned = false;
+                $ownerActor = $db->get('profiles', 'actor', ['id' => 1]);
+                foreach ($rawActivity['object']['tag'] as $v) {
+                    if ($v['type'] !== 'Mention') {
+                        continue;
+                    }
+                    if ($v['href'] === $ownerActor) {
+                        $mentioned = true;
+                        break;
+                    }
+                }
+                if ($mentioned) {
+                    $db->insert('notifications', [
+                        'actor' => $rawActivity['actor'],
+                        'profile_id' => $objectData['profile_id'],
+                        'activity_id' => $activityId,
+                        'type' => 'Mention',
+                        'status' => 1,
+                    ]);
+                }
+            }
+
+
             $db->pdo->commit();
         } catch (PDOException $e) {
             $db->pdo->rollBack();

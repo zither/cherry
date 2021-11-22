@@ -24,9 +24,21 @@
                                 <a class="btn mr" href="/follow-requests/<?=$v['id']?>/answer?action=ignore"><?=$this->lang('action_ignore')?></a>
                             </div>
                         <?php else: ?>
-                            <div><?=$this->lang('follow_success', $v['name'])?></div>
+                            <div><?=$this->lang('followed_message', $v['name'])?></div>
                             <div><a class="link" href="<?=$v['url']?>"><?=$v['url']?></a></div>
                         <?php endif;?>
+                    <?php elseif (strtolower($v['type'] === 'unfollow')): ?>
+                        <div><?=$this->lang('unfollowed_message', $v['name'])?></div>
+                        <div><a class="link" href="<?=$v['url']?>"><?=$v['url']?></a></div>
+                    <?php elseif (strtolower($v['type'] === 'mention')): ?>
+                        <div><?=$this->lang('mentioned_message', $v['name'])?></div>
+                        <div><a class="link" href="/web/threads/<?=$v['object_id']?>"><?=$v['raw']['object']['url'] ?? ''?></a></div>
+                    <?php elseif (strtolower($v['type'] === 'like')): ?>
+                        <div><?=$this->lang('liked_message', $v['name'])?></div>
+                        <div><a class="link" href="/web/threads/<?=$v['object_id']?>"><?=$v['raw']['object'] ?? ''?></a></div>
+                    <?php elseif (strtolower($v['type'] === 'reply')): ?>
+                        <div><?=$this->lang('replied_message', $v['name'])?></div>
+                        <div><a class="link" href="/web/threads/<?=$v['object_id']?>"><?=$v['raw']['object'] ?? ''?></a></div>
                     <?php endif; ?>
                 </div>
             </div>
