@@ -64,6 +64,10 @@ class RemoteLikeTask implements TaskInterface
                     'published' => $activity['published'],
                 ]);
             }
+            $db->update('activities', [
+                'object_id' => $object['id'],
+                'profile_id' => $profile['id']
+            ], ['id' => $activityId]);
             $db->pdo->commit();
         } catch (\PDOException $e) {
             $db->pdo->rollBack();
