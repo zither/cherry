@@ -1081,7 +1081,7 @@ class IndexController
             $v['raw'] = json_decode($v['raw'], true);
             $v['published'] = Time::getLocalTime($v['published'], 'Y-m-d');
         }
-        $db->update('notifictions', ['viewed' => 1], ['id' => $notificationIds]);
+        $db->update('notifications', ['viewed' => 1], ['id' => $notificationIds]);
 
         return $this->render($response, 'notifications', ['notifications' => $notifications]);
     }
