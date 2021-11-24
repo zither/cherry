@@ -80,6 +80,9 @@ textarea {
     border: 1px solid #f0f0f0;
     font-size: 1rem
 }
+pre {
+    white-space: pre-wrap;
+}
 .main {
     max-width: 35em;
     margin: .5em auto;
