@@ -3,9 +3,9 @@
 namespace Cherry\Task;
 
 use adrianfalleiro\TaskInterface;
-use Cherry\Helper\Time;
 use Psr\Container\ContainerInterface;
 use Medoo\Medoo;
+use InvalidArgumentException;
 
 class AnnounceRequestTask implements TaskInterface
 {
@@ -22,7 +22,7 @@ class AnnounceRequestTask implements TaskInterface
         $activityId = $args['activity_id'];
         $activity = $db->get('activities', '*', ['id' => $activityId]);
         if (empty($activity) || strtolower($activity['type']) !== 'announce') {
-            throw new \InvalidArgumentException('Invalid activity type');
+            throw new InvalidArgumentException('Invalid activity type');
         }
         $rawActivity = json_decode($activity['raw'], true);
 
@@ -33,7 +33,14 @@ class AnnounceRequestTask implements TaskInterface
             $activityProfileId = $profile['id'];
         }
 
-        $object = $db->get('objects', ['id', 'is_local'], ['raw_object_id' => $rawActivity['object']]);
+        if (is_string($rawActivity['object'])) {
+            $rawObjectId = $rawActivity['object'];
+        } else if (is_array($rawActivity['object']) && !empty($rawActivity['object']['id'])) {
+            $rawObjectId = $rawActivity['object']['id'];
+        } else {
+            throw new InvalidArgumentException('Invalid Object type');
+        }
+        $object = $db->get('objects', ['id', 'is_local'], ['raw_object_id' => $rawObjectId]);
         if (empty($object)) {
             $fetchObjectTask = new FetchObjectTask($this->container);
             $object = $fetchObjectTask->command(['id' => $rawActivity['object'], 'is_boosted' => 1]);
