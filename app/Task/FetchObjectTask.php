@@ -106,9 +106,10 @@ class FetchObjectTask implements TaskInterface
             $tags = [];
             $emojis = [];
             foreach ($object->tag as $v) {
-                if ($v['type'] === 'Hashtag') {
+                $tagType = $this->tagType($v);
+                if ($tagType === 'Hashtag') {
                     $tags[] = trim($v['name'], '#');
-                } else if ($v['type'] === 'Emoji' && isset($v['icon']['url'])) {
+                } else if ($tagType === 'Emoji' && isset($v['icon']['url'])) {
                     $emojis[$v['name']] = sprintf(
                         '<img class="emoji" src="%s" alt="%s" referrerpolicy="no-referrer" />',
                         $v['icon']['url'],
@@ -193,5 +194,16 @@ class FetchObjectTask implements TaskInterface
             $db->pdo->rollBack();
             throw new FailedTaskException($e->getMessage());
         }
+    }
+
+    public function tagType(array $tag)
+    {
+        if (isset($tag['type'])) {
+            return $tag['type'];
+        }
+        if (isset($tag['name']) && preg_match('/^#.+/', $tag['name'])) {
+            return 'HashTag';
+        }
+        return 'Unknown';
     }
 }

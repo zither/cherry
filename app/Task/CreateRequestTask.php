@@ -67,7 +67,7 @@ class CreateRequestTask implements TaskInterface
                 $mentioned = false;
                 $ownerActor = $db->get('profiles', 'actor', ['id' => 1]);
                 foreach ($rawActivity['object']['tag'] as $v) {
-                    if ($v['type'] !== 'Mention') {
+                    if (!isset($v['type']) || $v['type'] !== 'Mention') {
                         continue;
                     }
                     if ($v['href'] === $ownerActor) {
