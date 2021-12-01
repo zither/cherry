@@ -1006,6 +1006,7 @@ class IndexController
                 $v['snowflake_id'] =  $matches[0];
             }
             $v['attachments'] = $objectAttachments[$v['id']] ?? [];
+            $v['content'] = $this->stripTags($v['content']);
         }
 
         return $this->render($response, 'note', [
