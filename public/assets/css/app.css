@@ -203,6 +203,7 @@ pre {
 }
 .content {
     color: var(--fg-content);
+    word-break: break-all;
 }
 .content blockquote {
     margin: 0;
