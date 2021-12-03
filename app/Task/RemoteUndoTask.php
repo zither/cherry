@@ -2,6 +2,7 @@
 
 namespace Cherry\Task;
 
+use adrianfalleiro\FailedTaskException;
 use adrianfalleiro\TaskInterface;
 use Cherry\ActivityPub\Activity;
 use Psr\Container\ContainerInterface;
@@ -43,7 +44,14 @@ class RemoteUndoTask implements TaskInterface
                 ]);
                 break;
             case 'like':
-                $object = $db->get('objects', ['id'], ['raw_object_id' => $undoActivity->object]);
+                if (is_string($undoActivity->object)) {
+                    $rawObjectId = $undoActivity->object;
+                } else if (is_array($undoActivity->object) && isset($undoActivity->object['id'])) {
+                    $rawObjectId = $undoActivity->object['id'];
+                } else {
+                    throw new FailedTaskException('Invalid object');
+                }
+                $object = $db->get('objects', ['id'], ['raw_object_id' => $rawObjectId]);
                 if (empty($object)) {
                     return;
                 }
