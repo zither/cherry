@@ -1769,6 +1769,8 @@ SQL;
     {
         //@Todo remove invalid links in html
         $html = strip_tags($html, ['a', 'p', 'br', 'img', 'blockquote']);
+        // escape & in query string
+        $html = preg_replace("/&(?!\S+;)/", "&amp;", $html);
         $doc = new DOMDocument();
 
         $hack =  '<?xml encoding="utf-8" ?>';
