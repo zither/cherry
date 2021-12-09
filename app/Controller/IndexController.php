@@ -1080,6 +1080,7 @@ class IndexController
                 continue;
             }
             $v['raw'] = json_decode($v['raw'], true);
+            $v['raw_object_id'] = Activity::rawObjectId($v['raw']);
             $v['published'] = Time::getLocalTime($v['published'], 'Y-m-d');
         }
         $db->update('notifications', ['viewed' => 1], ['id' => $notificationIds]);

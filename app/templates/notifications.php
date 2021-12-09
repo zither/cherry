@@ -35,7 +35,7 @@
                         <div><a class="link" href="/web/threads/<?=$v['object_id']?>"><?=$v['raw']['object']['url'] ?? ''?></a></div>
                     <?php elseif (strtolower($v['type']) === 'like'): ?>
                         <div><?=$this->lang('liked_message', $v['name'])?></div>
-                        <div><a class="link" href="/web/threads/<?=$v['object_id']?>"><?=$v['raw']['object'] ?? ''?></a></div>
+                        <div><a class="link" href="/web/threads/<?=$v['object_id']?>"><?=$v['raw_object_id'] ?? ''?></a></div>
                     <?php elseif (strtolower($v['type']) === 'reply'): ?>
                         <div><?=$this->lang('replied_message', $v['name'])?></div>
                         <div><a class="link" href="/web/threads/<?=$v['object_id']?>"><?=$v['raw']['object']['url'] ?? ''?></a></div>

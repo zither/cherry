@@ -32,4 +32,18 @@ class Activity extends ObjectType
 
         return false;
     }
+
+    public static function rawObjectId(array $activity): string
+    {
+        if (!isset($activity['object'])) {
+            return '';
+        }
+        if (is_string($activity['object'])) {
+            return $activity['object'];
+        }
+        if (is_array($activity['object']) && isset($activity['object']['id'])) {
+            return $activity['object']['id'];
+        }
+        return '';
+    }
 }
