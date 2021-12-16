@@ -95,9 +95,11 @@ class FetchObjectTask implements TaskInterface
             $poll = [
                 'activity_id' => 0,
                 'choices' => json_encode($choices, JSON_UNESCAPED_UNICODE),
-                'end_time' => Time::UTCToLocalTime($args['endTime']),
+                // endTime may be null
+                'end_time' => Time::UTCToLocalTime($args['endTime'] ?? 'now'),
                 'voters_count' => $rawActivity['object']['votersCount'] ?? 0,
                 'multiple' => $multiple,
+                'is_closed' => empty($args['endTime']) ? 1 : 0,
             ];
         }
 
