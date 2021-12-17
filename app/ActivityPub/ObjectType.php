@@ -27,10 +27,10 @@ class ObjectType extends AbstractType
     public $url;
     public $mediaType;
     public $attachment;
-    public $to;
-    public $bto;
-    public $cc;
-    public $bcc;
+    public $to = [];
+    public $bto = [];
+    public $cc = [];
+    public $bcc = [];
     public $audience;
     public $published;
     public $inReplyTo;
@@ -40,7 +40,7 @@ class ObjectType extends AbstractType
     public $location;
     public $preview;
     public $replies;
-    public $tag;
+    public $tag = [];
     public $updated;
     public $startTime;
     public $endTime;
