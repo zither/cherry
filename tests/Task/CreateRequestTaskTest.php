@@ -122,4 +122,31 @@ class CreateRequestTaskTest extends TestCase
         $dbTimezone = $statement->fetch(\PDO::FETCH_NUM)[0];
         $this->assertEquals(Time::getTimeZoneOffset($configs['default_time_zone']), $dbTimezone);
     }
+
+    public function testDuplicateActivity()
+    {
+        $rawEmojiActivity = file_get_contents(ROOT . '/tests/data/emoji_activity.json');
+        $emojiActivity = Activity::createFromArray(json_decode($rawEmojiActivity, true));
+        $activity = [
+            'activity_id' => $emojiActivity->id,
+            'profile_id' => 1,
+            'object_id' => 999,
+            'type' => $emojiActivity->type,
+            'raw' => $rawEmojiActivity,
+            'is_local' => 1,
+            'is_public' => $emojiActivity->isPublic(),
+        ];
+        $db = $this->container->get(Medoo::class);
+        $db->insert('activities', $activity);
+
+        $activity['object_id'] = 0;
+        $db->insert('activities', $activity);
+        $activityId = $db->id();
+
+        $task = new CreateRequestTask($this->container);
+        $task->command(['activity_id' => $activityId]);
+
+        $deleted = $db->count('activities', ['id' => $activityId, 'is_deleted' => 1]);
+        $this->assertEquals(1, $deleted);
+    }
 }

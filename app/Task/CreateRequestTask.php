@@ -27,6 +27,17 @@ class CreateRequestTask implements TaskInterface
         if (empty($activity) || strtolower($activity['type']) !== 'create') {
             throw new InvalidArgumentException('Invalid activity type');
         }
+
+        // Check if this activity is duplicate
+        $exits = $db->count('activities', [
+            'activity_id' => $activity['activity_id'],
+            'profile_id' => $activity['profile_id'],
+            'object_id[>]' => 0,
+        ]);
+        if ($exits) {
+            $db->update('activities', ['is_deleted' => 1], ['id' => $activityId]);
+        }
+
         $rawActivity = json_decode($activity['raw'], true);
         $processObjectTask = new FetchObjectTask($this->container);
         $objectData = $processObjectTask->process($rawActivity['object']);
