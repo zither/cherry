@@ -146,7 +146,9 @@ class CreateRequestTaskTest extends TestCase
         $task = new CreateRequestTask($this->container);
         $task->command(['activity_id' => $activityId]);
 
-        $deleted = $db->count('activities', ['id' => $activityId, 'is_deleted' => 1]);
-        $this->assertEquals(1, $deleted);
+        $updatedActivity = $db->get('activities', '*', ['id' => $activityId]);
+        $this->assertNotEmpty($updatedActivity);
+        $this->assertEquals(0, $updatedActivity['object_id']);
+        $this->assertEquals(1, $updatedActivity['is_deleted']);
     }
 }

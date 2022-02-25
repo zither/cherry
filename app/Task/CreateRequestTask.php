@@ -36,6 +36,7 @@ class CreateRequestTask implements TaskInterface
         ]);
         if ($exits) {
             $db->update('activities', ['is_deleted' => 1], ['id' => $activityId]);
+            return;
         }
 
         $rawActivity = json_decode($activity['raw'], true);
