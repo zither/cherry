@@ -41,7 +41,7 @@ return function (App $app) {
             $group->get('/web/following', [IndexController::class, 'following']);
             $group->get('/web/followers', [IndexController::class, 'followers']);
             $group->post('/following/{id}/delete', [IndexController::class, 'deleteFollowing']);
-            $group->post('/followers/{id}/delete', [IndexController::class, 'deleteFollowers']);
+            $group->post('/followers/{id}/delete', [IndexController::class, 'deleteFollower']);
             $group->post('/profiles/{profile_id}/fetch', [IndexController::class, 'fetchProfile']);
             $group->post('/profiles/{profile_id}/update', [IndexController::class, 'updateProfile']);
             $group->get('/settings/profile', [IndexController::class, 'showProfileForm']);
