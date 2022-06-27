@@ -56,10 +56,12 @@ class FetchObjectTask implements TaskInterface
     {
         $db = $this->container->get(Medoo::class);
         $object = ObjectType::createFromArray($args);
-        if (!empty($object->attributedTo)) {
+
+        if (!empty($args['actor'])) {
+            $actor = $args['actor'];
+        } else if (!empty($object->attributedTo) && is_string($object->attributedTo)) {
+            //@TODO The attributed entity might not be Actort
             $actor = $object->attributedTo;
-        } else if (!empty($object->actor)) {
-            $actor = $object->actor;
         } else {
             throw new RuntimeException('Actor not found: ' . $args['id']);
         }
