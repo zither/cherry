@@ -56,10 +56,18 @@ class FetchObjectTask implements TaskInterface
     {
         $db = $this->container->get(Medoo::class);
         $object = ObjectType::createFromArray($args);
-        $profile = $db->get('profiles', ['id'], ['actor' => $object->attributedTo]);
+        if (!empty($object->attributedTo)) {
+            $actor = $object->attributedTo;
+        } else if (!empty($object->actor)) {
+            $actor = $object->actor;
+        } else {
+            throw new RuntimeException('Actor not found: ' . $args['id']);
+        }
+
+        $profile = $db->get('profiles', ['id'], ['actor' => $actor]);
         if (empty($profile)) {
             $subTask = new FetchProfileTask($this->container);
-            $profile = $subTask->command(['actor' => $object->attributedTo]);
+            $profile = $subTask->command(['actor' => $actor]);
         }
         $originId = 0;
         $parentId = 0;
