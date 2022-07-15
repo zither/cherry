@@ -44,7 +44,7 @@ trait SetupCherryEnv
     {
         $database = $configs['database'];
         $pdo = new \PDO("mysql:host={$database['host']};port={$database['port']}",$database['user'], $database['password']);
-        $pdo->exec("DROP DATABASE {$database['name']}");
+        $pdo->exec("DROP DATABASE IF EXISTS {$database['name']}");
         $pdo->exec("CREATE DATABASE {$database['name']}");
         $pdo->exec("USE {$database['name']}");
         $sql = file_get_contents(ROOT . '/data/cherry.sql');
