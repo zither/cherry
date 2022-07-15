@@ -91,7 +91,7 @@ class CallableResolver implements AdvancedCallableResolverInterface
      */
     private function resolveByPredicate($toResolve, callable $predicate, string $defaultMethod): callable
     {
-        if (is_callable($toResolve)) {
+        if (is_callable($toResolve) || is_array($toResolve)) {
             if (is_array($toResolve) && !$this->isStaticMethod($toResolve)) {
                 $toResolve = sprintf('%s:%s', $toResolve[0], $toResolve[1]);
             } else {
