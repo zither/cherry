@@ -25,4 +25,11 @@ class HelperTest extends TestCase
         // Expect no warning is thrown
         $this->assertTrue(true);
     }
+
+    public function testStripTagsWithUtf8Chars()
+    {
+        $html = "<p>中文</p>";
+        $strippedHtml = Helper::stripTags($html);
+        $this->assertStringContainsString('中文', $strippedHtml);
+    }
 }

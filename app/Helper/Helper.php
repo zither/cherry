@@ -28,7 +28,7 @@ class Helper
             $html = urldecode($html);
         }
         $doc = new DOMDocument();
-        $hack =  '<?xml encoding="utf-8" ?>';
+        $hack =  '<?xml encoding="utf-8" ?><meta http-equiv="content-type" content="text/html; charset=utf-8">';
         $doc->loadHTML($hack . $html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
         $images = $doc->getElementsByTagName('img');
         $attributeWhitelist = ['src', 'rel', 'alt', 'title', 'class'];
@@ -40,6 +40,7 @@ class Helper
                 }
             }
         }
-        return str_replace( $hack, '', $doc->saveHTML());
+        $savedHtml = $doc->saveHTML();
+        return str_replace( $hack, '', $savedHtml);
     }
 }
