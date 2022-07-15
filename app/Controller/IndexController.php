@@ -197,7 +197,7 @@ class IndexController
             $v['actor'] = $objectInfo['actor'];
             $v['preferred_name'] = $objectInfo['preferred_name'];
             $v['name'] = $objectInfo['name'];
-            $v['content'] = $this->stripTags($v['content']);
+            $v['content'] = Helper::stripTags($v['content']);
             $v['profile_url'] = $objectInfo['url'];
             $v['avatar'] = $objectInfo['avatar'];
             $v['account'] = "@{$objectInfo['account']}";
@@ -420,7 +420,7 @@ class IndexController
             $v['actor'] = $objectInfo['actor'];
             $v['preferred_name'] = $objectInfo['preferred_name'];
             $v['name'] = $objectInfo['name'];
-            $v['content'] = $this->stripTags($v['content']);
+            $v['content'] = Helper::stripTags($v['content']);
             $v['profile_url'] = $objectInfo['url'];
             $v['avatar'] = $objectInfo['avatar'];
             $v['account'] = "@{$objectInfo['account']}";
@@ -1006,7 +1006,7 @@ class IndexController
                 $v['snowflake_id'] =  $matches[0];
             }
             $v['attachments'] = $objectAttachments[$v['id']] ?? [];
-            $v['content'] = $this->stripTags($v['content']);
+            $v['content'] = Helper::stripTags($v['content']);
         }
 
         return $this->render($response, 'note', [
@@ -1449,7 +1449,7 @@ class IndexController
                 $v['actor'] = $objectInfo['actor'];
                 $v['preferred_name'] = $objectInfo['preferred_name'];
                 $v['name'] = $objectInfo['name'];
-                $v['content'] = $this->stripTags($v['content']);
+                $v['content'] = Helper::stripTags($v['content']);
                 $v['profile_url'] = $objectInfo['url'];
                 $v['avatar'] = $objectInfo['avatar'];
                 $v['account'] = "@{$objectInfo['account']}";
@@ -1764,29 +1764,6 @@ SQL;
     {
         $session = $this->session($request);
         return new FlashMessage($session);
-    }
-
-    protected function stripTags(string $html)
-    {
-        //@Todo remove invalid links in html
-        $html = strip_tags($html, ['a', 'p', 'br', 'img', 'blockquote']);
-        // escape & in query string
-        $html = preg_replace("/&(?!\S+;)/", "&amp;", $html);
-        $doc = new DOMDocument();
-
-        $hack =  '<?xml encoding="utf-8" ?>';
-        $doc->loadHTML($hack . $html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
-        $images = $doc->getElementsByTagName('img');
-        $attributeWhitelist = ['src', 'rel', 'alt', 'title', 'class'];
-        /** @var DOMNode $image */
-        foreach ($images as $image) {
-            foreach ($image->attributes as $attribute) {
-                if (!in_array($attribute->name, $attributeWhitelist)) {
-                    $image->removeAttribute($attribute->name);
-                }
-            }
-        }
-        return str_replace( $hack, '', $doc->saveHTML());
     }
 
     protected function hasSessionId(ServerRequestInterface $request, SessionInterface $session)

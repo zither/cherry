@@ -17,4 +17,12 @@ class HelperTest extends TestCase
         $request = $request->withHeader('Accept', 'application/activity+json');
         $this->assertTrue(Helper::isApi($request));
     }
+
+    public function testStripTags()
+    {
+        $html = file_get_contents(ROOT . '/tests/data/strip_tags.html');
+        Helper::stripTags($html);
+        // Expect no warning is thrown
+        $this->assertTrue(true);
+    }
 }
