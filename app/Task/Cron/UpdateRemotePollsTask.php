@@ -66,7 +66,7 @@ class UpdateRemotePollsTask implements TaskInterface
             $updated = [
                 'choices' => json_encode($choices, JSON_UNESCAPED_UNICODE),
                 'voters_count' => $question['votersCount'] ?? $votersCountSum,
-                'is_closed' => strtotime(Time::UTCToLocalTime($poll['end_time'])) < time() ? 1 : 0,
+                'is_closed' => strtotime($poll['end_time']) < time() ? 1 : 0,
             ];
             $db->update('polls', $updated, ['id' => $poll['id']]);
         } catch (Exception $e) {

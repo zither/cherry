@@ -95,19 +95,22 @@ class FetchObjectTask implements TaskInterface
             $multiple = isset($args['anyOf']) ? true : false;
             $choicesKey = $multiple ? 'anyOf' : 'oneOf';
             $choices = [];
+            $votersCountSum = 0;
             foreach ($args[$choicesKey] as $v) {
+                $count = $v['replies']['totalItems'] ?? 0;
                 $choices[] = [
                     'type' => $v['type'],
                     'name' => $v['name'],
-                    'count' => $v['replies']['totalItems'] ?? 0,
+                    'count' => $count,
                 ];
+                $votersCountSum += $count;
             }
             $poll = [
                 'activity_id' => 0,
                 'choices' => json_encode($choices, JSON_UNESCAPED_UNICODE),
                 // endTime may be null
                 'end_time' => Time::UTCToLocalTime($args['endTime'] ?? 'now'),
-                'voters_count' => $rawActivity['object']['votersCount'] ?? 0,
+                'voters_count' => $rawActivity['object']['votersCount'] ?? $votersCountSum,
                 'multiple' => $multiple,
                 'is_closed' => empty($args['endTime']) ? 1 : 0,
             ];
