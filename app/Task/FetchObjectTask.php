@@ -151,7 +151,7 @@ class FetchObjectTask implements TaskInterface
                 'content' => $content,
                 'summary' => $object->getStringAttribute('summary'),
                 'url' => $object->getStringAttribute('url') ?: $object->id,
-                'published' => Time::UTCToLocalTime($object->published),
+                'published' => Time::UTCToLocalTime($object->published ?? 'now'),
                 'is_local' => 0,
                 'is_public' => $object->isPublic(),
                 'is_boosted' => 0,
