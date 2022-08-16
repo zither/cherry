@@ -9,6 +9,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use Medoo\Medoo;
 use Psr\Container\ContainerInterface;
+use Cherry\Helper\Time;
 
 class UpdateRemotePollsTask implements TaskInterface
 {
@@ -52,17 +53,20 @@ class UpdateRemotePollsTask implements TaskInterface
             }
             $choicesKey = $poll['multiple'] ? 'anyOf' : 'oneOf';
             $choices = [];
+            $votersCountSum = 0;
             foreach ($question[$choicesKey] as $v) {
+                $count = $v['replies']['totalItems'] ?? 0;
                 $choices[] = [
                     'type' => $v['type'],
                     'name' => $v['name'],
-                    'count' => $v['replies']['totalItems'] ?? 0,
+                    'count' => $count,
                 ];
+                $votersCountSum += $count;
             }
             $updated = [
                 'choices' => json_encode($choices, JSON_UNESCAPED_UNICODE),
-                'voters_count' => $question['votersCount'] ?? 0,
-                'is_closed' => strtotime($poll['end_time']) < time() ? 1 : 0,
+                'voters_count' => $question['votersCount'] ?? $votersCountSum,
+                'is_closed' => strtotime(Time::UTCToLocalTime($poll['end_time'])) < time() ? 1 : 0,
             ];
             $db->update('polls', $updated, ['id' => $poll['id']]);
         } catch (Exception $e) {

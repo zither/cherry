@@ -396,6 +396,7 @@ class IndexController
                     foreach ($pd['choices'] as &$pc) {
                         $pc['selected'] = false;
                         $pc['percent'] = ($pd['voters_count'] > 0 ? $pc['count'] / $pd['voters_count'] : 0) * 100;
+                        $pc['percent'] = (int)$pc['percent'];
                         foreach ($myChoices as $c) {
                             if ($c['poll_id'] !== $pd['id']) {
                                 continue;
