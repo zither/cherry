@@ -759,7 +759,12 @@ class IndexController
         $activity = $db->get('activities', ['id', 'object_id'], ['activity_id' => $outboxId]);
 
         // 标记为已删除
-        $db->update('activities', ['is_deleted' => 1], ['id' => $activity['id']]);
+        $db->update('activities', ['is_deleted' => 1], [
+             'OR' => [
+                 'id' => $activity['id'],
+                 'object_id' => $activity['object_id'],
+             ]
+        ]);
         // 删除嘟文
         $db->delete('objects', ['id' => $activity['object_id']]);
         // 删除互动数据
