@@ -364,52 +364,8 @@ class IndexController
             }
         }
 
-
-        $objectAttachments = [];
-        if (!empty($objectIds)) {
-            $attachments = $db->select('attachments', '*', ['object_id' => $objectIds]);
-            foreach ($attachments as $v) {
-                if (!isset($objectAttachments[$v['object_id']])) {
-                    $objectAttachments[$v['object_id']] = [];
-                }
-                $objectAttachments[$v['object_id']][] = $v;
-            }
-        }
-
-        $pollMap = [];
-        if (!empty($pollIds)) {
-            $polls = $db->select('polls', '*', ['object_id' => $pollIds]);
-            $ids = [];
-            foreach ($polls as $p) {
-                $ids[] = $p['id'];
-            }
-            if (!empty($ids)) {
-                $myChoices = $db->select('poll_choices', '*', ['poll_id' => $ids, 'profile_id' => 1]);
-                foreach ($polls as &$pd) {
-                    $pd['is_closed'] = $pd['is_closed'] || strtotime($pd['end_time']) < time();
-                    if (!$pd['is_closed']) {
-                        $relativeTime = Time::relativeUnit($pd['end_time'], 'verbose_', 'day');
-                        $pd['time_left'] = $relativeTime['time'];
-                        $pd['time_left_type'] = $relativeTime['unit'];
-                    }
-                    $pd['choices'] = json_decode($pd['choices'], true);
-                    foreach ($pd['choices'] as &$pc) {
-                        $pc['selected'] = false;
-                        $pc['percent'] = ($pd['voters_count'] > 0 ? $pc['count'] / $pd['voters_count'] : 0) * 100;
-                        $pc['percent'] = (int)$pc['percent'];
-                        foreach ($myChoices as $c) {
-                            if ($c['poll_id'] !== $pd['id']) {
-                                continue;
-                            }
-                            if ($pc['name'] === $c['choice']) {
-                                $pc['selected'] = true;
-                            }
-                        }
-                    }
-                    $pollMap[$pd['object_id']] = $pd;
-                }
-            }
-        }
+        $objectAttachments = $this->getAttachmentMapByObjectIds($objectIds);
+        $pollMap = $this->getPollMapByObjectIds($pollIds);
         foreach ($blogs as &$v) {
             if (empty($v['profile_id'])) {
                 continue;
@@ -457,6 +413,61 @@ class IndexController
             'next' => empty($nextArgs['index']) ? null : http_build_query($nextArgs),
             'is_admin' => $this->isLoggedIn($request),
         ]);
+    }
+
+    protected function getPollMapByObjectIds(array $ids): array
+    {
+        $db = $this->db();
+        $pollMap = [];
+        if (!empty($pollIds)) {
+            $polls = $db->select('polls', '*', ['object_id' => $pollIds]);
+            $ids = [];
+            foreach ($polls as $p) {
+                $ids[] = $p['id'];
+            }
+            if (!empty($ids)) {
+                $myChoices = $db->select('poll_choices', '*', ['poll_id' => $ids, 'profile_id' => 1]);
+                foreach ($polls as &$pd) {
+                    $pd['is_closed'] = $pd['is_closed'] || strtotime($pd['end_time']) < time();
+                    if (!$pd['is_closed']) {
+                        $relativeTime = Time::relativeUnit($pd['end_time'], 'verbose_', 'day');
+                        $pd['time_left'] = $relativeTime['time'];
+                        $pd['time_left_type'] = $relativeTime['unit'];
+                    }
+                    $pd['choices'] = json_decode($pd['choices'], true);
+                    foreach ($pd['choices'] as &$pc) {
+                        $pc['selected'] = false;
+                        $pc['percent'] = ($pd['voters_count'] > 0 ? $pc['count'] / $pd['voters_count'] : 0) * 100;
+                        foreach ($myChoices as $c) {
+                            if ($c['poll_id'] !== $pd['id']) {
+                                continue;
+                            }
+                            if ($pc['name'] === $c['choice']) {
+                                $pc['selected'] = true;
+                            }
+                        }
+                    }
+                    $pollMap[$pd['object_id']] = $pd;
+                }
+            }
+        }
+
+        return $pollMap;
+    }
+
+    protected function getAttachmentMapByObjectIds(array $ids): array
+    {
+        $objectAttachments = [];
+        if (!empty($objectIds)) {
+            $attachments = $this->db()->select('attachments', '*', ['object_id' => $objectIds]);
+            foreach ($attachments as $v) {
+                if (!isset($objectAttachments[$v['object_id']])) {
+                    $objectAttachments[$v['object_id']] = [];
+                }
+                $objectAttachments[$v['object_id']][] = $v;
+            }
+        }
+        return $objectAttachments;
     }
 
     public function login(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
@@ -1932,5 +1943,10 @@ SQL;
 
 
         return $activityIds;
+    }
+
+    protected function db(): Medoo
+    {
+        return $this->container->get(Medoo::class);
     }
 }
