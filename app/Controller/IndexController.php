@@ -948,6 +948,9 @@ class IndexController
 
         $at = "@{$object['account']} ";
 
+        $attachments = $this->getAttachmentMapByObjectIds([$objectId]);
+        $object['attachments'] = $attachments[$objectId] ?? [];
+
         return $this->render($response, 'editor', [
             'note' => $object,
             'profile' => $profile,
