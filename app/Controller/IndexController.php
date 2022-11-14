@@ -415,12 +415,12 @@ class IndexController
         ]);
     }
 
-    protected function getPollMapByObjectIds(array $ids): array
+    protected function getPollMapByObjectIds(array $objectIds): array
     {
         $db = $this->db();
         $pollMap = [];
-        if (!empty($pollIds)) {
-            $polls = $db->select('polls', '*', ['object_id' => $pollIds]);
+        if (!empty($objectIds)) {
+            $polls = $db->select('polls', '*', ['object_id' => $objectIds]);
             $ids = [];
             foreach ($polls as $p) {
                 $ids[] = $p['id'];
@@ -455,7 +455,7 @@ class IndexController
         return $pollMap;
     }
 
-    protected function getAttachmentMapByObjectIds(array $ids): array
+    protected function getAttachmentMapByObjectIds(array $objectIds): array
     {
         $objectAttachments = [];
         if (!empty($objectIds)) {
