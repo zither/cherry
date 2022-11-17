@@ -950,6 +950,8 @@ class IndexController
 
         $attachments = $this->getAttachmentMapByObjectIds([$objectId]);
         $object['attachments'] = $attachments[$objectId] ?? [];
+        $polls = $this->getPollMapByObjectIds([$objectId]);
+        $object['poll'] = $polls[$objectId] ?? [];
 
         return $this->render($response, 'editor', [
             'note' => $object,

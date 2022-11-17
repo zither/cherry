@@ -40,6 +40,55 @@
                         <input type=radio class="hide-content"  id="hide-content-<?=$note['object_id']?>" name="group-<?=$note['object_id']?>">
                         <div class="object-content"><?=$note['content']?></div>
                     <?php endif; ?>
+                    <?php if (!empty($note['poll'])): ?>
+                        <div class="poll">
+                            <?php if ($note['poll']['is_voted'] || $note['poll']['is_closed']):?>
+                                <ul>
+                                    <?php foreach ($note['poll']['choices'] as $choice) :?>
+                                        <li class="choice">
+                                            <?=$choice['percent']?>% <?=$choice['name']?>
+                                            <?php if ($choice['selected']):?>
+                                                <span class="icon">✔</span>
+                                            <?php endif;?>
+                                        </li>
+                                        <li class="progress <?=$choice['selected'] ? 'selected' : ''?>" style="width: <?=$choice['percent'] ?: 1?>%"></li>
+                                    <?php endforeach;?>
+                                </ul>
+                            <?php else:?>
+                                <form method="POST" action="/web/polls/<?=$note['poll']['id']?>/vote">
+                                    <?php foreach ($note['poll']['choices'] as $i => $choice) :?>
+                                        <div class="choice">
+                                            <label>
+                                                <input
+                                                        type="<?=$note['poll']['multiple'] ? 'checkbox' : 'radio'?>"
+                                                        name="choice<?=$note['poll']['multiple'] ? '[]':''?>"
+                                                        value="<?=$choice['name']?>"
+                                                >
+                                                <?=$choice['name']?>
+                                            </label>
+                                        </div>
+                                    <?php endforeach;?>
+                                    <button class="mt mb"  <?=$is_admin ? '' : 'disabled'?>>投票</button>
+                                </form>
+                            <?php endif; ?>
+                            <span class="details inline-block mb">
+                                <?=$this->lang('poll_voters_count', $note['poll']['voters_count']);?>
+                                ·
+                                <?php if ($note['poll']['is_closed']):?>
+                                    <?=$this->lang('poll_closed');?>
+                                <?php else:?>
+                                    <?=$this->lang(
+                                        'poll_end_time',
+                                        $note['poll']['time_left'],
+                                        $this->lang(
+                                            $note['poll']['time_left_type'],
+                                            $note['poll']['time_left'] > 1
+                                        )
+                                    );?>
+                                <?php endif;?>
+                            </span>
+                        </div>
+                    <?php endif;?>
                 </div>
 
                 <?php if (!empty($note['attachments'])): ?>
