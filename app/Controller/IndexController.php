@@ -1214,6 +1214,7 @@ class IndexController
         if (!$poll['multiple']) {
             $choices = [$choices];
         }
+        $choiceData = json_decode($poll['choices'], true);
         foreach ($choices as $v) {
             $choice = [
                 'poll_id' => $pollId,
@@ -1227,8 +1228,19 @@ class IndexController
                 'task' => LocalVoteTask::class,
                 'params' => ['choice_id' => $choiceId]
             ]);
+            foreach ($choiceData as &$c) {
+                if ($c['name'] === $v) {
+                    $c['count'] += 1;
+                    break;
+                }
+            }
         }
-        $db->update('polls', ['is_voted' => 1], ['id' => $pollId]);
+        $jsonChoiceData = json_encode($choiceData, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
+        $db->update('polls', [
+            'is_voted' => 1,
+            'choices' => $jsonChoiceData,
+            'voters_count[+]' => 1
+        ], ['id' => $pollId]);
         return $this->redirectBack($request, $response);
     }
 
