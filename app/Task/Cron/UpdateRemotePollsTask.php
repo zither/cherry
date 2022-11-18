@@ -9,7 +9,6 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use Medoo\Medoo;
 use Psr\Container\ContainerInterface;
-use Cherry\Helper\Time;
 
 class UpdateRemotePollsTask implements TaskInterface
 {
