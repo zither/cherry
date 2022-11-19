@@ -59,16 +59,8 @@ class IndexController
             return $router->getNamedRoute('api_profile')->run($request);
         }
 
-        $db = $this->container->get(Medoo::class);
-        $profile = $db->get('profiles', [
-            'actor',
-            'name',
-            'preferred_name',
-            'account',
-            'url',
-            'avatar',
-            'summary',
-        ], ['id' => 1]);
+        $db = $this->db();
+        $profile = $this->adminProfile();
 
         $pageSize = 10;
         $index = $this->getQueryParam($request, 'index', null);
@@ -256,7 +248,7 @@ class IndexController
         $settings = $this->container->make('settings', ['keys' => $keys]);
         $groupActivities = isset($settings['group_activities']) ? (int)$settings['group_activities'] : 0;
 
-        $db = $this->container->get(Medoo::class);
+        $db = $this->db();
 
         $activityIds = $this->getActivityIdsForTimelineV2($request, $groupActivities, $index, $pid);
         $blogs = [];
@@ -464,17 +456,7 @@ class IndexController
         if ($this->isLoggedIn($request)) {
             return $response->withStatus('302')->withHeader('location', '/timeline');
         }
-        $db = $this->container->get(Medoo::class);
-        $profile = $db->get('profiles', [
-            'actor',
-            'name',
-            'preferred_name',
-            'account',
-            'url',
-            'avatar',
-            'summary',
-        ], ['id' => 1]);
-
+        $profile = $this->adminProfile();
         $flash = $this->flash($request);
         $data = [
             'profile' => $profile,
@@ -549,7 +531,7 @@ class IndexController
         // 回复嘟文的编号
         $inReplyTo = $this->getPostParam($request, 'in_reply_to');
 
-        $db = $this->container->get(Medoo::class);
+        $db = $this->db();
         $profile = $db->get('profiles', '*', ['id' => 1]);
         $domain = parse_url($profile['actor'], PHP_URL_HOST);
 
@@ -753,7 +735,7 @@ class IndexController
     public function deletePost(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $snowflakeId = $args['snowflake_id'];
-        $db = $this->container->get(Medoo::class);
+        $db = $this->db();
         $profile = $db->get('profiles', ['id', 'outbox'], ['id' => 1]);
         $outboxId = sprintf('%s/%s', $profile['outbox'], $snowflakeId);
         $activity = $db->get('activities', ['id', 'object_id'], ['activity_id' => $outboxId]);
@@ -783,7 +765,7 @@ class IndexController
     public function note(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $snowflakeId = $args['snowflake_id'];
-        $db = $this->container->get(Medoo::class);
+        $db = $this->db();
         $profile = $db->get('profiles', ['id', 'outbox'], ['id' => 1]);
         $outboxId = sprintf('%s/%s', $profile['outbox'], $snowflakeId);
         $activity = $db->get('activities', ['id', 'object_id'], [
@@ -897,7 +879,7 @@ class IndexController
     public function replyTo(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $objectId = $args['object_id'];
-        $db = $this->container->get(Medoo::class);
+        $db = $this->db();
         $profile = $db->get('profiles', '*', ['id' => 1]);
         $object = $db->get('objects', [
             '[>]profiles' => ['profile_id' => 'id'],
@@ -1954,5 +1936,18 @@ SQL;
     protected function db(): Medoo
     {
         return $this->container->get(Medoo::class);
+    }
+
+    protected function adminProfile(): array
+    {
+        return $this->db()->get('profiles', [
+            'actor',
+            'name',
+            'preferred_name',
+            'account',
+            'url',
+            'avatar',
+            'summary',
+        ], ['id' => CHERRY_ADMIN_PROFILE_ID]);
     }
 }
