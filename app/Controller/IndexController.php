@@ -173,18 +173,7 @@ class IndexController
                 $parentProfiles[$v['object_id']] = $v;
             }
         }
-
-
-        $objectAttachments = [];
-        if (!empty($objectIds)) {
-            $attachments = $db->select('attachments', '*', ['object_id' => $objectIds]);
-            foreach ($attachments as $v) {
-                if (!isset($objectAttachments[$v['object_id']])) {
-                    $objectAttachments[$v['object_id']] = [];
-                }
-                $objectAttachments[$v['object_id']][] = $v;
-            }
-        }
+        $objectAttachments = $this->getAttachmentMapByObjectIds($objectIds);
 
         foreach ($blogs as &$v) {
             if (empty($v['profile_id'])) {
