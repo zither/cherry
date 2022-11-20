@@ -979,16 +979,7 @@ class IndexController
         foreach ($notes as $v) {
             $objectIds[] = $v['id'];
         }
-        $objectAttachments = [];
-        if (!empty($objectIds)) {
-            $attachments = $db->select('attachments', '*', ['object_id' => $objectIds]);
-            foreach ($attachments as $v) {
-                if (!isset($objectAttachments[$v['object_id']])) {
-                    $objectAttachments[$v['object_id']] = [];
-                }
-                $objectAttachments[$v['object_id']][] = $v;
-            }
-        }
+        $objectAttachments = $this->getAttachmentMapByObjectIds($objectIds);
 
         foreach ($notes as &$v) {
             $v['date'] = Time::getLocalTime($v['published'], 'Y-m-d');
@@ -1087,7 +1078,7 @@ class IndexController
             if (empty($action) || empty($notificationId)) {
                 throw new \InvalidArgumentException('Both action and notification id required');
             }
-            $db = $this->container->get(Medoo::class);
+            $db = $this->db();
             $notification = $db->get('notifications', '*', ['id' => $notificationId]);
 
             $params = [
@@ -1120,7 +1111,7 @@ class IndexController
     public function liked(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $objectId = $args['object_id'];
-        $db = $this->container->get(Medoo::class);
+        $db = $this->db();
         $object = $db->get('objects', ['id', 'is_liked'], ['id' => $objectId]);
         $liked = $object['is_liked'] ? 0 : 1;
         $db->update('objects', ['is_liked' => $liked], ['id' => $objectId]);
@@ -1145,7 +1136,7 @@ class IndexController
     public function boosted(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $objectId = $args['object_id'];
-        $db = $this->container->get(Medoo::class);
+        $db = $this->db();
         $object = $db->get('objects', ['id', 'is_boosted', 'is_public'], ['id' => $objectId]);
         if (!$object['is_public']) {
             // 检查是否运行转载
@@ -1178,7 +1169,7 @@ class IndexController
     {
         $pollId = $args['poll_id'];
         $choices = $this->getPostParam($request, 'choice', []);
-        $db = $this->container->get(Medoo::class);
+        $db = $this->db();
         $poll = $db->get('polls', '*', ['id' => $pollId]);
         if (!$poll['multiple']) {
             $choices = [$choices];
@@ -1218,7 +1209,7 @@ class IndexController
         $page = $this->getQueryParam($request, 'page', 1);
         $size = 10;
         $offset = ($page - 1) * $size;
-        $db = $this->container->get(Medoo::class);
+        $db = $this->db();
         $followers = $db->select('followers', [
             '[>]profiles' => ['profile_id' => 'id'],
         ], [
@@ -1249,7 +1240,7 @@ class IndexController
         $followerId = $args['id'];
 
         if ($followerId) {
-            $db = $this->container->get(Medoo::class);
+            $db = $this->db();
             $follower = $db->get('followers', '*', ['id' => $followerId]);
             $db->delete('followers', ['id' => $followerId]);
             $this->container->get(TaskQueue::class)->queue([
@@ -1266,7 +1257,7 @@ class IndexController
         $followingId = $args['id'];
 
         if ($followingId) {
-            $db = $this->container->get(Medoo::class);
+            $db = $this->db();
             $following = $db->get('following', '*', ['id' => $followingId]);
             $db->delete('following', ['id' => $followingId]);
             $this->container->get(TaskQueue::class)->queue([
@@ -1283,7 +1274,7 @@ class IndexController
         $page = $this->getQueryParam($request, 'page', 1);
         $size = 10;
         $offset = ($page - 1) * $size;
-        $db = $this->container->get(Medoo::class);
+        $db = $this->db();
         $following = $db->select('following', [
             '[>]profiles' => ['profile_id' => 'id'],
         ], [
@@ -1316,7 +1307,7 @@ class IndexController
     public function tags(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $tag = $args['tag'];
-        $db = $this->container->get(Medoo::class);
+        $db = $this->db();
         $conditions = [
             'term' => $tag,
             'LIMIT' => 10,
@@ -1430,17 +1421,7 @@ class IndexController
                     $parentProfiles[$v['object_id']] = $v;
                 }
             }
-
-            $objectAttachments = [];
-            if (!empty($objectIds)) {
-                $attachments = $db->select('attachments', '*', ['object_id' => $objectIds]);
-                foreach ($attachments as $v) {
-                    if (!isset($objectAttachments[$v['object_id']])) {
-                        $objectAttachments[$v['object_id']] = [];
-                    }
-                    $objectAttachments[$v['object_id']][] = $v;
-                }
-            }
+            $objectAttachments = $this->getAttachmentMapByObjectIds($objectIds);
 
             foreach ($activities as &$v) {
                 if (empty($v['profile_id'])) {
@@ -1484,8 +1465,7 @@ class IndexController
         if ($profileId == 1) {
             throw new HttpException($request, 'Invalid profile id', 400);
         }
-        $db = $this->container->get(Medoo::class);
-        $actor = $db->get('profiles', 'actor', ['id' => $profileId]);
+        $actor = $this->db()->get('profiles', 'actor', ['id' => $profileId]);
         if (empty($actor)) {
             throw new HttpException($request, 'Invalid profile id', 400);
         }
@@ -1498,9 +1478,7 @@ class IndexController
 
     public function showProfileForm(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $profileId = 1;
-        $db = $this->container->get(Medoo::class);
-        $profile = $db->get('profiles', ['id', 'name', 'avatar', 'summary'], ['id' => $profileId]);
+        $profile = $this->adminProfile();
         if (empty($profile)) {
             throw new HttpException($request, 'profile not found', 400);
         }
@@ -1556,13 +1534,12 @@ class IndexController
         }
 
         try {
-            $db = $this->container->get(Medoo::class);
             $data = [
                 'name' => $name,
                 'avatar' => $avatar,
                 'summary' => $summary
             ];
-            $db->update('profiles', $data, ['id' => $profileId]);
+            $this->db()->update('profiles', $data, ['id' => $profileId]);
             $this->container->get(TaskQueue::class)->queue([
                 'task' => LocalUpdateProfileTask::class,
                 'params' => ['id' => $profileId]
@@ -1600,7 +1577,6 @@ class IndexController
         }
         $flash = $this->flash($request);
         if (!empty($updated)) {
-            $db = $this->container->get(Medoo::class);
             $kStrings = '';
             foreach ($updatedKeys as $key) {
                 $kStrings .= "'{$key}',";
@@ -1613,7 +1589,7 @@ UPDATE `settings` SET `v` = CASE
 WHERE `cat` = 'system' AND `k` IN (%s);
 SQL;
             $sql = sprintf($sql, $cases, $kStrings);
-            $statement = $db->pdo->prepare($sql);
+            $statement = $this->db()->pdo->prepare($sql);
             $statement->execute($updated);
             $flash->success('Updated successfully');
         } else {
@@ -1666,7 +1642,7 @@ SQL;
             openssl_pkey_export($res, $privateKey );
             $publicKey =openssl_pkey_get_details($res);
             $publicKey = $publicKey["key"];
-            $db = $this->container->get(Medoo::class);
+            $db = $this->db();
             $db->insert('settings', [
                 ['cat' => 'system', 'k' => 'domain', 'v' => $domain],
                 ['cat' => 'system', 'k' => 'password', 'v' => $hash],
@@ -1681,7 +1657,7 @@ SQL;
             ]);
 
             $profile = [
-                'id' => 1,
+                'id' => CHERRY_ADMIN_PROFILE_ID,
                 'actor' => "https://$domain",
                 'name' => $name,
                 'preferred_name' => $preferredName,
@@ -1793,7 +1769,7 @@ SQL;
         $pidCondition = $pid ? ['profile_id' => $pid] : [];
         $commonConditions = array_merge($commonConditions, $pidCondition);
         $objectCondition = ['object_id[!]' => 0];
-        $db = $this->container->get(Medoo::class);
+        $db = $this->db();
 
         if (($type === 'next' || $type === 'prev') && is_null($index)) {
             return [];
@@ -1854,7 +1830,7 @@ SQL;
         $pidCondition = $pid ? ['profile_id' => $pid] : [];
         $commonConditions = array_merge($commonConditions, $pidCondition);
         $objectCondition = ['object_id[!]' => 0];
-        $db = $this->container->get(Medoo::class);
+        $db = $this->db();
 
         $activityIds = [
             'prev' => [],
