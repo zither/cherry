@@ -620,7 +620,7 @@ class IndexController
             }
         }
 
-        if (!empty($replyActor)) {
+        if (!empty($replyProfile) && !empty($replyObject)) {
             $objectTags[] = [
                 'type' => 'Mention',
                 'href' => $replyProfile['actor'],
@@ -817,16 +817,7 @@ class IndexController
         foreach ($notes as $v) {
             $objectIds[] = $v['id'];
         }
-        $objectAttachments = [];
-        if (!empty($objectIds)) {
-            $attachments = $db->select('attachments', '*', ['object_id' => $objectIds]);
-            foreach ($attachments as $v) {
-                if (!isset($objectAttachments[$v['object_id']])) {
-                    $objectAttachments[$v['object_id']] = [];
-                }
-                $objectAttachments[$v['object_id']][] = $v;
-            }
-        }
+        $objectAttachments = $this->getAttachmentMapByObjectIds($objectIds);
 
         $note = null;
         $replies = [];
@@ -878,7 +869,7 @@ class IndexController
     {
         $objectId = $args['object_id'];
         $db = $this->db();
-        $profile = $db->get('profiles', '*', ['id' => 1]);
+        $profile = $this->adminProfile();
         $object = $db->get('objects', [
             '[>]profiles' => ['profile_id' => 'id'],
         ], [
@@ -1314,7 +1305,7 @@ class IndexController
             'ORDER' => ['id' => 'DESC']
         ];
         if (!$this->isLoggedIn($request)) {
-            $conditions['profile_id'] = 1;
+            $conditions['profile_id'] = CHERRY_ADMIN_PROFILE_ID;
         }
         $tags = $db->select('tags', ['object_id'], $conditions);
 
@@ -1462,7 +1453,7 @@ class IndexController
         if (!$profileId) {
             throw new HttpException($request, 'Profile id required', 400);
         }
-        if ($profileId == 1) {
+        if ($profileId == CHERRY_ADMIN_PROFILE_ID) {
             throw new HttpException($request, 'Invalid profile id', 400);
         }
         $actor = $this->db()->get('profiles', 'actor', ['id' => $profileId]);
@@ -1520,7 +1511,7 @@ class IndexController
     {
         $flash = $this->flash($request);
         $profileId = $args['profile_id'];
-        if ($profileId != 1) {
+        if ($profileId != CHERRY_ADMIN_PROFILE_ID) {
             $flash->error('非法请求');
             return $this->redirectBack($request, $response);
         }
