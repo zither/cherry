@@ -36,8 +36,6 @@ use GuzzleHttp\Cookie\SetCookie;
 use Exception;
 use InvalidArgumentException;
 use DirectoryIterator;
-use DOMDocument;
-use DOMNode;
 
 class IndexController
 {
