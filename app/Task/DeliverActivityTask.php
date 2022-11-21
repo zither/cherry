@@ -95,10 +95,15 @@ class DeliverActivityTask implements TaskInterface
             }
         }
 
-        $targets = [];
         if ($activityType->type === 'Follow') {
             $actors = array_merge($actors, [$activityType->object]);
         }
+
+        if (is_array($activityType->object)) {
+            $this->getActorsRecursivelyFromObject($activityType->object, $actors);
+        }
+
+        $targets = [];
         if (!empty($actors)) {
             $profiles = $db->select('profiles', ['inbox', 'shared_inbox'], ['actor' => $actors]);
             $targets = array_merge($targets, $profiles);
@@ -127,5 +132,17 @@ class DeliverActivityTask implements TaskInterface
         }
 
         return $inboxes;
+    }
+
+    protected function getActorsRecursivelyFromObject(array $object, array &$actors)
+    {
+        if (isset($object['actor'])) {
+            if (!in_array($object['actor'], $actors)) {
+                $actors[] = $object['actor'];
+            }
+        }
+        if (isset($object['object']) && is_array($object['object'])) {
+            $this->getActorsRecursivelyFromObject($object['object'], $actors);
+        }
     }
 }
