@@ -3,7 +3,6 @@
 namespace Cherry\Task;
 
 use adrianfalleiro\FailedTaskException;
-use adrianfalleiro\RetryException;
 use adrianfalleiro\TaskInterface;
 use Cherry\ActivityPub\Activity;
 use Cherry\ActivityPub\Context;
@@ -12,6 +11,8 @@ use Cherry\Helper\Time;
 use Godruoyi\Snowflake\Snowflake;
 use Psr\Container\ContainerInterface;
 use Medoo\Medoo;
+use InvalidArgumentException;
+use PDOException;
 
 class LocalUndoTask implements TaskInterface
 {
@@ -28,7 +29,7 @@ class LocalUndoTask implements TaskInterface
         $activityId = $args['activity_id'];
         $activity = $db->get('activities', '*', ['id' => $activityId]);
         if (empty($activity)) {
-            throw new \InvalidArgumentException('Invalid activity id: ' . $activityId);
+            throw new InvalidArgumentException('Invalid activity id: ' . $activityId);
         }
         $rawActivity = json_decode($activity['raw'], true);
         $activityType = Activity::createFromArray($rawActivity);
@@ -39,19 +40,19 @@ class LocalUndoTask implements TaskInterface
             'Follow',
         ];
         if (!in_array($activityType->type, $validTypes)) {
-            throw new \InvalidArgumentException('Invalid activity type: ' . $activityType->type);
+            throw new InvalidArgumentException('Invalid activity type: ' . $activityType->type);
         }
-        $targetObject = $db->get('objects', ['id', 'profile_id'], ['raw_object_id' => $activityType->object]);
+        $rawObjectId = is_array($activityType->object) ? $activityType->object['id'] : $activityType->object;
+        $targetObject = $db->get('objects', ['id', 'profile_id'], ['raw_object_id' => $rawObjectId]);
         if (empty($targetObject) && ($activityType->type === 'Like' || $activityType === 'Announce')) {
-            throw new \InvalidArgumentException('Object not found : ' . $activityType->object);
+            throw new InvalidArgumentException('Object not found : ' . $rawObjectId);
         }
-        $profile = $db->get('profiles', ['id', 'actor', 'outbox'], ['id' => 1]);
+        $profile = $db->get('profiles', ['id', 'actor', 'outbox'], ['id' => CHERRY_ADMIN_PROFILE_ID]);
 
         $snowflake = $this->container->get(Snowflake::class);
         $snowflakeId = $snowflake->id();
 
-        $origin = $db->get('activities', '*', ['id' => $activityId]);
-        $rawOriginActivity = json_decode($origin['raw'], true);
+        $rawOriginActivity = $rawActivity;
         unset($rawOriginActivity['@context']);
 
         $undo = [
@@ -104,7 +105,7 @@ class LocalUndoTask implements TaskInterface
                 'params' => ['activity_id' => $newActivityId]
             ]);
             $db->pdo->commit();
-        } catch (\PDOException $e) {
+        } catch (PDOException $e) {
             $db->pdo->rollBack();
             throw new FailedTaskException($e->getMessage());
         }
