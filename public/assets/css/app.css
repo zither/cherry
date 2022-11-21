@@ -191,6 +191,7 @@ pre {
 .counts .btn {
     background-color: var(--bg-counter);
     color: var(--fg-counter);
+    border: none;
 }
 .content-header-name, .content-header-name a {
     color: var(--fg-content-header);
