@@ -26,6 +26,13 @@ class HelperTest extends TestCase
         $this->assertTrue(true);
     }
 
+    public function testStripTagsWithAmpersand()
+    {
+        $html = file_get_contents(ROOT . '/tests/data/ampersand.html');
+        $stripped = Helper::stripTags($html);
+        $this->assertEquals("<p>&amp; Tom &amp; Jerry &amp;&amp;mark&amp;&amp;</p>\n", $stripped);
+    }
+
     public function testStripTagsWithUtf8Chars()
     {
         $html = "<p>中文</p>";

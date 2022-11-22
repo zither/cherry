@@ -23,6 +23,8 @@ class Helper
     {
         //@Todo remove invalid links in html
         $html = strip_tags($html, ['a', 'p', 'br', 'img', 'blockquote']);
+        // Handle '&' char which causes warnings
+        $html = preg_replace('/&(?!amp;)/', '&amp;', $html);
         // fix invalid html entities
         if (preg_match('/&amp;amp%3B/', $html)) {
             $html = urldecode($html);
