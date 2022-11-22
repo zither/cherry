@@ -60,7 +60,7 @@ class FetchObjectTask implements TaskInterface
         if (!empty($args['actor'])) {
             $actor = $args['actor'];
         } else if (!empty($object->attributedTo) && is_string($object->attributedTo)) {
-            //@TODO The attributed entity might not be Actort
+            //@TODO The attributed entity might not be Actor
             $actor = $object->attributedTo;
         } else {
             throw new RuntimeException('Actor not found: ' . $args['id']);
