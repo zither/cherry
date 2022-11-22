@@ -23,7 +23,7 @@ class Helper
     {
         //@Todo remove invalid links in html
         $html = strip_tags($html, ['a', 'p', 'br', 'img', 'blockquote']);
-        $html = html_entity_decode($html);
+        $html = html_entity_decode($html, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401);
         // Handle '&' char which causes warnings
         $html = str_replace('&', '&amp;', $html);
         // fix invalid html entities
