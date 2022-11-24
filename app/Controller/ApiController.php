@@ -9,27 +9,21 @@ use Cherry\ActivityPub\ObjectType;
 use Cherry\ActivityPub\OrderedCollection;
 use Cherry\Helper\SignRequest;
 use Cherry\Helper\Time;
-use Medoo\Medoo;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class ApiController
+class ApiController extends BaseController
 {
-    private $container;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
-
     public function webFinger(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $queries = $request->getQueryParams();
         $resource = $queries['resource'] ?? '';
         $arr = explode(':', $resource);
-        $db = $this->container->get(Medoo::class);
-        $profile = $db->get('profiles', '*', ['id' => 1]);
+        $profile = $this->adminProfile();
+        if (count($arr) !== 2 && $arr[1] !== $profile['account']) {
+            return $response->withStatus(404);
+        }
+
         $webFinger = [
             'subject' => "acct:{$profile['account']}",
             'aliases' => [
@@ -112,8 +106,7 @@ class ApiController
 
     public function profile(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $db = $this->container->get(Medoo::class);
-        $profile = $db->get('profiles', '*', ['id' => 1]);
+        $profile = $this->adminProfile(['*']);
         $user = [
             'type' => 'Person',
             'id' => $profile['actor'],
@@ -150,7 +143,7 @@ class ApiController
             return $response->withStatus(400);
         }
 
-        $db = $this->container->get(Medoo::class);
+        $db = $this->db();
         $activityId = $activity['id'];
         $exists = $db->get('activities', ['id'], ['activity_id' => $activityId]);
         if ($exists) {
@@ -212,8 +205,8 @@ class ApiController
 
     public function outbox(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $db = $this->container->get(Medoo::class);
-        $profile = $db->get('profiles', ['id', 'actor', 'outbox'], ['id' => 1]);
+        $db = $this->db();
+        $profile = $this->adminProfile(['id', 'actor', 'outbox']);
         $total = $db->count('activities', [
             'profile_id' => $profile['id'],
             'type' => ['Create', 'Announce'],
@@ -292,8 +285,8 @@ class ApiController
             return $response->withStatus(404);
         }
 
-        $db = $this->container->get(Medoo::class);
-        $profile = $db->get('profiles', ['id', 'outbox'], ['id' => 1]);
+        $db = $this->db();
+        $profile = $this->adminProfile(['id', 'outbox']);
         $activityUrl = "{$profile['outbox']}/$snowflakeId";
         $activity = $db->get('activities', '*', ['activity_id' => $activityUrl]);
         if (empty($activity) || $activity['type'] !== 'Create') {
@@ -318,8 +311,8 @@ class ApiController
             return $response->withStatus(404);
         }
 
-        $db = $this->container->get(Medoo::class);
-        $profile = $db->get('profiles', ['id', 'outbox'], ['id' => 1]);
+        $db = $this->db();
+        $profile = $this->adminProfile(['id', 'outbox']);
         $activityUrl = "{$profile['outbox']}/$snowflakeId";
         $activity = $db->get('activities', '*', ['activity_id' => $activityUrl]);
         if (empty($activity)) {
@@ -341,9 +334,8 @@ class ApiController
 
     public function followers(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $db = $this->container->get(Medoo::class);
-        $profile = $db->get('profiles', ['id', 'followers'], ['id' => 1]);
-        $count = $db->count('followers');
+        $profile = $this->adminProfile(['id', 'followers']);
+        $count = $this->db()->count('followers');
         $collection = OrderedCollection::createFromArray([
             'id' => $profile['followers'],
             'totalItems' => $count,
@@ -354,9 +346,8 @@ class ApiController
 
     public function following(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $db = $this->container->get(Medoo::class);
-        $profile = $db->get('profiles', ['id', 'following'], ['id' => 1]);
-        $count = $db->count('following');
+        $profile = $this->adminProfile(['id', 'following']);
+        $count = $this->db()->count('following');
         $collection = OrderedCollection::createFromArray([
             'id' => $profile['following'],
             'totalItems' => $count,
@@ -380,17 +371,5 @@ class ApiController
         );
         $response->getBody()->write(json_encode($body, JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE));
         return $response;
-    }
-
-    protected function getPostParam(ServerRequestInterface $request, string $key, $default = null)
-    {
-        $params = $request->getParsedBody();
-        return $params[$key] ?? $default;
-    }
-
-    protected function getQueryParam(ServerRequestInterface $request, string $key, $default = null)
-    {
-        $queries = $request->getQueryParams();
-        return $queries[$key] ?? $default;
     }
 }

@@ -26,7 +26,6 @@ use Cherry\Task\{
 use Godruoyi\Snowflake\Snowflake;
 use League\Plates\Engine;
 use Medoo\Medoo;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Exception\HttpException;
@@ -37,18 +36,8 @@ use Exception;
 use InvalidArgumentException;
 use DirectoryIterator;
 
-class IndexController
+class IndexController extends BaseController
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
-
     public function home(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         if (Helper::isApi($request)) {
@@ -479,7 +468,7 @@ class IndexController
             $maxRetry = 3;
             $denySeconds = 60 * 60 * 2;
             if (!password_verify($password, $settings['password'])) {
-                $db = $this->container->get(Medoo::class);
+                $db = $this->db();
                 $currentRetry = $settings['login_retry'] + 1;
                 if ($currentRetry >= $maxRetry) {
                     $db->update('settings', ['v' => $now + $denySeconds], ['k' => 'deny_login_until', 'cat' => 'system']);
@@ -493,7 +482,7 @@ class IndexController
             $session = $this->session($request);
             $session['is_admin'] = true;
             $redirect = '/editor';
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $redirect = '/login';
             $flash = $this->flash($request);
             $flash->error($e->getMessage());
@@ -924,7 +913,7 @@ class IndexController
     public function showThread(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $objectId = $args['object_id'];
-        $db = $this->container->get(Medoo::class);
+        $db = $this->db();
         $object = $db->get('objects', ['origin_id', 'parent_id'], ['id' => $objectId]);
         if (empty($object)) {
             throw new HttpNotFoundException($request, 'Object Not Found');
@@ -1022,7 +1011,7 @@ class IndexController
 
     public function notifications(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $db = $this->container->get(Medoo::class);
+        $db = $this->db();
         $notifications = $db->select('notifications(n)', [
             '[>]profiles(p)' => ['n.profile_id' => 'id'],
             '[>]activities(a)' => ['n.activity_id' => 'id'],
@@ -1067,7 +1056,7 @@ class IndexController
             $action = $this->getQueryParam($request, 'action');
             $notificationId = $args['notification_id'];
             if (empty($action) || empty($notificationId)) {
-                throw new \InvalidArgumentException('Both action and notification id required');
+                throw new InvalidArgumentException('Both action and notification id required');
             }
             $db = $this->db();
             $notification = $db->get('notifications', '*', ['id' => $notificationId]);
@@ -1093,7 +1082,7 @@ class IndexController
                 }
                 $db->delete('notifications', ['id' => $notificationId]);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // pass
         }
         return $response->withStatus('302')->withHeader('location', '/notifications');
@@ -1695,18 +1684,6 @@ SQL;
         return $response;
     }
 
-    protected function getPostParam(ServerRequestInterface $request, string $key, $default = null)
-    {
-        $params = $request->getParsedBody();
-        return $params[$key] ?? $default;
-    }
-
-    protected function getQueryParam(ServerRequestInterface $request, string $key, $default = null)
-    {
-        $queries = $request->getQueryParams();
-        return $queries[$key] ?? $default;
-    }
-
     protected function isLoggedIn(ServerRequestInterface $request)
     {
         $session = $this->session($request);
@@ -1896,23 +1873,5 @@ SQL;
 
 
         return $activityIds;
-    }
-
-    protected function db(): Medoo
-    {
-        return $this->container->get(Medoo::class);
-    }
-
-    protected function adminProfile(): array
-    {
-        return $this->db()->get('profiles', [
-            'actor',
-            'name',
-            'preferred_name',
-            'account',
-            'url',
-            'avatar',
-            'summary',
-        ], ['id' => CHERRY_ADMIN_PROFILE_ID]);
     }
 }
