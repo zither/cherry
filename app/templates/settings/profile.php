@@ -39,7 +39,7 @@
         <div class="bold">
             <span><?=$this->lang('preference_title')?></span>
         </div>
-        <form class="mt" action="/web/preferences/update" method="POST">
+        <form class="mt" action="/settings" method="POST">
             <div class="mt label">
                 <label for="lock_site"><?=$this->lang('form_lock_site_label')?></label>
                 <input id="lock_site" type="checkbox" name="lock_site"  value="1" <?=($settings['lock_site'] ?? false) ? 'checked' :''?> />

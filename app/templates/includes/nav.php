@@ -10,10 +10,10 @@
         <a href="/editor"><?=$this->lang('nav_editor')?></a>
     </div>
     <div class="mr">
-        <a href="/web/following"><?=$this->lang('nav_relations')?></a>
+        <a href="/following"><?=$this->lang('nav_relations')?></a>
     </div>
     <div class="mr">
-        <a href="/settings/profile"><?=$this->lang('nav_settings')?></a>
+        <a href="/settings"><?=$this->lang('nav_settings')?></a>
     </div>
     <div>
         <a href="/"><?=$this->lang('nav_back')?></a>

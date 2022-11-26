@@ -18,9 +18,9 @@ class InitiatingMiddlewareTest extends TestCase
         $response = $this->app->handle($request);
         $this->assertEquals(302, $response->getStatusCode());
         $location = $response->getHeaderLine('Location');
-        $this->assertEquals('/init', $location);
+        $this->assertEquals('/install', $location);
 
-        $request = $provider->createServerRequest('/init', 'GET');
+        $request = $provider->createServerRequest('/install', 'GET');
         $response = $this->app->handle($request);
         $this->assertEquals(200, $response->getStatusCode());
     }
@@ -32,7 +32,7 @@ class InitiatingMiddlewareTest extends TestCase
         $response = $this->app->handle($request);
         $this->assertEquals(200, $response->getStatusCode());
 
-        $request = $provider->createServerRequest('/init', 'GET');
+        $request = $provider->createServerRequest('/install', 'GET');
         $response = $this->app->handle($request);
         $this->assertEquals(302, $response->getStatusCode());
         $location = $response->getHeaderLine('Location');

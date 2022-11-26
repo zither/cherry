@@ -41,17 +41,6 @@ class IndexControllerTest extends TestCase
         $this->assertEquals('401', $response->getStatusCode());
     }
 
-    public function testHomeWithApiRequest()
-    {
-        $provider = new PSR7ObjectProvider();
-        $request = $provider->createServerRequest('/', 'GET');
-        $request = $request->withHeader('Accept', 'application/activity+json');
-        $response = $this->app->handle($request);
-        $json = json_decode((string)$response->getBody(), true);
-        $this->assertNotEmpty($json);
-        $this->assertNotEmpty($json['@context']);
-    }
-
     public function testSendFollowWithoutPostParams()
     {
         $provider = new PSR7ObjectProvider();
@@ -139,7 +128,7 @@ class IndexControllerTest extends TestCase
     {
         $content = 'Mention: @dev@cherry.test .';
         $provider = new PSR7ObjectProvider();
-        $request = $provider->createServerRequest('/notes', 'POST', ['content' => $content]);
+        $request = $provider->createServerRequest('/editor', 'POST', ['content' => $content]);
         $session =  $this->signIn($request);
         $this->app->handle($request);
 
@@ -178,7 +167,7 @@ class IndexControllerTest extends TestCase
     {
         $content = 'Tag: #测试标签 #cherry';
         $provider = new PSR7ObjectProvider();
-        $request = $provider->createServerRequest('/notes', 'POST', ['content' => $content]);
+        $request = $provider->createServerRequest('/editor', 'POST', ['content' => $content]);
         $this->signIn($request);
         $this->app->handle($request);
 
@@ -198,7 +187,7 @@ class IndexControllerTest extends TestCase
     {
         $content = 'Tag: #已登录';
         $provider = new PSR7ObjectProvider();
-        $request = $provider->createServerRequest('/notes', 'POST', ['content' => $content, 'scope' => 4]);
+        $request = $provider->createServerRequest('/editor', 'POST', ['content' => $content, 'scope' => 4]);
         $session = $this->signIn($request);
         $sessionName = $session->getName();
         $sessionId = $session->getId();
@@ -219,7 +208,7 @@ class IndexControllerTest extends TestCase
     {
         $content = 'Tag: #已登录';
         $provider = new PSR7ObjectProvider();
-        $request = $provider->createServerRequest('/notes', 'POST', ['content' => $content, 'scope' => 4]);
+        $request = $provider->createServerRequest('/editor', 'POST', ['content' => $content, 'scope' => 4]);
         $this->signIn($request);
         $this->app->handle($request);
         $db = $this->container->get(Medoo::class);

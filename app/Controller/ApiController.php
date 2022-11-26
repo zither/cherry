@@ -107,6 +107,11 @@ class ApiController extends BaseController
     public function profile(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $profile = $this->adminProfile(['*']);
+
+        if (empty($args['name']) || $args['name'] !== $profile['preferred_name']) {
+            return $response->withStatus(404);
+        }
+
         $user = [
             'type' => 'Person',
             'id' => $profile['actor'],
@@ -280,19 +285,20 @@ class ApiController extends BaseController
 
     public function objectInfo(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $snowflakeId = $args['snowflake_id'];
-        if (empty($snowflakeId)) {
+        $publicId = $args['public_id'];
+        if (empty($publicId)) {
             return $response->withStatus(404);
         }
 
         $db = $this->db();
-        $profile = $this->adminProfile(['id', 'outbox']);
-        $activityUrl = "{$profile['outbox']}/$snowflakeId";
-        $activity = $db->get('activities', '*', ['activity_id' => $activityUrl]);
-        if (empty($activity) || $activity['type'] !== 'Create') {
+        $settings = $this->container->make('settings', ['keys' => ['domain']]);
+        $objectUrl = sprintf('https://%s/objects/%s', $settings['domain'], $publicId);
+        $objectId = $db->get('objects', 'id', ['raw_object_id' => $objectUrl, 'is_local' => 1]);
+        if (empty($objectId)) {
             return $response->withStatus(404);
         }
 
+        $activity = $this->db()->get('activities', 'raw', ['object_id' => $objectId, 'type' => 'Create']);
         $rawActivity = json_decode($activity['raw'], true);
         $object = $rawActivity['object'];
 
@@ -306,14 +312,14 @@ class ApiController extends BaseController
 
     public function activityInfo(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $snowflakeId = $args['snowflake_id'];
-        if (empty($snowflakeId)) {
+        $publicId = $args['public_id'];
+        if (empty($publicId)) {
             return $response->withStatus(404);
         }
 
         $db = $this->db();
-        $profile = $this->adminProfile(['id', 'outbox']);
-        $activityUrl = "{$profile['outbox']}/$snowflakeId";
+        $settings = $this->container->make('settings', ['keys' => ['domain']]);
+        $activityUrl = sprintf('https://%s/activities/%s', $settings['domain'], $publicId);
         $activity = $db->get('activities', '*', ['activity_id' => $activityUrl]);
         if (empty($activity)) {
             return $response->withStatus(404);

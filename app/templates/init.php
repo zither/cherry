@@ -15,7 +15,7 @@
                 <span class="message"><?=$this->lang('flash_message')?><?=$message?></span>
             <?php endforeach;?>
         </div>
-        <form class="mt" action="/init" method="POST">
+        <form class="mt" action="/install" method="POST">
             <div class="label">
                 <label for="domain"><?=$this->lang('form_domain_label')?></label>
                 <input id="domain" type="text" name="domain" placeholder="<?=$this->lang('form_domain_placeholder')?>" />

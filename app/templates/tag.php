@@ -175,11 +175,11 @@
                                     <?php if ($is_admin): ?>
                                         <div class="dropdown-menu flex-column">
                                             <div class="item">
-                                                <a href="/web/threads/<?=$v['object_id']?>"><?=$this->lang('menu_expand_thread')?></a>
+                                                <a href="/objects/<?=$v['object_id']?>/thread"><?=$this->lang('menu_expand_thread')?></a>
                                             </div>
                                             <?php if ($v['is_local']):?>
                                                 <div class="item">
-                                                    <form action="/notes/<?=$v['snowflake_id']?>/delete" METHOD="POST">
+                                                    <form action="/activities/<?=$v['activity_id']?>/delete" METHOD="POST">
                                                         <input class="btn" type="submit" value="<?=$this->lang('menu_delete_activity')?>" />
                                                     </form>
                                                 </div>

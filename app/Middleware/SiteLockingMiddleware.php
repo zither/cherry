@@ -26,16 +26,13 @@ class SiteLockingMiddleware implements MiddlewareInterface
 
     public function process(Request $request, RequestHandler $requestHandler): ResponseInterface
     {
-        $isProfileApi = Helper::isApi($request) && $request->getRequestTarget() === '/';
-        if (!$isProfileApi) {
-            $keys = ['lock_site'];
-            $settings = $this->container->make('settings', ['keys' => $keys]);
-            if ($settings['lock_site'] ?? false) {
-                $session = $this->container->make(SessionInterface::class, ['request' => $request]);
-                $loggedIn = $session->isStarted() && $session['is_admin'];
-                if (!$loggedIn) {
-                    return new Response('302', ['location' => '/login']);
-                }
+        $keys = ['lock_site'];
+        $settings = $this->container->make('settings', ['keys' => $keys]);
+        if ($settings['lock_site'] ?? false) {
+            $session = $this->container->make(SessionInterface::class, ['request' => $request]);
+            $loggedIn = $session->isStarted() && $session['is_admin'];
+            if (!$loggedIn) {
+                return new Response('302', ['location' => '/login']);
             }
         }
         return $requestHandler->handle($request);

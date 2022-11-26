@@ -27,17 +27,12 @@ class SiteLockingMiddlewareTest extends TestCase
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertContains('/login', $response->getHeader('Location'));
 
-        $request = $provider->createServerRequest('/', 'GET');
-        $request = $request->withHeader('Accept', 'application/activity+json');
-        $response = $this->app->handle($request);
-        $this->assertEquals(200, $response->getStatusCode());
-
-        $request = $provider->createServerRequest('/notes/fake-note-id', 'GET');
+        $request = $provider->createServerRequest('/objects/fake-note-id/details', 'GET');
         $response = $this->app->handle($request);
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertContains('/login', $response->getHeader('Location'));
 
-        $request = $provider->createServerRequest('/notes/fake-note-id', 'GET');
+        $request = $provider->createServerRequest('/objects/fake-note-id/details', 'GET');
         $request = $request->withHeader('Accept', 'application/activity+json');
         $response = $this->app->handle($request);
         $this->assertEquals(302, $response->getStatusCode());

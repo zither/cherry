@@ -116,7 +116,7 @@
                                 </div>
                                 <?php if ($is_admin):?>
                                     <div class="flex-grow-full">
-                                        <a href="/objects/<?=$v['object_id']?>/reply" title="<?=$this->lang('icon_reply')?>">
+                                        <a href="/objects/<?=$v['object_id']?>/editor" title="<?=$this->lang('icon_reply')?>">
                                             <div class="inline-block">
                                                 <i class="gg-corner-double-up-left"></i>
                                             </div>
@@ -202,11 +202,11 @@
                                     <?php if ($is_admin): ?>
                                     <div class="dropdown-menu flex-column">
                                         <div class="item">
-                                            <a href="/web/threads/<?=$v['object_id']?>"><?=$this->lang('menu_expand_thread')?></a>
+                                            <a href="/objects/<?=$v['object_id']?>/thread"><?=$this->lang('menu_expand_thread')?></a>
                                         </div>
                                         <?php if ($v['is_local']):?>
                                             <div class="item">
-                                                <form action="/notes/<?=$v['snowflake_id']?>/delete" METHOD="POST">
+                                                <form action="/activities/<?=$v['id']?>/delete" METHOD="POST">
                                                     <input class="btn" type="submit" value="<?=$this->lang('menu_delete_activity')?>" />
                                                 </form>
                                             </div>

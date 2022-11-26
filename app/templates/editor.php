@@ -237,7 +237,7 @@
     <?php endif;?>
 
     <div  class="flex-grow mt">
-        <form  action="/notes" method="POST">
+        <form  action="/editor" method="POST">
             <input name="in_reply_to" type="hidden" value="<?=$note['id'] ?? ''?>"/>
             <div class="mb">
                 <textarea name="summary" rows="1" placeholder="<?=$this->lang('warning_placeholder');?>"></textarea>

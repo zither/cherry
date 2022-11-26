@@ -163,9 +163,9 @@
                                     </div>
                                     <?php if ($is_admin): ?>
                                         <div class="dropdown-menu flex-column">
-                                            <?php if ($v['is_local']):?>
+                                            <?php if ($v['is_local'] || $v['activity_id']):?>
                                                 <div class="item">
-                                                    <form action="/notes/<?=$v['snowflake_id']?>/delete" METHOD="POST">
+                                                    <form action="/activities/<?=$v['activity_id']?>/delete" METHOD="POST">
                                                         <input class="btn" type="submit" value="<?=$this->lang('menu_delete_activity')?>" />
                                                     </form>
                                                 </div>

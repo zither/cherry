@@ -30,7 +30,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Exception\HttpException;
 use Slim\Exception\HttpNotFoundException;
-use Slim\Interfaces\RouteCollectorInterface;
 use GuzzleHttp\Cookie\SetCookie;
 use Exception;
 use InvalidArgumentException;
@@ -40,12 +39,6 @@ class IndexController extends BaseController
 {
     public function home(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        if (Helper::isApi($request)) {
-            /** @var RouteCollectorInterface $router */
-            $router = $this->container->get('router');
-            return $router->getNamedRoute('api_profile')->run($request);
-        }
-
         $db = $this->db();
         $profile = $this->adminProfile();
 
@@ -505,7 +498,7 @@ class IndexController extends BaseController
         return $this->render($response, 'editor');
     }
 
-    public function createPost(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    public function createActivity(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $content = $this->getPostParam($request, 'content');
         if (empty($content)) {
@@ -519,12 +512,13 @@ class IndexController extends BaseController
         $inReplyTo = $this->getPostParam($request, 'in_reply_to');
 
         $db = $this->db();
-        $profile = $db->get('profiles', '*', ['id' => 1]);
-        $domain = parse_url($profile['actor'], PHP_URL_HOST);
+        $profile = $this->adminProfile(['*']);
+        $settings = $this->container->make('settings', ['keys' => ['domain']]);
+        $host = $settings['domain'];
 
         // 嘟文
         $markdown = $this->container->get(Markdown::class);
-        $markdown->setTagHost($domain);
+        $markdown->setTagHost($host);
         $parsedContent = $markdown->text($content);
 
         // 获取自身和目标对象相关信息
@@ -536,20 +530,21 @@ class IndexController extends BaseController
                 'origin_id',
                 'is_local',
             ], ['id' => $inReplyTo]);
-            //$replyInbox = $db->get('profiles', 'inbox', ['id' => $replyObject['profile_id']]);
             $replyProfile = $db->get('profiles', ['actor', 'inbox', 'account'], [
                 'id' => $replyObject['profile_id']
             ]);
             $replyActor = $replyProfile['actor'];
         }
+        $urlPrefix = 'https://' . $settings['domain'];
 
         // 新嘟文 Object 信息
         $snowflake = $this->container->get(Snowflake::class);
         $objectId = $snowflake->id();
+
         $published = Time::UTCTimeISO8601();
         $object = [
-            'id' => "{$profile['outbox']}/$objectId/object",
-            'url' => "https://$domain/notes/$objectId",
+            'id' => "$urlPrefix/objects/$objectId",
+            'url' => "$urlPrefix/objects/$objectId/details",
             'type' => 'Note',
             'attributedTo' => $profile['actor'],
             'summary' => $summary,
@@ -620,9 +615,9 @@ class IndexController extends BaseController
 
         $object = array_merge($object, $audiences);
 
-        // 新 Activity 信息
+        $activityId = $snowflake->id();
         $activity = Activity::createFromArray(array_merge([
-            'id' => "https://$domain/outbox/$objectId",
+            'id' => "$urlPrefix/activities/$activityId",
             'type' => 'Create',
             'actor' => $profile['actor'],
             'published' => $published,
@@ -636,7 +631,7 @@ class IndexController extends BaseController
             // 保存新 Object
             $db->insert('objects', [
                 'type' => $object['type'],
-                'profile_id' => 1,
+                'profile_id' => CHERRY_ADMIN_PROFILE_ID,
                 'raw_object_id' => $object['id'],
                 'content' => $object['content'],
                 'summary' => $object['summary'] ?? '',
@@ -656,7 +651,7 @@ class IndexController extends BaseController
                 foreach ($tags as $v) {
                     $terms[] = [
                         'term' => $v,
-                        'profile_id' => 1,
+                        'profile_id' => CHERRY_ADMIN_PROFILE_ID,
                         'object_id' => $objectId,
                     ];
                     $objectTags[] = [
@@ -678,7 +673,7 @@ class IndexController extends BaseController
             // 保存新 Activity
             $db->insert('activities', [
                 'activity_id' => $activity->id,
-                'profile_id' => 1,
+                'profile_id' => CHERRY_ADMIN_PROFILE_ID,
                 'object_id' => $objectId,
                 'type' => 'Create',
                 'raw' => json_encode($activity->toArray(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
@@ -719,49 +714,51 @@ class IndexController extends BaseController
         }
     }
 
-    public function deletePost(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    public function deleteActivity(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $snowflakeId = $args['snowflake_id'];
+        $id = $args['id'];
         $db = $this->db();
-        $profile = $db->get('profiles', ['id', 'outbox'], ['id' => 1]);
-        $outboxId = sprintf('%s/%s', $profile['outbox'], $snowflakeId);
-        $activity = $db->get('activities', ['id', 'object_id'], ['activity_id' => $outboxId]);
-
-        // 标记为已删除
-        $db->update('activities', ['is_deleted' => 1], [
-             'OR' => [
-                 'id' => $activity['id'],
-                 'object_id' => $activity['object_id'],
-             ]
+        $activity = $db->get('activities', ['id', 'object_id'], [
+            'id' => $id,
+            'type' => 'Create',
+            'is_deleted' => 0,
+            'is_local' => 1
         ]);
-        // 删除嘟文
-        $db->delete('objects', ['id' => $activity['object_id']]);
-        // 删除互动数据
-        $db->delete('interactions', ['object_id' => $activity['object_id']]);
-        // 删除标签
-        $db->delete('tags', ['object_id' => $activity['object_id']]);
 
-        $this->container->get(TaskQueue::class)->queue([
-            'task' => DeleteActivityTask::class,
-            'params' => ['activity_id' => $activity['id']]
-        ]);
+        if (!empty($activity)) {
+            // 标记为已删除
+            $db->update('activities', ['is_deleted' => 1], [
+                'OR' => [
+                    'id' => $activity['id'],
+                    'object_id' => $activity['object_id'],
+                ]
+            ]);
+            // 删除嘟文
+            $db->delete('objects', ['id' => $activity['object_id']]);
+            // 删除互动数据
+            $db->delete('interactions', ['object_id' => $activity['object_id']]);
+            // 删除标签
+            $db->delete('tags', ['object_id' => $activity['object_id']]);
+            $this->container->get(TaskQueue::class)->queue([
+                'task' => DeleteActivityTask::class,
+                'params' => ['activity_id' => $activity['id']]
+            ]);
+        }
 
         return $response->withStatus('302')->withHeader('location', '/');
     }
 
-    public function note(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    public function objectDetails(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $snowflakeId = $args['snowflake_id'];
+        $publicId = $args['public_id'];
         $db = $this->db();
-        $profile = $db->get('profiles', ['id', 'outbox'], ['id' => 1]);
-        $outboxId = sprintf('%s/%s', $profile['outbox'], $snowflakeId);
-        $activity = $db->get('activities', ['id', 'object_id'], [
-            'activity_id' => $outboxId,
+        $settings = $this->container->make('settings', ['keys' => ['domain']]);
+        $objectUrlId = sprintf('https://%s/objects/%s', $settings['domain'], $publicId);
+        $objectId = $this->db()->get('objects', 'id', [
+            'raw_object_id' => $objectUrlId,
             'is_public' => 1,
-            'is_deleted' => 0,
         ]);
-
-        if (empty($activity)) {
+        if (empty($objectId)) {
             throw new HttpNotFoundException($request);
         }
 
@@ -793,9 +790,9 @@ class IndexController extends BaseController
             'profiles.account',
         ], [
             'OR' => [
-                'objects.id' => $activity['object_id'],
-                'objects.parent_id' => $activity['object_id'],
-                'objects.origin_id' => $activity['object_id'],
+                'objects.id' => $objectId,
+                'objects.parent_id' => $objectId,
+                'objects.origin_id' => $objectId,
             ],
             'objects.unlisted' => 0,
             'objects.is_public' => 1,
@@ -817,7 +814,7 @@ class IndexController extends BaseController
                 $v['snowflake_id'] =  $matches[0];
             }
             $v['attachments'] = $objectAttachments[$v['id']] ?? [];
-            if ($v['id'] == $activity['object_id']) {
+            if ($v['id'] == $objectId) {
                 $note = $v;
             } else {
                 $replies[] = $v;
@@ -835,7 +832,7 @@ class IndexController extends BaseController
             'profiles.name',
             'profiles.preferred_name',
         ], [
-            'interactions.object_id' => $activity['object_id']
+            'interactions.object_id' => $objectId
         ]);
 
         foreach ($interactions as &$v) {
@@ -854,9 +851,9 @@ class IndexController extends BaseController
         ]);
     }
 
-    public function replyTo(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    public function objectEditor(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $objectId = $args['object_id'];
+        $objectId = $args['id'];
         $db = $this->db();
         $profile = $this->adminProfile();
         $object = $db->get('objects', [
@@ -910,9 +907,9 @@ class IndexController extends BaseController
         ]);
     }
 
-    public function showThread(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    public function objectThread(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $objectId = $args['object_id'];
+        $objectId = $args['id'];
         $db = $this->db();
         $object = $db->get('objects', ['origin_id', 'parent_id'], ['id' => $objectId]);
         if (empty($object)) {
@@ -961,11 +958,21 @@ class IndexController extends BaseController
         }
         $objectAttachments = $this->getAttachmentMapByObjectIds($objectIds);
 
+        $activityIds = $this->db()->select('activities', ['id', 'object_id'], [
+            'object_id' => $objectIds,
+            'type' => 'Create',
+            'is_local' => 1,
+        ]);
+        $activityIdMap = [];
+        foreach ($activityIds as $v) {
+            $activityIdMap[$v['object_id']] = $v['id'];
+        }
+
         foreach ($notes as &$v) {
             $v['date'] = Time::getLocalTime($v['published'], 'Y-m-d');
+            $v['activity_id'] = 0;
             if ($v['is_local']) {
-                preg_match('#\d{18}#', $v['raw_object_id'], $matches);
-                $v['snowflake_id'] =  $matches[0];
+                $v['activity_id'] = $activityIdMap[$v['id']] ?? 0;
             }
             $v['attachments'] = $objectAttachments[$v['id']] ?? [];
             $v['content'] = Helper::stripTags($v['content']);
@@ -1088,9 +1095,9 @@ class IndexController extends BaseController
         return $response->withStatus('302')->withHeader('location', '/notifications');
     }
 
-    public function liked(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    public function like(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $objectId = $args['object_id'];
+        $objectId = $args['id'];
         $db = $this->db();
         $object = $db->get('objects', ['id', 'is_liked'], ['id' => $objectId]);
         $liked = $object['is_liked'] ? 0 : 1;
@@ -1102,7 +1109,10 @@ class IndexController extends BaseController
                 'params' => ['object_id' => $objectId, 'type' => 'Like']
             ]);
         } else if ($object['is_liked']) {
-            $interaction = $db->get('interactions', ['activity_id'], ['profile_id' => 1, 'object_id' => $objectId]);
+            $interaction = $db->get('interactions', ['activity_id'], [
+                'profile_id' => CHERRY_ADMIN_PROFILE_ID,
+                'object_id' => $objectId
+            ]);
             $taskQueue->queue([
                 'task' => LocalUndoTask::class,
                 'params' => [ 'activity_id' => $interaction['activity_id']]
@@ -1113,9 +1123,9 @@ class IndexController extends BaseController
         return $response->withStatus('302')->withHeader('location', $redirect);
     }
 
-    public function boosted(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    public function boost(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $objectId = $args['object_id'];
+        $objectId = $args['id'];
         $db = $this->db();
         $object = $db->get('objects', ['id', 'is_boosted', 'is_public'], ['id' => $objectId]);
         if (!$object['is_public']) {
@@ -1132,7 +1142,10 @@ class IndexController extends BaseController
                 'params' => ['object_id' => $objectId, 'type' => 'Announce']
             ]);
         } else if ($object['is_boosted']) {
-            $interaction = $db->get('interactions', ['activity_id'], ['profile_id' => 1, 'object_id' => $objectId]);
+            $interaction = $db->get('interactions', ['activity_id'], [
+                'profile_id' => CHERRY_ADMIN_PROFILE_ID,
+                'object_id' => $objectId
+            ]);
             $taskQueue->queue([
                 'task' => LocalUndoTask::class,
                 'params' => ['activity_id' => $interaction['activity_id']]
@@ -1402,6 +1415,7 @@ class IndexController extends BaseController
                 }
             }
             $objectAttachments = $this->getAttachmentMapByObjectIds($objectIds);
+            $activityIdMap = $this->getActivityIdMapByObjectIds($objectIds);
 
             foreach ($activities as &$v) {
                 if (empty($v['profile_id'])) {
@@ -1418,9 +1432,9 @@ class IndexController extends BaseController
                 $v['avatar'] = $objectInfo['avatar'];
                 $v['account'] = "@{$objectInfo['account']}";
                 $v['show_boosted'] = $v['activity_type'] === 'Announce';
+                $v['activity_id'] = 0;
                 if ($v['is_local']) {
-                    preg_match('#\d{18}#', $v['activity_id'], $matches);
-                    $v['snowflake_id'] =  $matches[0];
+                    $v['activity_id'] = $activityIdMap[$v['id']] ?? 0;
                 }
                 if ($v['parent_id']) {
                     $v['parent_profile'] = $parentProfiles[$v['parent_id']] ?? [];
@@ -1438,7 +1452,7 @@ class IndexController extends BaseController
 
     public function fetchProfile(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $profileId = $args['profile_id'] ?? 0;
+        $profileId = $args['id'] ?? 0;
         if (!$profileId) {
             throw new HttpException($request, 'Profile id required', 400);
         }
@@ -1456,7 +1470,7 @@ class IndexController extends BaseController
         return $this->redirectBack($request, $response);
     }
 
-    public function showProfileForm(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    public function settings(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $profile = $this->adminProfile();
         if (empty($profile)) {
@@ -1499,7 +1513,7 @@ class IndexController extends BaseController
     public function updateProfile(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $flash = $this->flash($request);
-        $profileId = $args['profile_id'];
+        $profileId = $args['id'];
         if ($profileId != CHERRY_ADMIN_PROFILE_ID) {
             $flash->error('非法请求');
             return $this->redirectBack($request, $response);
@@ -1873,5 +1887,21 @@ SQL;
 
 
         return $activityIds;
+    }
+
+    protected function getActivityIdMapByObjectIds(array $objectIds)
+    {
+        $activityIdMap = [];
+        if (!empty($objectIds)) {
+            $activityIds = $this->db()->select('activities', ['id', 'object_id'], [
+                'object_id' => $objectIds,
+                'type' => 'Create',
+                'is_local' => 1,
+            ]);
+            foreach ($activityIds as $v) {
+                $activityIdMap[$v['object_id']] = $v['id'];
+            }
+        }
+        return $activityIdMap;
     }
 }

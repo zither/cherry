@@ -28,12 +28,12 @@ class InitiatingMiddleware implements MiddlewareInterface
         $settings = $this->container->make('settings', ['keys' => ['domain']]);
         $initiated = !empty($settings);
         if ($initiated) {
-            if ($target === '/init') {
+            if ($target === '/install') {
                 return new Response('302', ['location' => '/']);
             }
         } else {
-            if ($target !== '/init') {
-                return new Response('302', ['location' => '/init']);
+            if ($target !== '/install') {
+                return new Response('302', ['location' => '/install']);
             }
         }
         return $requestHandler->handle($request);

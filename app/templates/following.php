@@ -4,10 +4,10 @@
     <div class="flex-auto flex flex-row header nav">
         <div class="bold mr"><?=$this->lang('nav_admin')?></div>
         <div class="mr">
-            <a href="/web/following"><?=$this->lang('nav_following')?></a>
+            <a href="following"><?=$this->lang('nav_following')?></a>
         </div>
         <div class="mr">
-            <a href="/web/followers"><?=$this->lang('nav_followers')?></a>
+            <a href="/followers"><?=$this->lang('nav_followers')?></a>
         </div>
         <div>
             <a href="/timeline"><?=$this->lang('nav_back')?></a>
@@ -67,14 +67,14 @@
         <div class="flex-row mt-1">
             <div class="navigator  flex-grow-full text-center mr">
                 <?php if ($prev):?>
-                    <a class="color-purple no-decoration" href="/web/following?page=<?=$prev?>"><?=$this->lang('pagination_prev')?></a>
+                    <a class="color-purple no-decoration" href="/following?page=<?=$prev?>"><?=$this->lang('pagination_prev')?></a>
                 <?php else: ?>
                     <span class=""><?=$this->lang('pagination_prev')?></span>
                 <?php endif;?>
             </div>
             <div class="flex-grow-full text-center navigator ml">
                 <?php if ($next):?>
-                    <a class="color-purple no-decoration" href="/web/following?page=<?=$next?>"><?=$this->lang('pagination_next')?></a>
+                    <a class="color-purple no-decoration" href="/following?page=<?=$next?>"><?=$this->lang('pagination_next')?></a>
                 <?php else: ?>
                     <span class=""><?=$this->lang('pagination_next')?></span>
                 <?php endif;?>
