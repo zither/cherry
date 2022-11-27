@@ -23,16 +23,18 @@ class DeleteActivityTask implements TaskInterface
     {
         $activityId = $args['activity_id'];
         $db = $this->container->get(Medoo::class);
-        $activityIdentity = $db->get('activities', 'activity_id', ['id' => $activityId]);
+        $objectId = $db->get('activities', 'object_id', ['id' => $activityId]);
+        $rawObjectId = $db->get('objects', 'raw_object_id', ['id' => $objectId]);
+        $settings = $this->container->make('settings', ['keys' => ['domain']]);
         $helper = $this->container->get(SignRequest::class);
         $snowflake = $this->container->get(Snowflake::class);
         $newActivityId = $snowflake->id();
         $adminProfile = $db->get('profiles', ['id', 'outbox', 'actor'], ['id' =>  1]);
         $rawActivity = [
-            'id' => "{$adminProfile['outbox']}/{$newActivityId}",
+            'id' => "https://{$settings['domain']}/activities/{$newActivityId}",
             'type' => 'Delete',
             'actor' => $adminProfile['actor'],
-            'object' => "$activityIdentity/object",
+            'object' => $rawObjectId,
             'to' => ['https://www.w3.org/ns/activitystreams#Public'],
         ];
         $rawActivity = Context::set($rawActivity, Context::OPTION_ACTIVITY_STREAMS | Context::OPTION_SECURITY_V1);
@@ -51,6 +53,6 @@ class DeleteActivityTask implements TaskInterface
             'params' => ['activity_id' => $id]
         ]);
         $db->update('activities', ['is_deleted' => 1], ['id' => $activityId]);
-        $db->delete('notifications', ['activity_id' => $rawActivity['id']]);
+        $db->delete('notifications', ['activity_id' => $activityId]);
     }
 }
