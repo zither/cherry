@@ -64,6 +64,8 @@ return function (App $app) {
         $group->get('/.well-known/nodeinfo', [ApiController::class, 'nodeInfo']);
         $group->get('/nodeinfo/{version}.json', [ApiController::class, 'nodeInfoDetails']);
 
+        $group->post('/inbox', [ApiController::class, 'inbox']);
+
         $group->get('/users/{name:\w+}', [ApiController::class, 'profile'])->setName('api_profile');
         $group->post('/users/{name:\w+}/inbox', [ApiController::class, 'inbox']);
         $group->get('/users/{name:\w+}/outbox', [ApiController::class, 'outbox']);
