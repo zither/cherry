@@ -733,8 +733,6 @@ class IndexController extends BaseController
                     'object_id' => $activity['object_id'],
                 ]
             ]);
-            // 删除嘟文
-            $db->delete('objects', ['id' => $activity['object_id']]);
             // 删除互动数据
             $db->delete('interactions', ['object_id' => $activity['object_id']]);
             // 删除标签

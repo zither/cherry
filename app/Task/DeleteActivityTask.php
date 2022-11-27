@@ -52,6 +52,8 @@ class DeleteActivityTask implements TaskInterface
             'task' => DeliverActivityTask::class,
             'params' => ['activity_id' => $id]
         ]);
+
+        $db->delete('objects', ['id' => $objectId]);
         $db->update('activities', ['is_deleted' => 1], ['id' => $activityId]);
         $db->delete('notifications', ['activity_id' => $activityId]);
     }
