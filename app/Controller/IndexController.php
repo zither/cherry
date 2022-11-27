@@ -754,12 +754,29 @@ class IndexController extends BaseController
         $db = $this->db();
         $settings = $this->container->make('settings', ['keys' => ['domain']]);
         $objectUrlId = sprintf('https://%s/objects/%s', $settings['domain'], $publicId);
-        $objectId = $this->db()->get('objects', 'id', [
-            'raw_object_id' => $objectUrlId,
-            'is_public' => 1,
-        ]);
+
+        $loggedIn = $this->isLoggedIn($request);
+        $conditions = ['raw_object_id' => $objectUrlId];
+        if (!$loggedIn) {
+            $conditions['is_public'] = 1;
+        }
+
+        $objectId = $this->db()->get('objects', 'id', $conditions);
         if (empty($objectId)) {
             throw new HttpNotFoundException($request);
+        }
+
+        $conditions = [
+            'OR' => [
+                'objects.id' => $objectId,
+                'objects.parent_id' => $objectId,
+                'objects.origin_id' => $objectId,
+            ],
+            'objects.unlisted' => 0,
+            'ORDER' => ['published' => 'ASC']
+        ];
+        if (!$loggedIn) {
+            $conditions['objects.is_public'] = 1;
         }
 
         $notes = $db->select('objects', [
@@ -788,16 +805,7 @@ class IndexController extends BaseController
             'profiles.url(profile_url)',
             'profiles.avatar',
             'profiles.account',
-        ], [
-            'OR' => [
-                'objects.id' => $objectId,
-                'objects.parent_id' => $objectId,
-                'objects.origin_id' => $objectId,
-            ],
-            'objects.unlisted' => 0,
-            'objects.is_public' => 1,
-            'ORDER' => ['published' => 'ASC']
-        ]);
+        ], $conditions);
 
         $objectIds = [];
         foreach ($notes as $v) {
