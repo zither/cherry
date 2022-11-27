@@ -78,7 +78,7 @@
                                 </div>
                                 <?php if ($is_admin):?>
                                     <div class="flex-grow-full">
-                                        <a href="/objects/<?=$v['object_id']?>/reply" title="<?=$this->lang('icon_reply')?>">
+                                        <a href="/objects/<?=$v['object_id']?>/editor" title="<?=$this->lang('icon_reply')?>">
                                             <div class="inline-block">
                                                 <i class="gg-corner-double-up-left"></i>
                                             </div>
