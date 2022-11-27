@@ -60,11 +60,11 @@ class CreateRequestTask implements TaskInterface
             }
 
             if ($objectData['parent_id']) {
-                $profileIdOfParentObject = $db->get('objects', 'profile_id', [
+                $localParentId = $db->get('objects', 'profile_id', [
                     'id' => $objectData['parent_id'],
-                    'profile_id' => 1,
+                    'profile_id' => CHERRY_ADMIN_PROFILE_ID,
                 ]);
-                if ($profileIdOfParentObject) {
+                if ($localParentId) {
                     $db->insert('notifications', [
                         'actor' => $rawActivity['actor'],
                         'profile_id' => $objectData['profile_id'],

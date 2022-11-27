@@ -3,7 +3,6 @@
 namespace Cherry\Task;
 
 use adrianfalleiro\FailedTaskException;
-use adrianfalleiro\RetryException;
 use adrianfalleiro\TaskInterface;
 use Cherry\ActivityPub\Context;
 use Cherry\Helper\SignRequest;
@@ -31,6 +30,8 @@ class AcceptFollowTask implements TaskInterface
         $profileId = $args['profile_id'];
         $profile = $db->get('profiles', ['inbox'], ['id' => $profileId]);
 
+        $adminProfile = $db->get('profiles', ['actor'], ['id' => CHERRY_ADMIN_PROFILE_ID]);
+
         if (empty($activity) || empty($profile)) {
             throw new FailedTaskException('Both activity and profile required');
         }
@@ -40,8 +41,8 @@ class AcceptFollowTask implements TaskInterface
         $settings = $this->container->make('settings');
         $acceptActivityId = $snowflake->id();
         $message = [
-            'id' => sprintf('https://%s/outbox/%s', $settings['domain'], $acceptActivityId),
-            'actor' => sprintf('https://%s', $settings['domain']),
+            'id' => sprintf('https://%s/activities/%s', $settings['domain'], $acceptActivityId),
+            'actor' => $adminProfile['actor'],
             'type' => 'Accept',
             'object' => $rawActivity,
         ];
@@ -50,7 +51,7 @@ class AcceptFollowTask implements TaskInterface
         $message['signature'] = $helper->createLdSignature($message);
         $acceptActivity = [
             'activity_id' => $message['id'],
-            'profile_id' => 1,
+            'profile_id' => CHERRY_ADMIN_PROFILE_ID,
             'type' => 'Accept',
             'raw' => json_encode($message, JSON_UNESCAPED_SLASHES),
             'published' => Time::getLocalTime(),

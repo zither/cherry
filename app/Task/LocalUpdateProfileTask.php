@@ -11,6 +11,7 @@ use Cherry\Helper\Time;
 use Godruoyi\Snowflake\Snowflake;
 use Psr\Container\ContainerInterface;
 use Medoo\Medoo;
+use InvalidArgumentException;
 
 class LocalUpdateProfileTask implements TaskInterface
 {
@@ -27,7 +28,7 @@ class LocalUpdateProfileTask implements TaskInterface
         $db = $this->container->get(Medoo::class);
         $profile = $db->get('profiles', '*', ['id' => $profileId]);
         if (empty($profile)) {
-            throw new \InvalidArgumentException('Invalid profile id: ' . $profileId);
+            throw new InvalidArgumentException('Invalid profile id: ' . $profileId);
         }
 
         $helper = $this->container->get(SignRequest::class);
@@ -58,8 +59,10 @@ class LocalUpdateProfileTask implements TaskInterface
             ]
         ];
 
+
+        $settings = $this->container->make('settings', ['keys' => ['domain']]);
         $rawActivity = [
-            'id' => "{$profile['outbox']}/$snowflakeId",
+            'id' => "https://{$settings['domain']}/activities/$snowflakeId",
             'type' => 'Update',
             'actor' => $profile['actor'],
             'object' => $object,

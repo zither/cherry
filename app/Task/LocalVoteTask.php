@@ -32,11 +32,13 @@ class LocalVoteTask implements TaskInterface
         $snowflake = $this->container->get(Snowflake::class);
         $snowflakeId = $snowflake->id();
         $profile = $db->get('profiles', ['id', 'actor', 'outbox', 'followers'], ['id' => 1]);
+        $settings = $this->container->make('settings', ['keys' => ['domain']]);
 
-        $newActivityId = "{$profile['outbox']}/$snowflakeId";
+        $newActivityId = "https://{$settings['domain']}/activities/$snowflakeId";
         $published =  Time::UTCTimeISO8601();
+        $objectPublicId = $snowflake->id();
         $object = [
-            'id' => $newActivityId . '/object',
+            'id' => "https://{$settings['domain']}/objects/$objectPublicId",
             'type' => 'Note',
             'attributedTo' => $profile['actor'],
             'name' => $choice['choice'],
@@ -63,7 +65,7 @@ class LocalVoteTask implements TaskInterface
             // 保存新 Object
             $db->insert('objects', [
                 'type' => $object['type'],
-                'profile_id' => 1,
+                'profile_id' => CHERRY_ADMIN_PROFILE_ID,
                 'raw_object_id' => $object['id'],
                 'content' => $object['name'],
                 'summary' => $object['summary'] ?? '',

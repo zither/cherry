@@ -68,13 +68,14 @@ class FollowTask implements TaskInterface
                 $profile = (new FetchProfileTask($this->container))->command(['actor' => $profileUrl]);
             }
 
-            $adminProfile = $db->get('profiles', ['id', 'outbox', 'actor'], ['id' =>  1]);
+            $adminProfile = $db->get('profiles', ['id', 'outbox', 'actor'], ['id' =>  CHERRY_ADMIN_PROFILE_ID]);
+            $settings = $this->container->make('settings', ['keys' => ['domain']]);
 
             $db->pdo->beginTransaction();
             $snowflake = $this->container->get(Snowflake::class);
             $activityId = $snowflake->id();
             $followRequest = [
-                'id' => "{$adminProfile['outbox']}/$activityId",
+                'id' => "https://{$settings['domain']}/activities/$activityId",
                 'type' => 'Follow',
                 'actor' => $adminProfile['actor'],
                 'object' => $profileUrl,

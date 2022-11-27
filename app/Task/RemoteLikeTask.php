@@ -7,6 +7,7 @@ use adrianfalleiro\FailedTaskException;
 use adrianfalleiro\TaskInterface;
 use Psr\Container\ContainerInterface;
 use Medoo\Medoo;
+use PDOException;
 
 class RemoteLikeTask implements TaskInterface
 {
@@ -78,7 +79,7 @@ class RemoteLikeTask implements TaskInterface
                 'profile_id' => $profile['id']
             ], ['id' => $activityId]);
             $db->pdo->commit();
-        } catch (\PDOException $e) {
+        } catch (PDOException $e) {
             $db->pdo->rollBack();
             throw new FailedTaskException($e->getMessage());
         }

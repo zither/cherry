@@ -19,6 +19,6 @@ class FollowBeRejectedTask implements TaskInterface
     {
         $activityId = $args['activity_id'];
         $db = $this->container->get(Medoo::class);
-        $db->delete('activities', ['id' => $activityId]);
+        $db->update('activities', ['is_deleted' => 1], ['id' => $activityId]);
     }
 }

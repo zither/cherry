@@ -55,8 +55,9 @@ class LocalUndoTask implements TaskInterface
         $rawOriginActivity = $rawActivity;
         unset($rawOriginActivity['@context']);
 
+        $settings = $this->container->make('settings', ['keys' => ['domain']]);
         $undo = [
-            'id' => "{$profile['outbox']}/$snowflakeId",
+            'id' => "https://{$settings['domain']}/activities/$snowflakeId",
             'type' => 'Undo',
             'actor' => $profile['actor'],
             'object' => $rawOriginActivity,

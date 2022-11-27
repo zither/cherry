@@ -34,14 +34,14 @@ class RejectFollowTask implements TaskInterface
         if (empty($activity) || empty($profile)) {
             throw new FailedTaskException('Both activity and profile required');
         }
-
         $rawActivity = json_decode($activity['raw'], true);
 
-        $snowflake = $this->container->get(Snowflake::class);
+        $adminActor = $db->get('profiles', 'actor', ['id' => CHERRY_ADMIN_PROFILE_ID]);
         $settings = $this->container->make('settings');
+        $snowflake = $this->container->get(Snowflake::class);
         $message = [
-            'id' => sprintf('https://%s/outbox/%s', $settings['domain'], $snowflake->id()),
-            'actor' => sprintf('https://%s', $settings['domain']),
+            'id' => sprintf('https://%s/activities/%s', $settings['domain'], $snowflake->id()),
+            'actor' => $adminActor,
             'type' => 'Reject',
             'object' => $rawActivity,
         ];

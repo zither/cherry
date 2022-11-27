@@ -42,6 +42,7 @@ class DeliverActivityTask implements TaskInterface
                     $originActivityType = Activity::createFromArray(json_decode($originActivity['raw'], true));
                 }
             } else if ($activityType->type === 'Delete') {
+                //@TODO Remove
                 if (is_string($activityType->object)) {
                     $deletedObjectId = $db->get('objects', 'id', ['raw_object_id' => $activityType->object]);
                     $originActivityTypeId = str_replace('/object', '', $activityType->object);

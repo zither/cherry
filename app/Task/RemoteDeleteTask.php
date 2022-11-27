@@ -6,6 +6,7 @@ use adrianfalleiro\TaskInterface;
 use Cherry\ActivityPub\Activity;
 use Medoo\Medoo;
 use Psr\Container\ContainerInterface;
+use InvalidArgumentException;
 
 class RemoteDeleteTask implements TaskInterface
 {
@@ -22,7 +23,7 @@ class RemoteDeleteTask implements TaskInterface
         $activityId = $args['activity_id'];
         $activity = $db->get('activities', '*', ['id' => $activityId]);
         if (empty($activity) || strtolower($activity['type']) !== 'delete') {
-            throw new \InvalidArgumentException('Invalid activity type');
+            throw new InvalidArgumentException('Invalid activity type');
         }
         $rawActivity = json_decode($activity['raw'], true);
         $activityType = Activity::createFromArray($rawActivity);

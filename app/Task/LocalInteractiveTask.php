@@ -9,6 +9,8 @@ use Cherry\Helper\Time;
 use Godruoyi\Snowflake\Snowflake;
 use Psr\Container\ContainerInterface;
 use Medoo\Medoo;
+use InvalidArgumentException;
+use PDOException;
 
 class LocalInteractiveTask implements TaskInterface
 {
@@ -25,20 +27,20 @@ class LocalInteractiveTask implements TaskInterface
         $objectId = $args['object_id'];
         $object = $db->get('objects', ['id', 'raw_object_id', 'profile_id', 'is_public'], ['id' => $objectId]);
         if (empty($object)) {
-            throw new \InvalidArgumentException('Invalid object id: ' . $objectId);
+            throw new InvalidArgumentException('Invalid object id: ' . $objectId);
         }
         $interaction = $args['type'];
         if (!in_array($interaction, ['Like', 'Announce'])) {
-            throw new \InvalidArgumentException('Invalid interaction type: ' . $interaction);
+            throw new InvalidArgumentException('Invalid interaction type: ' . $interaction);
         }
 
         $snowflake = $this->container->get(Snowflake::class);
         $snowflakeId = $snowflake->id();
-        $profile = $db->get('profiles', ['id', 'actor', 'outbox', 'followers'], ['id' => 1]);
+        $profile = $db->get('profiles', ['id', 'actor', 'outbox', 'followers'], ['id' => CHERRY_ADMIN_PROFILE_ID]);
         $targetProfile = $db->get('profiles', ['id', 'actor', 'inbox'], ['id' => $object['profile_id']]);
-
+        $settings = $this->container->make('settings', ['keys' => ['domain']]);
         $rawActivity = [
-            'id' => "{$profile['outbox']}/$snowflakeId",
+            'id' => "https://{$settings['domain']}/activities/$snowflakeId",
             'type' => $interaction,
             'actor' => $profile['actor'],
             'object' => $object['raw_object_id'],
@@ -95,7 +97,7 @@ class LocalInteractiveTask implements TaskInterface
             ]);
 
             $db->pdo->commit();
-        } catch (\PDOException $e) {
+        } catch (PDOException $e) {
             $db->pdo->rollBack();
             throw new FailedTaskException($e->getMessage());
         }

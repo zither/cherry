@@ -29,7 +29,7 @@ class DeleteActivityTask implements TaskInterface
         $helper = $this->container->get(SignRequest::class);
         $snowflake = $this->container->get(Snowflake::class);
         $newActivityId = $snowflake->id();
-        $adminProfile = $db->get('profiles', ['id', 'outbox', 'actor'], ['id' =>  1]);
+        $adminProfile = $db->get('profiles', ['id', 'outbox', 'actor'], ['id' =>  CHERRY_ADMIN_PROFILE_ID]);
         $rawActivity = [
             'id' => "https://{$settings['domain']}/activities/{$newActivityId}",
             'type' => 'Delete',

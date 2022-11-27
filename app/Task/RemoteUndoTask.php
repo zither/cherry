@@ -7,6 +7,7 @@ use adrianfalleiro\TaskInterface;
 use Cherry\ActivityPub\Activity;
 use Psr\Container\ContainerInterface;
 use Medoo\Medoo;
+use InvalidArgumentException;
 
 class RemoteUndoTask implements TaskInterface
 {
@@ -23,13 +24,13 @@ class RemoteUndoTask implements TaskInterface
         $activityId = $args['activity_id'];
         $activity = $db->get('activities', '*', ['id' => $activityId]);
         if (empty($activity) || strtolower($activity['type']) !== 'undo') {
-            throw new \InvalidArgumentException('Invalid activity type');
+            throw new InvalidArgumentException('Invalid activity type');
         }
         $rawActivity = json_decode($activity['raw'], true);
         $undoActivity = Activity::createFromArray($rawActivity['object']);
         switch ($undoActivity->lowerType()) {
             case 'follow':
-                $actor = $db->get('profiles', 'actor', ['id' => 1]);
+                $actor = $db->get('profiles', 'actor', ['id' => CHERRY_ADMIN_PROFILE_ID]);
                 if ($undoActivity->object !== $actor) {
                     return;
                 }
