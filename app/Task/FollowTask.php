@@ -40,7 +40,7 @@ class FollowTask implements TaskInterface
                 $webFingerUrl = sprintf('https://%s/.well-known/webfinger?resource=acct:%s', $accountArr[1], $account);
 
                 $webFingerRequest = new Request('GET', $webFingerUrl, [
-                    'Accept' => 'application/activity+json',
+                    'Accept' => 'application/json',
                     'Content-Type' => 'text/html',
                 ]);
 
