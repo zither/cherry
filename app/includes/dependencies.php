@@ -161,10 +161,11 @@ return function (App $app) {
 
     // Session factory
     $container->set(SignRequest::class, function(ContainerInterface $container) {
-        $settings = $container->make('settings');
+        $actor = $container->get(Medoo::class)->get('profiles', 'actor', ['id' => CHERRY_ADMIN_PROFILE_ID]);
+        $settings = $container->make('settings', ['keys' => ['public_key', 'private_key']]);
         $helper = new SignRequest();
         $helper->withKey($settings['public_key'], $settings['private_key']);
-        $helper->withDomain($settings['domain']);
+        $helper->withDomain($actor);
         return $helper;
     });
 };
