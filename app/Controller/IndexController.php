@@ -727,6 +727,7 @@ class IndexController extends BaseController
         $db->delete('interactions', ['object_id' => $objectId]);
         $db->delete('tags', ['object_id' => $objectId]);
         $db->update('activities', ['is_deleted' => 1], ['object_id' => $objectId, 'type[!]' => 'Create']);
+        $db->update('activities', ['unlisted' => 1], ['object_id' => $objectId, 'type' => 'Create']);
 
         $activityId = $db->get('activities', 'id', [
             'object_id' => $objectId,
