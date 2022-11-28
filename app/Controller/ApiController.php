@@ -298,9 +298,9 @@ class ApiController extends BaseController
             return $response->withStatus(404);
         }
 
-        $activity = $this->db()->get('activities', 'raw', ['object_id' => $objectId, 'type' => 'Create']);
-        $rawActivity = json_decode($activity['raw'], true);
-        $object = $rawActivity['object'];
+        $raw = $this->db()->get('activities', 'raw', ['object_id' => $objectId, 'type' => 'Create']);
+        $activity = json_decode($raw, true);
+        $object = $activity['object'];
 
         $objectType = ObjectType::createFromArray($object);
         if (!$objectType->isPublic()) {
