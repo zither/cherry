@@ -28,8 +28,8 @@ abstract class AbstractType
 
     public function set(string $attributeName, $value)
     {
-        if (property_exists($this, $attributeName)) {
+        //if (property_exists($this, $attributeName)) {
             $this->{$attributeName} = $value;
-        }
+        //}
     }
 }
