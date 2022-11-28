@@ -1021,7 +1021,7 @@ class IndexController extends BaseController
         } catch (Exception $e) {
             $this->flash($request)->error($e->getMessage());
         }
-        return $response->withStatus('302')->withHeader('location', '/web/following');
+        return $response->withStatus('302')->withHeader('location', '/following');
     }
 
     public function notifications(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
