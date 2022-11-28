@@ -147,7 +147,7 @@ class DeliverActivityTask implements TaskInterface
         }
 
         if (isset($object->actor)) {
-            $actors[] = $object['actor'];
+            $actors[] = $object->actor;
         }
 
         if (isset($object->object)) {
