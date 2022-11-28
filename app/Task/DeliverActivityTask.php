@@ -5,6 +5,7 @@ namespace Cherry\Task;
 use adrianfalleiro\FailedTaskException;
 use adrianfalleiro\TaskInterface;
 use Cherry\ActivityPub\Activity;
+use Cherry\ActivityPub\ObjectType;
 use Medoo\Medoo;
 use Psr\Container\ContainerInterface;
 
@@ -29,7 +30,9 @@ class DeliverActivityTask implements TaskInterface
         $rawActivity = json_decode($activity['raw'], true);
         $activityType = Activity::createFromArray($rawActivity);
 
-        $profile = $db->get('profiles', ['id', 'inbox', 'followers'], ['id' => 1]);
+        $profile = $db->get('profiles', ['id', 'actor', 'inbox', 'shared_inbox', 'followers'], [
+            'id' => CHERRY_ADMIN_PROFILE_ID
+        ]);
         $inboxes = $this->getInboxesFromActivity($activityType, $profile);
 
         // if inboxes was empty, try to find inboxes from origin activity.
@@ -67,7 +70,7 @@ class DeliverActivityTask implements TaskInterface
 
         $tasks = [];
         foreach ($inboxes as $v) {
-            if ($v === $profile['inbox']) {
+            if ($v === $profile['inbox'] || $v === $profile['shared_inbox']) {
                 continue;
             }
             $params = json_encode([
@@ -80,6 +83,11 @@ class DeliverActivityTask implements TaskInterface
                 'priority' => 140,
             ];
         }
+
+        if (empty($tasks)) {
+            throw new FailedTaskException('No Task queued: ' . $activityId);
+        }
+
         $db->insert('tasks', $tasks);
     }
 
@@ -87,21 +95,18 @@ class DeliverActivityTask implements TaskInterface
     {
         $db = $this->container->get(Medoo::class);
         $actors = [];
+        $this->getActorsRecursivelyFromObject($activityType, $actors);
+        $actors = array_unique($actors);
         $toFollowers = false;
-        foreach ($activityType->audiences() as $v) {
+        foreach ($actors as $v) {
+            if ($v === $profile['actor']) {
+                continue;
+            }
             if ($v === Activity::PUBLIC_COLLECTION || $v === $profile['followers']) {
                 $toFollowers = true;
             } else  {
                 $actors[] = $v;
             }
-        }
-
-        if ($activityType->type === 'Follow') {
-            $actors = array_merge($actors, [$activityType->object]);
-        }
-
-        if (is_array($activityType->object)) {
-            $this->getActorsRecursivelyFromObject($activityType->object, $actors);
         }
 
         $targets = [];
@@ -135,15 +140,25 @@ class DeliverActivityTask implements TaskInterface
         return $inboxes;
     }
 
-    protected function getActorsRecursivelyFromObject(array $object, array &$actors)
+    protected function getActorsRecursivelyFromObject(ObjectType $object, array &$actors)
     {
-        if (isset($object['actor'])) {
-            if (!in_array($object['actor'], $actors)) {
-                $actors[] = $object['actor'];
-            }
+        foreach ($object->audiences() as $v) {
+            $actors[] = $v;
         }
-        if (isset($object['object']) && is_array($object['object'])) {
-            $this->getActorsRecursivelyFromObject($object['object'], $actors);
+
+        if (isset($object->actor)) {
+            $actors[] = $object['actor'];
+        }
+
+        if (isset($object->object)) {
+            if (is_string($object->object)) {
+                if ($object->type === 'Follow') {
+                    $actors[] = $object->object;
+                }
+            } else if (is_array($object->object)) {
+                $subObject = ObjectType::createFromArray($object->object);
+                $this->getActorsRecursivelyFromObject($subObject, $actors);
+            }
         }
     }
 }
