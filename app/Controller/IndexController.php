@@ -1069,7 +1069,7 @@ class IndexController extends BaseController
     {
         try {
             $action = $this->getQueryParam($request, 'action');
-            $notificationId = $args['notification_id'];
+            $notificationId = $args['id'];
             if (empty($action) || empty($notificationId)) {
                 throw new InvalidArgumentException('Both action and notification id required');
             }
