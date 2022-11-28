@@ -1598,17 +1598,17 @@ SQL;
         return $this->redirectBack($request, $response);
     }
 
-    public function showInitialForm(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    public function install(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $flash = $this->flash($request);
         $data = [
             'errors' => $flash->get('error', []),
             'messages' => $flash->get('success', [])
         ];
-        return $this->render($response, 'init', $data);
+        return $this->render($response, 'install', $data);
     }
 
-    public function init(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    public function initDatabase(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $domain = $this->getPostParam($request, 'domain');
         $name = $this->getPostParam($request, 'name');
@@ -1658,11 +1658,11 @@ SQL;
 
             $profile = [
                 'id' => CHERRY_ADMIN_PROFILE_ID,
-                'actor' => "https://$domain",
+                'actor' => "https://$domain/users/$preferredName",
                 'name' => $name,
                 'preferred_name' => $preferredName,
                 'account' => "$preferredName@$domain",
-                'url' => "https://$domain",
+                'url' => "https://$domain/@$preferredName",
                 'avatar' => $avatar,
                 'summary' => $summary,
                 'inbox' => "https://$domain/users/$preferredName/inbox",

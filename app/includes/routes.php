@@ -14,8 +14,8 @@ return function (App $app) {
         /**
          * Web routes
          */
-        $group->get('/install', [IndexController::class, 'showInitialForm']);
-        $group->post('/install', [IndexController::class, 'init']);
+        $group->get('/install', [IndexController::class, 'install']);
+        $group->post('/install', [IndexController::class, 'initDatabase']);
         $group->get('/login', [IndexController::class, 'login']);
         $group->post('/login', [IndexController::class, 'verifyPassword']);
         $group->get('/logout', [IndexController::class, 'logout']);
