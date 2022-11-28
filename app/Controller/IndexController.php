@@ -739,7 +739,7 @@ class IndexController extends BaseController
                 'task' => DeleteActivityTask::class,
                 'params' => ['activity_id' => $activityId]
             ];
-            $this->container->get(TaskQueue::class)->queueArray($task);
+            $this->container->get(TaskQueue::class)->queue($task);
         }
         return $response->withStatus('302')->withHeader('location', '/');
     }
