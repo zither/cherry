@@ -3,6 +3,7 @@
 namespace Cherry\Task;
 
 use adrianfalleiro\TaskInterface;
+use Cherry\ActivityPub\Activity;
 use Cherry\ActivityPub\Context;
 use Cherry\Helper\SignRequest;
 use Cherry\Helper\Time;
@@ -23,21 +24,28 @@ class DeleteActivityTask implements TaskInterface
     {
         $activityId = $args['activity_id'];
         $db = $this->container->get(Medoo::class);
-        $objectId = $db->get('activities', 'object_id', ['id' => $activityId]);
-        $rawObjectId = $db->get('objects', 'raw_object_id', ['id' => $objectId]);
+        $activityData = $db->get('activities', '*', ['id' => $activityId]);
+        $originActivity = json_decode($activityData['raw'], true);
+        $object = $originActivity['object'];
+        $tombstone = [
+            'id' => $object['id'],
+            'type' => 'Tombstone',
+            'atomUri' => $object['id'],
+        ];
         $settings = $this->container->make('settings', ['keys' => ['domain']]);
-        $helper = $this->container->get(SignRequest::class);
-        $snowflake = $this->container->get(Snowflake::class);
-        $newActivityId = $snowflake->id();
         $adminProfile = $db->get('profiles', ['id', 'outbox', 'actor'], ['id' =>  CHERRY_ADMIN_PROFILE_ID]);
+        $snowflake = $this->container->get(Snowflake::class);
+        $publicId = $snowflake->id();
         $rawActivity = [
-            'id' => "https://{$settings['domain']}/activities/{$newActivityId}",
+            'id' => "https://{$settings['domain']}/activities/{$publicId}",
             'type' => 'Delete',
             'actor' => $adminProfile['actor'],
-            'object' => $rawObjectId,
+            'object' => $tombstone,
             'to' => ['https://www.w3.org/ns/activitystreams#Public'],
         ];
         $rawActivity = Context::set($rawActivity, Context::OPTION_ACTIVITY_STREAMS | Context::OPTION_SECURITY_V1);
+
+        $helper = $this->container->get(SignRequest::class);
         $rawActivity['signature'] = $helper->createLdSignature($rawActivity);
         $activity = [
             'activity_id' => $rawActivity['id'],
@@ -53,7 +61,6 @@ class DeleteActivityTask implements TaskInterface
             'params' => ['activity_id' => $id]
         ]);
 
-        $db->delete('objects', ['id' => $objectId]);
         $db->update('activities', ['is_deleted' => 1], ['id' => $activityId]);
         $db->delete('notifications', ['activity_id' => $activityId]);
     }

@@ -539,12 +539,12 @@ class IndexController extends BaseController
 
         // 新嘟文 Object 信息
         $snowflake = $this->container->get(Snowflake::class);
-        $objectId = $snowflake->id();
+        $objectPublicId = $snowflake->id();
 
         $published = Time::UTCTimeISO8601();
         $object = [
-            'id' => "$urlPrefix/objects/$objectId",
-            'url' => "$urlPrefix/objects/$objectId/details",
+            'id' => "$urlPrefix/objects/$objectPublicId",
+            'url' => "$urlPrefix/@{$profile['preferred_name']}/$objectPublicId",
             'type' => 'Note',
             'attributedTo' => $profile['actor'],
             'summary' => $summary,
@@ -714,54 +714,55 @@ class IndexController extends BaseController
         }
     }
 
-    public function deleteActivity(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    public function deleteObject(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $id = $args['id'];
+        $objectId = $args['id'];
         $db = $this->db();
-        $activity = $db->get('activities', ['id', 'object_id'], [
-            'id' => $id,
+        $object = $db->get('objects', ['id'], ['id' => $objectId, 'is_local' => 1]);
+        if (empty($object)) {
+            return $response->withStatus(404);
+        }
+
+        $db->delete('objects', ['id' => $objectId]);
+        $db->delete('interactions', ['object_id' => $objectId]);
+        $db->delete('tags', ['object_id' => $objectId]);
+        $db->update('activities', ['is_deleted' => 1], ['object_id' => $objectId, 'type[!]' => 'Create']);
+
+        $activityId = $db->get('activities', 'id', [
+            'object_id' => $objectId,
             'type' => 'Create',
             'is_deleted' => 0,
             'is_local' => 1
         ]);
-
-        if (!empty($activity)) {
-            // 标记为已删除
-            $db->update('activities', ['is_deleted' => 1], [
-                'OR' => [
-                    'id' => $activity['id'],
-                    'object_id' => $activity['object_id'],
-                ]
-            ]);
-            // 删除互动数据
-            $db->delete('interactions', ['object_id' => $activity['object_id']]);
-            // 删除标签
-            $db->delete('tags', ['object_id' => $activity['object_id']]);
-            $this->container->get(TaskQueue::class)->queue([
+        if ($activityId) {
+            $task = [
                 'task' => DeleteActivityTask::class,
-                'params' => ['activity_id' => $activity['id']]
-            ]);
+                'params' => ['activity_id' => $activityId]
+            ];
+            $this->container->get(TaskQueue::class)->queueArray($task);
         }
-
         return $response->withStatus('302')->withHeader('location', '/');
     }
 
     public function objectDetails(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $publicId = $args['public_id'];
-        $db = $this->db();
+        $name = $args['name'];
+        $profile = $this->adminProfile(['preferred_name']);
+        if ($profile['preferred_name'] !== $name) {
+            return $response->withStatus('404');
+        }
+
         $settings = $this->container->make('settings', ['keys' => ['domain']]);
         $objectUrlId = sprintf('https://%s/objects/%s', $settings['domain'], $publicId);
-
         $loggedIn = $this->isLoggedIn($request);
         $conditions = ['raw_object_id' => $objectUrlId];
         if (!$loggedIn) {
             $conditions['is_public'] = 1;
         }
-
         $objectId = $this->db()->get('objects', 'id', $conditions);
         if (empty($objectId)) {
-            throw new HttpNotFoundException($request);
+            return $response->withStatus('404');
         }
 
         $conditions = [
@@ -777,7 +778,7 @@ class IndexController extends BaseController
             $conditions['objects.is_public'] = 1;
         }
 
-        $notes = $db->select('objects', [
+        $notes = $this->db()->select('objects', [
             '[>]profiles' => ['profile_id' => 'id'],
         ], [
             'objects.id',
@@ -827,7 +828,7 @@ class IndexController extends BaseController
             }
         }
 
-        $interactions = $db->select('interactions', [
+        $interactions = $this->db()->select('interactions', [
             '[>]profiles' => ['profile_id' => 'id']
         ], [
             'interactions.id',

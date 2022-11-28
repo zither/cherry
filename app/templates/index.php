@@ -206,7 +206,7 @@
                                         </div>
                                         <?php if ($v['is_local']):?>
                                             <div class="item">
-                                                <form action="/activities/<?=$v['id']?>/delete" METHOD="POST">
+                                                <form action="/objects/<?=$v['object_id']?>/delete" METHOD="POST">
                                                     <input class="btn" type="submit" value="<?=$this->lang('menu_delete_activity')?>" />
                                                 </form>
                                             </div>

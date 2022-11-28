@@ -23,7 +23,7 @@ return function (App $app) {
         $group->group('', function (RouteCollectorProxy $group) {
             $group->get('/', [IndexController::class, 'home'])->setName('home');
             $group->get('/@{name}', [IndexController::class, 'home'])->setName('home');
-            $group->get('/objects/{public_id}/details', [IndexController::class, 'objectDetails']);
+            $group->get('/@{name}/{public_id}', [IndexController::class, 'objectDetails']);
             $group->get('/tags/{tag}', [IndexController::class, 'tags']);
         })->add(SiteLockingMiddleware::class);
 
@@ -35,7 +35,7 @@ return function (App $app) {
             $group->get('/notifications', [IndexController::class, 'notifications']);
             $group->get('/notifications/{id}/answer', [IndexController::class, 'handleFollowRequest']);
 
-            $group->post('/activities/{id}/delete', [IndexController::class, 'deleteActivity']);
+            $group->post('/objects/{id}/delete', [IndexController::class, 'deleteObject']);
             $group->post('/objects/{id}/like', [IndexController::class, 'like']);
             $group->post('/objects/{id}/boost', [IndexController::class, 'boost']);
             $group->get('/objects/{id}/editor', [IndexController::class, 'objectEditor']);

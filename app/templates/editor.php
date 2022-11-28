@@ -215,7 +215,7 @@
                                 <div class="dropdown-menu flex-column">
                                     <?php if ($note['is_local']):?>
                                         <div class="item">
-                                            <form action="/notes/<?=$note['snowflake_id']?>/delete" METHOD="POST">
+                                            <form action="/objects/<?=$note['id']?>/delete" METHOD="POST">
                                                 <input class="btn" type="submit" value="<?=$this->lang('menu_delete_activity')?>" />
                                             </form>
                                         </div>
