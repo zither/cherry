@@ -55,7 +55,7 @@ class CreateRequestTask implements TaskInterface
             }
             $db->update('activities', $updatedData, ['id' => $activityId]);
 
-            if ($objectData['type'] === ActivityPub::OBJECT_TYPE_QUESTION) {
+            if ($objectData['type'] === ActivityPub::QUESTION) {
                 $db->update('polls', ['activity_id' => $activityId], ['object_id' => $objectId]);
             }
 

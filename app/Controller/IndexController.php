@@ -47,7 +47,7 @@ class IndexController extends BaseController
 
         $defaultConditions = [
             'activities.object_id[!]' => 0,
-            'activities.type' => ['Create', 'Announce'],
+            'activities.type' => [ActivityPub::CREATE, ActivityPub::ANNOUNCE],
             'activities.unlisted' => 0,
             'activities.is_local' => 1,
             'activities.is_deleted' => 0,
@@ -162,7 +162,7 @@ class IndexController extends BaseController
             $v['profile_url'] = $objectInfo['url'];
             $v['avatar'] = $objectInfo['avatar'];
             $v['account'] = "@{$objectInfo['account']}";
-            $v['show_boosted'] = $v['activity_type'] === 'Announce';
+            $v['show_boosted'] = $v['activity_type'] === ActivityPub::ANNOUNCE;
             if ($v['is_local']) {
                 preg_match('#\d{18}#', $v['activity_id'], $matches);
                 $v['snowflake_id'] =  $matches[0];
@@ -186,7 +186,6 @@ class IndexController extends BaseController
             ]
         ]);
 
-
         $prevIndexes = $db->select('activities', ['id', 'published'], $prevConditions);
         $prevIndexes =  array_reverse($prevIndexes);
         $prevIndex = empty($prevIndexes) ? 0 : $prevIndexes[0]['id'];
@@ -197,7 +196,7 @@ class IndexController extends BaseController
             'unlisted' => 0,
             'is_local' => 1,
             'is_deleted' => 0,
-            'type' => ['Create', 'Announce']
+            'type' => [ActivityPub::CREATE, ActivityPub::ANNOUNCE]
         ]);
         $followersCount = $db->count('followers', ['status' => 1]);
         $followingCount = $db->count('following', ['status' => 1]);
@@ -282,7 +281,7 @@ class IndexController extends BaseController
             if ($v['parent_id']) {
                 $parentIds[] = $v['parent_id'];
             }
-            if ($v['type'] === ActivityPub::OBJECT_TYPE_QUESTION) {
+            if ($v['type'] === ActivityPub::QUESTION) {
                 $pollIds[] = $v['object_id'];
             }
         }

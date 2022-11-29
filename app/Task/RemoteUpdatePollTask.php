@@ -28,7 +28,7 @@ class RemoteUpdatePollTask implements TaskInterface
         $object = $rawActivity['object'];
         $objectRecord = $db->get('objects', '*', ['raw_object_id' => $object['id']]);
         if (
-            $object['type'] !== ActivityPub::OBJECT_TYPE_QUESTION
+            $object['type'] !== ActivityPub::QUESTION
             || !isset($rawActivity['signature'])
             || empty($objectRecord)
         ) {

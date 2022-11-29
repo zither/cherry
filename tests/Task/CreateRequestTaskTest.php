@@ -75,7 +75,7 @@ class CreateRequestTaskTest extends TestCase
         $objectId = $db->get('activities', 'object_id', ['id' => $activityId]);
         $this->assertNotEmpty($objectId);
         $objectType = $db->get('objects', 'type', ['id' => $objectId]);
-        $this->assertEquals($objectType, ActivityPub::OBJECT_TYPE_QUESTION);
+        $this->assertEquals($objectType, ActivityPub::QUESTION);
         $poll = $db->get('polls', '*', ['object_id' => $objectId]);
         $this->assertNotEmpty($poll);
         $choices = [

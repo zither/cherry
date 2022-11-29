@@ -1,6 +1,7 @@
 <?php
 namespace Cherry\Controller;
 
+use Cherry\ActivityPub\ActivityPub;
 use Cherry\ActivityPub\Context;
 use Cherry\Task\TaskQueue;
 use InvalidArgumentException;
@@ -214,7 +215,7 @@ class ApiController extends BaseController
         $profile = $this->adminProfile(['id', 'actor', 'outbox']);
         $total = $db->count('activities', [
             'profile_id' => $profile['id'],
-            'type' => ['Create', 'Announce'],
+            'type' => [ActivityPub::CREATE, ActivityPub::ANNOUNCE],
             'is_local' => 1,
             'is_deleted' => 0,
         ]);
@@ -237,7 +238,7 @@ class ApiController extends BaseController
             $offset = ($page - 1) * $size;
             $activities = $db->select('activities', '*', [
                 'profile_id' => $profile['id'],
-                'type' => ['Create', 'Announce'],
+                'type' => [ActivityPub::CREATE, ActivityPub::ANNOUNCE],
                 'is_local' => 1,
                 'is_public' => 1,
                 'is_deleted' => 0,
@@ -327,7 +328,7 @@ class ApiController extends BaseController
 
         $rawActivity = json_decode($activity['raw'], true);
         $activityType = Activity::createFromArray($rawActivity);
-        if (!in_array($activityType->lowerType(), ['create', 'announce'])) {
+        if (!in_array($activityType->type, [ActivityPub::CREATE, ActivityPub::ANNOUNCE])) {
             return $response->withStatus(404);
         }
         //@TODO check request authorization
