@@ -2,6 +2,7 @@
 
 namespace Cherry\Task;
 
+use Cherry\ActivityPub\ActivityPub;
 use Cherry\ActivityPub\Context;
 use PDOException;
 use adrianfalleiro\FailedTaskException;
@@ -35,7 +36,7 @@ class LocalUpdateProfileTask implements TaskInterface
         $snowflake = $this->container->get(Snowflake::class);
         $snowflakeId = $snowflake->id();
         $object = [
-            'type' => 'Person',
+            'type' => ActivityPub::PERSON,
             'id' => $profile['actor'],
             'url' => $profile['url'],
             'preferredUsername' => $profile['preferred_name'],
@@ -63,7 +64,7 @@ class LocalUpdateProfileTask implements TaskInterface
         $settings = $this->container->make('settings', ['keys' => ['domain']]);
         $rawActivity = [
             'id' => "https://{$settings['domain']}/activities/$snowflakeId",
-            'type' => 'Update',
+            'type' => ActivityPub::UPDATE,
             'actor' => $profile['actor'],
             'object' => $object,
             'to' => ["https://www.w3.org/ns/activitystreams#Public"],
@@ -75,7 +76,7 @@ class LocalUpdateProfileTask implements TaskInterface
             'activity_id' => $rawActivity['id'],
             'profile_id' => $profile['id'],
             'object_id' => 0,
-            'type' => 'Update',
+            'type' => ActivityPub::UPDATE,
             'raw' => json_encode($rawActivity, JSON_UNESCAPED_SLASHES),
             'published' => Time::getLocalTime(),
             'is_local' => 1,

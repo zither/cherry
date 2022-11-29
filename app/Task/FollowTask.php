@@ -5,6 +5,7 @@ namespace Cherry\Task;
 use adrianfalleiro\RetryException;
 use adrianfalleiro\TaskInterface;
 use Cherry\ActivityPub\Activity;
+use Cherry\ActivityPub\ActivityPub;
 use Cherry\ActivityPub\Context;
 use Cherry\Helper\SignRequest;
 use Cherry\Helper\Time;
@@ -76,12 +77,12 @@ class FollowTask implements TaskInterface
             $activityId = $snowflake->id();
             $followRequest = [
                 'id' => "https://{$settings['domain']}/activities/$activityId",
-                'type' => 'Follow',
+                'type' => ActivityPub::FOLLOW,
                 'actor' => $adminProfile['actor'],
                 'object' => $profileUrl,
             ];
             $followRequest = Context::set($followRequest, Context::OPTION_ACTIVITY_STREAMS | Context::OPTION_SECURITY_V1);
-            if ($profile['type'] === 'Group') {
+            if ($profile['type'] === ActivityPub::GROUP) {
                 $followRequest['object'] = Activity::PUBLIC_COLLECTION;
                 // keep the actor in raw activity
                 $followRequest['cc'] = [$profile['actor']];
@@ -93,7 +94,7 @@ class FollowTask implements TaskInterface
             $jsonRequest =json_encode($followRequest, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
             $activity = [
                 'activity_id' => $followRequest['id'],
-                'type' => 'Follow',
+                'type' => ActivityPub::FOLLOW,
                 'raw' => $jsonRequest,
                 'published' => Time::getLocalTime(),
                 'is_local' => 1,

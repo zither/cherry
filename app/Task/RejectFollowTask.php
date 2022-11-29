@@ -5,6 +5,7 @@ namespace Cherry\Task;
 use adrianfalleiro\FailedTaskException;
 use adrianfalleiro\RetryException;
 use adrianfalleiro\TaskInterface;
+use Cherry\ActivityPub\ActivityPub;
 use Cherry\ActivityPub\Context;
 use Cherry\Helper\SignRequest;
 use Godruoyi\Snowflake\Snowflake;
@@ -42,7 +43,7 @@ class RejectFollowTask implements TaskInterface
         $message = [
             'id' => sprintf('https://%s/activities/%s', $settings['domain'], $snowflake->id()),
             'actor' => $adminActor,
-            'type' => 'Reject',
+            'type' => ActivityPub::REJECT,
             'object' => $rawActivity,
         ];
         $message = Context::set($message, Context::OPTION_ACTIVITY_STREAMS);

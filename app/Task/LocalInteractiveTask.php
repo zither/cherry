@@ -4,6 +4,7 @@ namespace Cherry\Task;
 
 use adrianfalleiro\FailedTaskException;
 use adrianfalleiro\TaskInterface;
+use Cherry\ActivityPub\ActivityPub;
 use Cherry\ActivityPub\Context;
 use Cherry\Helper\Time;
 use Godruoyi\Snowflake\Snowflake;
@@ -30,7 +31,7 @@ class LocalInteractiveTask implements TaskInterface
             throw new InvalidArgumentException('Invalid object id: ' . $objectId);
         }
         $interaction = $args['type'];
-        if (!in_array($interaction, ['Like', 'Announce'])) {
+        if (!in_array($interaction, [ActivityPub::LIKE, ActivityPub::ANNOUNCE])) {
             throw new InvalidArgumentException('Invalid interaction type: ' . $interaction);
         }
 
@@ -47,7 +48,7 @@ class LocalInteractiveTask implements TaskInterface
             'to' => [$targetProfile['actor']],
         ];
         $rawActivity = Context::set($rawActivity, Context::OPTION_ACTIVITY_STREAMS);
-        if ($interaction !== 'Like') {
+        if ($interaction !== ActivityPub::LIKE) {
             $rawActivity = array_merge($rawActivity, [
                 'cc' => [
                     "https://www.w3.org/ns/activitystreams#Public",
@@ -72,10 +73,10 @@ class LocalInteractiveTask implements TaskInterface
             $activityId = $db->id();
 
             switch ($interaction) {
-                case 'Like':
+                case ActivityPub::LIKE:
                     $column = 'likes';
                     break;
-                case 'Announce':
+                case ActivityPub::ANNOUNCE:
                     $column = 'shares';
                     break;
             }

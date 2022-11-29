@@ -5,6 +5,7 @@ namespace Cherry\Task;
 use adrianfalleiro\FailedTaskException;
 use adrianfalleiro\TaskInterface;
 use Cherry\ActivityPub\Activity;
+use Cherry\ActivityPub\ActivityPub;
 use Cherry\ActivityPub\ObjectType;
 use Medoo\Medoo;
 use Psr\Container\ContainerInterface;
@@ -37,14 +38,14 @@ class DeliverActivityTask implements TaskInterface
 
         // if inboxes was empty, try to find inboxes from origin activity.
         if (empty($inboxes)) {
-            if ($activityType->type === 'Undo') {
+            if ($activityType->type === ActivityPub::UNDO) {
                 if (is_array($activityType->object)) {
                     $originActivityType = Activity::createFromArray($activityType->object);
                 } else {
                     $originActivity = $db->get('activities', ['id', 'raw'], ['activity_id' => $activityType->object]);
                     $originActivityType = Activity::createFromArray(json_decode($originActivity['raw'], true));
                 }
-            } else if ($activityType->type === 'Delete') {
+            } else if ($activityType->type === ActivityPub::DELETE) {
                 //@TODO Remove
                 if (is_string($activityType->object)) {
                     $deletedObjectId = $db->get('objects', 'id', ['raw_object_id' => $activityType->object]);
@@ -54,7 +55,7 @@ class DeliverActivityTask implements TaskInterface
                             'object_id' => $deletedObjectId,
                             'activity_id' => $originActivityTypeId
                         ],
-                        'type' => 'Create'
+                        'type' => ActivityPub::CREATE
                     ]);
                     $originActivityType = Activity::createFromArray(json_decode($originActivity['raw'], true));
                 }
@@ -152,7 +153,7 @@ class DeliverActivityTask implements TaskInterface
 
         if (isset($object->object)) {
             if (is_string($object->object)) {
-                if ($object->type === 'Follow') {
+                if ($object->type === ActivityPub::FOLLOW) {
                     $actors[] = $object->object;
                 }
             } else if (is_array($object->object)) {

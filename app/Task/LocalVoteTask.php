@@ -5,6 +5,7 @@ namespace Cherry\Task;
 use adrianfalleiro\FailedTaskException;
 use adrianfalleiro\TaskInterface;
 use Cherry\ActivityPub\Activity;
+use Cherry\ActivityPub\ActivityPub;
 use Cherry\ActivityPub\Context;
 use Cherry\Helper\Time;
 use Godruoyi\Snowflake\Snowflake;
@@ -39,7 +40,7 @@ class LocalVoteTask implements TaskInterface
         $objectPublicId = $snowflake->id();
         $object = [
             'id' => "https://{$settings['domain']}/objects/$objectPublicId",
-            'type' => 'Note',
+            'type' => ActivityPub::NOTE,
             'attributedTo' => $profile['actor'],
             'name' => $choice['choice'],
             'to' => [$pollActivity->actor],
@@ -51,7 +52,7 @@ class LocalVoteTask implements TaskInterface
 
         $rawActivity = [
             'id' => $newActivityId,
-            'type' => 'Create',
+            'type' => ActivityPub::CREATE,
             'actor' => $profile['actor'],
             'object' => $object,
             'to' => [$pollActivity->actor],

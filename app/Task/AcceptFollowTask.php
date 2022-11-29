@@ -4,6 +4,7 @@ namespace Cherry\Task;
 
 use adrianfalleiro\FailedTaskException;
 use adrianfalleiro\TaskInterface;
+use Cherry\ActivityPub\ActivityPub;
 use Cherry\ActivityPub\Context;
 use Cherry\Helper\SignRequest;
 use Cherry\Helper\Time;
@@ -43,7 +44,7 @@ class AcceptFollowTask implements TaskInterface
         $message = [
             'id' => sprintf('https://%s/activities/%s', $settings['domain'], $acceptActivityId),
             'actor' => $adminProfile['actor'],
-            'type' => 'Accept',
+            'type' => ActivityPub::ACCEPT,
             'object' => $rawActivity,
         ];
         $message = Context::set($message, Context::OPTION_ACTIVITY_STREAMS);
@@ -52,7 +53,7 @@ class AcceptFollowTask implements TaskInterface
         $acceptActivity = [
             'activity_id' => $message['id'],
             'profile_id' => CHERRY_ADMIN_PROFILE_ID,
-            'type' => 'Accept',
+            'type' => ActivityPub::ACCEPT,
             'raw' => json_encode($message, JSON_UNESCAPED_SLASHES),
             'published' => Time::getLocalTime(),
         ];

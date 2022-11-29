@@ -4,6 +4,7 @@ namespace Cherry\Task;
 
 use adrianfalleiro\FailedTaskException;
 use adrianfalleiro\TaskInterface;
+use Cherry\ActivityPub\ActivityPub;
 use Psr\Container\ContainerInterface;
 use Medoo\Medoo;
 use PDOException;
@@ -24,9 +25,9 @@ class DeleteRemoteNoteTask implements TaskInterface
         $activity = $db->get('activities', '*', ['id' => $activityId]);
         $rawActivity = json_decode($activity['raw'], true);
         if (
-            $rawActivity['type'] !== 'Delete'
+            $rawActivity['type'] !== ActivityPub::DELETE
             || empty($rawActivity['object']['type'])
-            || $rawActivity['object']['type'] !== 'Tombstone'
+            || $rawActivity['object']['type'] !== ActivityPub::TOMBSTONE
         ) {
             return;
         }

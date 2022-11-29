@@ -5,6 +5,7 @@ namespace Cherry\Task;
 use adrianfalleiro\FailedTaskException;
 use adrianfalleiro\TaskInterface;
 use Cherry\ActivityPub\Activity;
+use Cherry\ActivityPub\ActivityPub;
 use Cherry\ActivityPub\Context;
 use Cherry\Helper\SignRequest;
 use Cherry\Helper\Time;
@@ -34,17 +35,17 @@ class LocalUndoTask implements TaskInterface
         $rawActivity = json_decode($activity['raw'], true);
         $activityType = Activity::createFromArray($rawActivity);
         $validTypes = [
-            'Like',
-            'Announce',
-            'Accept',
-            'Follow',
+            ActivityPub::LIKE,
+            ActivityPub::ANNOUNCE,
+            ActivityPub::ACCEPT,
+            ActivityPub::FOLLOW,
         ];
         if (!in_array($activityType->type, $validTypes)) {
             throw new InvalidArgumentException('Invalid activity type: ' . $activityType->type);
         }
         $rawObjectId = is_array($activityType->object) ? $activityType->object['id'] : $activityType->object;
         $targetObject = $db->get('objects', ['id', 'profile_id'], ['raw_object_id' => $rawObjectId]);
-        if (empty($targetObject) && ($activityType->type === 'Like' || $activityType === 'Announce')) {
+        if (empty($targetObject) && ($activityType->type === ActivityPub::LIKE || $activityType === ActivityPub::ANNOUNCE)) {
             throw new InvalidArgumentException('Object not found : ' . $rawObjectId);
         }
         $profile = $db->get('profiles', ['id', 'actor', 'outbox'], ['id' => CHERRY_ADMIN_PROFILE_ID]);
@@ -58,7 +59,7 @@ class LocalUndoTask implements TaskInterface
         $settings = $this->container->make('settings', ['keys' => ['domain']]);
         $undo = [
             'id' => "https://{$settings['domain']}/activities/$snowflakeId",
-            'type' => 'Undo',
+            'type' => ActivityPub::UNDO,
             'actor' => $profile['actor'],
             'object' => $rawOriginActivity,
         ];
@@ -71,7 +72,7 @@ class LocalUndoTask implements TaskInterface
             'activity_id' => $undo['id'],
             'profile_id' => $profile['id'],
             'object_id' => $targetObject['id'] ?? 0,
-            'type' => 'Undo',
+            'type' => ActivityPub::UNDO,
             'raw' => json_encode($undo, JSON_UNESCAPED_SLASHES),
             'published' => Time::getLocalTime(),
             'is_local' => 1,
@@ -82,10 +83,10 @@ class LocalUndoTask implements TaskInterface
             $newActivityId = $db->id();
 
             switch ($activityType->type) {
-                case 'Like':
+                case ActivityPub::LIKE:
                     $column = 'likes';
                     break;
-                case 'Announce':
+                case ActivityPub::ANNOUNCE:
                     $column = 'shares';
                     break;
             }

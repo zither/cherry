@@ -4,6 +4,7 @@ namespace Cherry\Task;
 
 use adrianfalleiro\TaskInterface;
 use Cherry\ActivityPub\Activity;
+use Cherry\ActivityPub\ActivityPub;
 use Medoo\Medoo;
 use Psr\Container\ContainerInterface;
 use InvalidArgumentException;
@@ -22,13 +23,13 @@ class RemoteDeleteTask implements TaskInterface
         $db = $this->container->get(Medoo::class);
         $activityId = $args['activity_id'];
         $activity = $db->get('activities', '*', ['id' => $activityId]);
-        if (empty($activity) || strtolower($activity['type']) !== 'delete') {
+        if (empty($activity) || $activity['type'] !== ActivityPub::DELETE) {
             throw new InvalidArgumentException('Invalid activity type');
         }
         $rawActivity = json_decode($activity['raw'], true);
         $activityType = Activity::createFromArray($rawActivity);
 
-        if (is_array($rawActivity['object']) && $rawActivity['object']['type'] === 'Tombstone') {
+        if (is_array($rawActivity['object']) && $rawActivity['object']['type'] === ActivityPub::TOMBSTONE) {
             $task = new DeleteRemoteNoteTask($this->container);
             $task->command($args);
             return;

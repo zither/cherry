@@ -5,6 +5,7 @@ namespace Cherry\Task;
 use adrianfalleiro\FailedTaskException;
 use adrianfalleiro\TaskInterface;
 use Cherry\ActivityPub\Activity;
+use Cherry\ActivityPub\ActivityPub;
 use Psr\Container\ContainerInterface;
 use Medoo\Medoo;
 use InvalidArgumentException;
@@ -23,13 +24,13 @@ class RemoteUndoTask implements TaskInterface
         $db = $this->container->get(Medoo::class);
         $activityId = $args['activity_id'];
         $activity = $db->get('activities', '*', ['id' => $activityId]);
-        if (empty($activity) || strtolower($activity['type']) !== 'undo') {
+        if (empty($activity) || $activity['type'] !== ActivityPub::UNDO) {
             throw new InvalidArgumentException('Invalid activity type');
         }
         $rawActivity = json_decode($activity['raw'], true);
         $undoActivity = Activity::createFromArray($rawActivity['object']);
-        switch ($undoActivity->lowerType()) {
-            case 'follow':
+        switch ($undoActivity->type) {
+            case ActivityPub::FOLLOW:
                 $actor = $db->get('profiles', 'actor', ['id' => CHERRY_ADMIN_PROFILE_ID]);
                 if ($undoActivity->object !== $actor) {
                     return;
@@ -44,7 +45,7 @@ class RemoteUndoTask implements TaskInterface
                     'status' => 1,
                 ]);
                 break;
-            case 'like':
+            case ActivityPub::LIKE:
                 if (is_string($undoActivity->object)) {
                     $rawObjectId = $undoActivity->object;
                 } else if (is_array($undoActivity->object) && isset($undoActivity->object['id'])) {
@@ -70,7 +71,7 @@ class RemoteUndoTask implements TaskInterface
                     $db->update('objects', ['likes[-]' => 1], ['id' => $object['id']]);
                 }
                 break;
-            case 'announce':
+            case ActivityPub::ANNOUNCE:
                 $db->update('activities', ['is_deleted' => 1], [
                     'OR' => [
                         'activity_id' => $undoActivity->id,

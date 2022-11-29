@@ -4,6 +4,7 @@ namespace Cherry\Task;
 
 use adrianfalleiro\FailedTaskException;
 use adrianfalleiro\TaskInterface;
+use Cherry\ActivityPub\ActivityPub;
 use Cherry\Helper\SignRequest;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
@@ -44,7 +45,7 @@ class FetchProfileTask implements TaskInterface
         $host = parse_url($person['id'], PHP_URL_HOST);
         $profile = [
             'actor' => $person['id'],
-            'type' => $person['type'] ?? 'Person',
+            'type' => $person['type'] ?? ActivityPub::PERSON,
             'name' => $person['name'] ?? '',
             'preferred_name' => $person['preferredUsername'],
             'account' => "{$person['preferredUsername']}@$host",

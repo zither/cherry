@@ -4,6 +4,7 @@ namespace Cherry\Task;
 
 use adrianfalleiro\TaskInterface;
 use Cherry\ActivityPub\Activity;
+use Cherry\ActivityPub\ActivityPub;
 use Cherry\ActivityPub\Context;
 use Cherry\Helper\SignRequest;
 use Cherry\Helper\Time;
@@ -29,7 +30,7 @@ class DeleteActivityTask implements TaskInterface
         $object = $originActivity['object'];
         $tombstone = [
             'id' => $object['id'],
-            'type' => 'Tombstone',
+            'type' => ActivityPub::TOMBSTONE,
             'atomUri' => $object['id'],
         ];
         $settings = $this->container->make('settings', ['keys' => ['domain']]);
@@ -38,7 +39,7 @@ class DeleteActivityTask implements TaskInterface
         $publicId = $snowflake->id();
         $rawActivity = [
             'id' => "https://{$settings['domain']}/activities/{$publicId}",
-            'type' => 'Delete',
+            'type' => ActivityPub::DELETE,
             'actor' => $adminProfile['actor'],
             'object' => $tombstone,
             'to' => ['https://www.w3.org/ns/activitystreams#Public'],
@@ -49,7 +50,7 @@ class DeleteActivityTask implements TaskInterface
         $rawActivity['signature'] = $helper->createLdSignature($rawActivity);
         $activity = [
             'activity_id' => $rawActivity['id'],
-            'type' => 'Delete',
+            'type' => ActivityPub::DELETE,
             'raw' => json_encode($rawActivity, JSON_UNESCAPED_SLASHES),
             'published' => TIme::getLocalTime(),
             'is_local' => 1,

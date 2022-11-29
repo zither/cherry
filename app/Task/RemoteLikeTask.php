@@ -2,6 +2,7 @@
 
 namespace Cherry\Task;
 
+use Cherry\ActivityPub\ActivityPub;
 use InvalidArgumentException;
 use adrianfalleiro\FailedTaskException;
 use adrianfalleiro\TaskInterface;
@@ -23,7 +24,7 @@ class RemoteLikeTask implements TaskInterface
         $db = $this->container->get(Medoo::class);
         $activityId = $args['activity_id'];
         $activity = $db->get('activities', '*', ['id' => $activityId]);
-        if (empty($activity) || strtolower($activity['type']) !== 'like') {
+        if (empty($activity) || $activity['type'] !== ActivityPub::LIKE) {
             throw new InvalidArgumentException('Invalid activity type');
         }
         $rawActivity = json_decode($activity['raw'], true);
@@ -48,11 +49,11 @@ class RemoteLikeTask implements TaskInterface
             $profile = $subTask->command(['actor' => $actor]);
         }
         $types = [
-            'Like' => 1,
-            'Announce' => 2,
+            ActivityPub::LIKE => 1,
+            ActivityPub::ANNOUNCE => 2,
         ];
         try {
-            $column = $activity['type'] == 'Like' ? 'likes' : 'shares';
+            $column = $activity['type'] == ActivityPub::LIKE ? 'likes' : 'shares';
             $db->pdo->beginTransaction();
             $db->update('objects', ["{$column}[+]" => 1], ['raw_object_id' => $rawObjectId]);
             // local notes
@@ -69,7 +70,7 @@ class RemoteLikeTask implements TaskInterface
                         'actor' => $actor,
                         'profile_id' => $profile['id'],
                         'activity_id' => $activityId,
-                        'type' => 'Like',
+                        'type' => ActivityPub::LIKE,
                         'status' => 1,
                     ]);
                 }

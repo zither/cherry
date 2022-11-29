@@ -5,6 +5,7 @@ namespace Cherry\Task;
 use adrianfalleiro\FailedTaskException;
 use adrianfalleiro\RetryException;
 use adrianfalleiro\TaskInterface;
+use Cherry\ActivityPub\ActivityPub;
 use GuzzleHttp\Exception\GuzzleException;
 use Medoo\Medoo;
 use Psr\Container\ContainerInterface;
@@ -65,7 +66,7 @@ class FollowRequestTask implements TaskInterface
                 'actor' => $actor,
                 'profile_id' => $profile['id'],
                 'activity_id' => $activityId,
-                'type' => 'Follow',
+                'type' => ActivityPub::FOLLOW,
                 'viewed' => 0,
             ];
             $db->insert('notifications', $notification);

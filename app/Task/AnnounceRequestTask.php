@@ -4,6 +4,7 @@ namespace Cherry\Task;
 
 use adrianfalleiro\TaskInterface;
 use Psr\Container\ContainerInterface;
+use Cherry\ActivityPub\ActivityPub;
 use Medoo\Medoo;
 use InvalidArgumentException;
 
@@ -21,7 +22,7 @@ class AnnounceRequestTask implements TaskInterface
         $db = $this->container->get(Medoo::class);
         $activityId = $args['activity_id'];
         $activity = $db->get('activities', '*', ['id' => $activityId]);
-        if (empty($activity) || strtolower($activity['type']) !== 'announce') {
+        if (empty($activity) || $activity['type'] !== ActivityPub::ANNOUNCE) {
             throw new InvalidArgumentException('Invalid activity type');
         }
         $rawActivity = json_decode($activity['raw'], true);
