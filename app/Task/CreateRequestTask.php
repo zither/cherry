@@ -24,14 +24,13 @@ class CreateRequestTask implements TaskInterface
         $db = $this->container->get(Medoo::class);
         $activityId = $args['activity_id'];
         $activity = $db->get('activities', '*', ['id' => $activityId]);
-        if (empty($activity) || strtolower($activity['type']) !== 'create') {
-            throw new InvalidArgumentException('Invalid activity type');
+        if (empty($activity) || $activity['type'] !== ActivityPub::CREATE) {
+            throw new InvalidArgumentException('Invalid activity type: ' . $activity['type'] ?? '');
         }
 
         // Check if this activity is duplicate
         $exits = $db->count('activities', [
             'activity_id' => $activity['activity_id'],
-            'profile_id' => $activity['profile_id'],
             'object_id[>]' => 0,
         ]);
         if ($exits) {

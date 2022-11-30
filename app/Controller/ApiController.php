@@ -203,7 +203,7 @@ class ApiController extends BaseController
             }
         }
 
-        $statusCode = $activityType->lowerType() == 'create' ? 201 : 202;
+        $statusCode = $activityType->type == ActivityPub::CREATE ? 201 : 202;
         $response = $response->withStatus($statusCode);
 
         return $response;
