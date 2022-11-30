@@ -98,7 +98,7 @@ class CreateRequestTask implements TaskInterface
             }
 
             // Deliver reply activity to followers
-            if ($objectData['reply_to_local_object']) {
+            if ($activity['is_public'] && $objectData['reply_to_local_object']) {
                 $taskQueue = new TaskQueue($this->container);
                 $taskQueue->queue([
                     'task' => DeliverActivityTask::class,
