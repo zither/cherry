@@ -73,8 +73,10 @@ class FetchObjectTask implements TaskInterface
         }
         $originId = 0;
         $parentId = 0;
+        $replyToLocalObject = 0;
         if ($object->isReply()) {
-            $parent = $db->get('objects', ['id', 'origin_id', 'parent_id'], ['raw_object_id' => $object->inReplyTo]);
+            $parent = $db->get('objects', ['id', 'origin_id', 'parent_id', 'is_local'], ['raw_object_id' => $object->inReplyTo]);
+            $replyToLocalObject = $parent['is_local'] ?? 0;
             if (empty($parent)) {
                 // Just try one time to fetch parent object
                 try {
@@ -203,6 +205,8 @@ class FetchObjectTask implements TaskInterface
                 $db->update('objects', ['replies[+]' => 1], ['id' => $parentId]);
             }
             $db->pdo->commit();
+
+            $objectData['reply_to_local_object'] = $replyToLocalObject;
 
             return $objectData;
         } catch (PDOException $e) {

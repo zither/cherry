@@ -97,6 +97,14 @@ class CreateRequestTask implements TaskInterface
                 }
             }
 
+            // Deliver reply activity to followers
+            if ($objectData['reply_to_local_object']) {
+                $taskQueue = new TaskQueue($this->container);
+                $taskQueue->queue([
+                    'task' => DeliverActivityTask::class,
+                    'params' => ['activity_id' => $activityId]
+                ]);
+            }
 
             $db->pdo->commit();
         } catch (PDOException $e) {

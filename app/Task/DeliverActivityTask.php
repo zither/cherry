@@ -74,12 +74,12 @@ class DeliverActivityTask implements TaskInterface
             if ($v === $profile['inbox'] || $v === $profile['shared_inbox']) {
                 continue;
             }
-            $params = json_encode([
+            $params = [
                 'activity_id' => $activityId,
                 'inbox' => $v,
-            ], JSON_UNESCAPED_SLASHES);
+            ];
             $tasks[] = [
-                'task' => 'PushActivityTask',
+                'task' => PushActivityTask::class,
                 'params' => $params,
                 'priority' => 140,
             ];
@@ -88,8 +88,8 @@ class DeliverActivityTask implements TaskInterface
         if (empty($tasks)) {
             throw new FailedTaskException('No Task queued: ' . $activityId);
         }
-
-        $db->insert('tasks', $tasks);
+        $taskQueue = new TaskQueue($this->container);
+        $taskQueue->queueArray($tasks);
     }
 
     protected function getInboxesFromActivity(Activity $activityType, array $profile): array
@@ -99,14 +99,13 @@ class DeliverActivityTask implements TaskInterface
         $this->getActorsRecursivelyFromObject($activityType, $actors);
         $actors = array_unique($actors);
         $toFollowers = false;
-        foreach ($actors as $v) {
-            if ($v === $profile['actor']) {
+        foreach ($actors as $k => $v) {
+            if ($v === $profile['actor'] || $v === $activityType->actor) {
+                unset($actors[$k]);
                 continue;
             }
             if ($v === Activity::PUBLIC_COLLECTION || $v === $profile['followers']) {
                 $toFollowers = true;
-            } else  {
-                $actors[] = $v;
             }
         }
 
