@@ -53,7 +53,8 @@ class BaseController
             'likes',
             'featured',
             'shared_inbox',
-            'public_key'
+            'public_key',
+            'public_key_id',
         ];
         if (empty($columns)) {
             $selectedColumns = $defaultColumns;
