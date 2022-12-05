@@ -1835,6 +1835,7 @@ SQL;
         $selectedColumns = is_null($pid) && $groupActivities ? ['id' => Medoo::raw('max(id)')] : ['id'];
         if (is_null($pid) && $groupActivities) {
             $distinctObjectConditions = array_merge($conditions, $objectCondition);
+            //'@' is the distinct keyword
             $distinctObjectIds = $db->select('activities', '@object_id', $distinctObjectConditions);
             if (empty($distinctObjectIds)) {
                 return $activityIds;
