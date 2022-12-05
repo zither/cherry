@@ -47,7 +47,7 @@ class Context
     public static function set(array $object, int $options = self::OPTION_ACTIVITY_STREAMS): array
     {
         $context = self::get($options);
-        $object['@context'] = $context;
+        $object = array_merge(['@context' => $context], $object);
         return $object;
     }
 }
