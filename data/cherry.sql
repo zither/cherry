@@ -123,8 +123,10 @@ CREATE TABLE `profiles` (
   `featured` varchar(192) NOT NULL DEFAULT '',
   `shared_inbox` varchar(192) NOT NULL DEFAULT '',
   `public_key` text DEFAULT NULL,
+  `public_key_id` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
-  KEY `profiles_actor_IDX` (`actor`) USING BTREE
+  KEY `profiles_actor_IDX` (`actor`) USING BTREE,
+  KEY `profiles_key_id_IDX` (`public_key_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `replies`;

@@ -54,12 +54,13 @@ class FetchProfileTask implements TaskInterface
             'outbox' => $person['outbox'] ?? '',
             'following' => $person['following'] ?? '',
             'followers' => $person['followers'] ?? '',
-            'public_key' => $person['publicKey']['publicKeyPem'] ?? '',
             'likes' => $person['likes'] ?? '',
             'avatar' => $person['icon']['url'] ?? '',
             'summary' => $person['summary'] ?? '',
             'shared_inbox' => $person['endpoints']['sharedInbox'] ?? '',
             'featured' => $person['featured'] ?? '',
+            'public_key_id' => $person['publicKey']['id'] ?? '',
+            'public_key' => $person['publicKey']['publicKeyPem'] ?? '',
         ];
         if (!empty($targetProfile)) {
             $db->update('profiles', $profile, ['actor' => $actor]);

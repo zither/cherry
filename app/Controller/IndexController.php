@@ -1657,22 +1657,24 @@ SQL;
                 ['cat' => 'system', 'k' => 'group_activities', 'v' => 0],
             ]);
 
+            $actor = "https://$domain/users/$preferredName";
             $profile = [
                 'id' => CHERRY_ADMIN_PROFILE_ID,
-                'actor' => "https://$domain/users/$preferredName",
+                'actor' => $actor,
                 'name' => $name,
                 'preferred_name' => $preferredName,
                 'account' => "$preferredName@$domain",
                 'url' => "https://$domain/@$preferredName",
                 'avatar' => $avatar,
                 'summary' => $summary,
-                'inbox' => "https://$domain/users/$preferredName/inbox",
-                'outbox' => "https://$domain/users/$preferredName/outbox",
-                'following' => "https://$domain/users/$preferredName/following",
-                'followers' => "https://$domain/users/$preferredName/followers",
-                'featured' => "https://$domain/users/$preferredName/featured",
+                'inbox' => "$actor/inbox",
+                'outbox' => "$actor/outbox",
+                'following' => "$actor/following",
+                'followers' => "$actor/followers",
+                'featured' => "$actor/featured",
                 'shared_inbox' => "https://$domain/inbox",
                 'public_key' => $publicKey,
+                'public_key_id' => "$actor#main-key",
             ];
             $db->insert('profiles', $profile);
 

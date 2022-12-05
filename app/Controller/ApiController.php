@@ -131,7 +131,7 @@ class ApiController extends BaseController
                 "url" => $profile['avatar']
             ],
             'publicKey' => [
-                'id' => "{$profile['actor']}#main-key",
+                'id' => $profile['public_key_id'],
                 'owner' => $profile['actor'],
                 'publicKeyPem' => $profile['public_key'],
                 'type' => 'Key'
