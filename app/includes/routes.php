@@ -3,6 +3,7 @@ use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
 use Cherry\Controller\IndexController;
 use Cherry\Controller\ApiController;
+use Cherry\Controller\DevController;
 use Cherry\Middleware\AuthenticationMiddleware;
 use Cherry\Middleware\ApiCheckingMiddleware;
 use Cherry\Middleware\InitiatingMiddleware;
@@ -55,6 +56,9 @@ return function (App $app) {
             $group->post('/settings', [IndexController::class, 'updatePreferences']);
 
             $group->post('/polls/{id}/vote', [IndexController::class, 'vote']);
+
+
+            $group->get('/dev/objects', [DevController::class, 'objects']);
         })->add(AuthenticationMiddleware::class);
 
         /**
