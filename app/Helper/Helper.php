@@ -30,9 +30,13 @@ class Helper
         if (preg_match('/&amp;amp%3B/', $html)) {
             $html = urldecode($html);
         }
+
+        $previousValue = libxml_use_internal_errors(true);
         $doc = new DOMDocument();
         $hack =  '<?xml encoding="utf-8" ?><meta http-equiv="content-type" content="text/html; charset=utf-8">';
         $doc->loadHTML($hack . $html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        libxml_use_internal_errors($previousValue);
+
         $images = $doc->getElementsByTagName('img');
         $attributeWhitelist = ['src', 'rel', 'alt', 'title', 'class'];
         /** @var DOMNode $image */
