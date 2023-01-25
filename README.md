@@ -65,7 +65,7 @@ Set Nginx rewrite rules:
 
 Visit setup URL in web browser:
 
-    https://your-domain/init
+    https://your-domain/install
 
 Start task runner:
 
