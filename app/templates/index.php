@@ -6,12 +6,15 @@
             <h1 class="mr"><?=$profile['name'] ?: $profile['preferred_name']?></h1>
             <span class="mr">@<?=$profile['account']?></span>
             <?php if ($is_admin): ?>
-            <a class="link" href="/timeline">
-                <?=$this->lang('index_admin')?>
+                <a class="link inline-block" href="/timeline">
+                    <?=$this->lang('index_admin')?>
+                </a>
+
                 <?php if ($notifications):?>
-                    (<?=$notifications?>)
+                <a class="link inline-block ml" href="/notifications">
+                    <?=$this->lang('notification_count')?>(<?=$notifications?>)
+                </a>
                 <?php endif;?>
-            </a>
             <?php endif;?>
         </div>
         <div class="description mt-1 mb-1">
