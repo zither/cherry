@@ -5,7 +5,6 @@ use Cherry\Controller\IndexController;
 use Cherry\Controller\ApiController;
 use Cherry\Controller\DevController;
 use Cherry\Middleware\AuthenticationMiddleware;
-use Cherry\Middleware\ApiCheckingMiddleware;
 use Cherry\Middleware\InitiatingMiddleware;
 use Cherry\Middleware\SiteLockingMiddleware;
 
